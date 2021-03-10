@@ -1,37 +1,29 @@
 /******************************************************************************
 Pedometer.ino
 
-Marshall Taylor @ SparkFun Electronics
-May 20, 2015
-https://github.com/sparkfun/LSM6DS3_Breakout
-https://github.com/sparkfun/SparkFun_LSM6DS3_Arduino_Library
+Original Library written for the LSM6DS3 by Marshall Taylor @ SparkFun Electronics
+Updated to modern SparkFun practices for the LSM6DS0 by Elias Santistevan @ SparkFun Electronics
+March, 2021
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0_Arduino_Library
 
 Description:
 This sketch counts steps taken.
 
-Run the sketch and open a serial window at 9600 baud.  The sketch will display
-the number of steps taken since reset.  lightly tap the sensor on something at the
+Run the sketch and open a serial window at 115200 baud.  The sketch will display
+the number of steps taken since reset.  Lightly tap the sensor on something at the
 rate of walking to simulate having the device in your pocket.  Note that you must
 take 7 regularly spaced steps before the counter starts reporting.
 
 Push the reset button to reset the device and count.
 
-The configuration is determined by reading the LSM6DS3 datasheet and application
+The configuration is determined by reading the LSM6DS0 datasheet and application
 note, then driving hex values to the registers of interest to set the appropriate
 bits.  The sketch is based of the "LowLevelExampe" sketch.
 
 Resources:
 Uses Wire.h for i2c operation
 Uses SPI.h for SPI operation
-
-Development environment specifics:
-Arduino IDE 1.6.4
-Teensy loader 1.23
-
-Hardware connections:
-Connect I2C SDA line to A4
-Connect I2C SCL line to A5
-Connect GND and 3.3v power to the IMU
 
 This code is released under the [MIT License](http://opensource.org/licenses/MIT).
 
@@ -41,19 +33,20 @@ or concerns with licensing, please contact techsupport@sparkfun.com.
 Distributed as-is; no warranty is given.
 ******************************************************************************/
 
-#include "SparkFunLSM6DS3.h"
+#include "SparkFunLSM6DS0.h"
 #include "Wire.h"
-#include "SPI.h"
+//#include "SPI.h"
 
-LSM6DS3Core myIMU( I2C_MODE, 0x6B );
-//LSM6DS3Core myIMU( SPI_MODE, 10 );
+LSM6DS0Core myIMU( I2C_MODE, 0x6B );
+//LSM6DS0Core myIMU( SPI_MODE, 10 );
 
 void setup()
 {
-	Serial.begin(9600);
+	Serial.begin(115200);
 	delay(1000); //relax...
 	Serial.println("Processor came out of reset.\n");
 
+  Wire.begin();
 	//Call .beginCore() to configure the IMU
 	if( myIMU.beginCore() != 0 )
 	{

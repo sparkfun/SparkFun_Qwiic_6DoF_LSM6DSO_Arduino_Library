@@ -2,10 +2,11 @@
 FifoExample.ino
 Example using the FIFO over SPI.
 
-Marshall Taylor @ SparkFun Electronics
-May 20, 2015
-https://github.com/sparkfun/LSM6DS3_Breakout
-https://github.com/sparkfun/SparkFun_LSM6DS3_Arduino_Library
+Original Library written for the LSM6DS3 by Marshall Taylor @ SparkFun Electronics
+Updated to modern SparkFun practices for the LSM6DS0 by Elias Santistevan @ SparkFun Electronics
+March, 2021
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0_Arduino_Library
 
 Description:
 The FIFO is configured to take readings at 50Hz.  When 100 samples have
@@ -22,23 +23,13 @@ never getting the FIFO back down to zero.
 Removing the 10ms delay allows the FIFO to be emptied, but then too much data
 gets placed in the serial write buffer and stability suffers.
 
+
+Example using the LSM6DS0 with basic settings.  This sketch collects Gyro and
+Accelerometer data every second, then presents it on the serial monitor.
+
 Resources:
-Uses Wire.h for I2C operation
+Uses Wire.h for i2c operation
 Uses SPI.h for SPI operation
-Either can be omitted if not used
-
-Development environment specifics:
-Arduino IDE 1.6.4
-Teensy loader 1.23
-
-Hardware connections:
-***CAUTION -- SPI pins can not be connected directly to 5V IO***
-
-Connect SDA/SDI line to pin 11 through a level shifter (MOSI)
-Connect SCL pin line to pin 13 through a level shifter (SCLK)
-Connect SDO/SA0 line to pin 12 through a level shifter (MISO)
-Connect CS to a free pin through a level shifter.  This example uses pin 10.
-Connect GND and ***3.3v*** power to the IMU.  The sensors are not 5v tolerant.
 
 This code is released under the [MIT License](http://opensource.org/licenses/MIT).
 
@@ -48,13 +39,13 @@ or concerns with licensing, please contact techsupport@sparkfun.com.
 Distributed as-is; no warranty is given.
 ******************************************************************************/
 
-#include "SparkFunLSM6DS3.h"
-#include "Wire.h"
+#include "SparkFunLSM6DS0.h"
+// #include "Wire.h"
 #include "SPI.h"
 
-LSM6DS3 myIMU( SPI_MODE, 10 );
+LSM6DS0 myIMU( SPI_MODE, 10 );
 
-void setup( void ) {
+void setup() {
   //Over-ride default settings if desired
   myIMU.settings.gyroEnabled = 1;  //Can be 0 or 1
   myIMU.settings.gyroRange = 2000;   //Max deg/s.  Can be: 125, 245, 500, 1000, 2000
@@ -93,6 +84,7 @@ void setup( void ) {
   Serial.println("Processor came out of reset.\n");
   
   //Call .begin() to configure the IMUs
+  SPI.begin();
   if( myIMU.begin() != 0 )
   {
 	  Serial.println("Problem starting the sensor with CS @ Pin 10.");

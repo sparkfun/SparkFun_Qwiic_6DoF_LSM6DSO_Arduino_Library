@@ -1,10 +1,11 @@
 /******************************************************************************
 MemoryPagingExample.ino
 
-Marshall Taylor @ SparkFun Electronics
-May 20, 2015
-https://github.com/sparkfun/LSM6DS3_Breakout
-https://github.com/sparkfun/SparkFun_LSM6DS3_Arduino_Library
+Original Library written for the LSM6DS3 by Marshall Taylor @ SparkFun Electronics
+Updated to modern SparkFun practices for the LSM6DS0 by Elias Santistevan @ SparkFun Electronics
+March, 2021
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0_Arduino_Library
 
 Description:
 This sketch switches between the base memory page and the embedded page.
@@ -12,20 +13,11 @@ This sketch switches between the base memory page and the embedded page.
 The test writes to a base address, switches pages, writes to a embedded location
 at the same numerical address, switches back and reads the original value.
 
-This sketch doesn't do any meaningful configuration for the LSM6DS3, just tests.
+This sketch doesn't do any meaningful configuration for the LSM6DS0, just tests.
 
 Resources:
 Uses Wire.h for i2c operation
 Uses SPI.h for SPI operation
-
-Development environment specifics:
-Arduino IDE 1.6.4
-Teensy loader 1.23
-
-Hardware connections:
-Connect I2C SDA line to A4
-Connect I2C SCL line to A5
-Connect GND and 3.3v power to the IMU
 
 This code is released under the [MIT License](http://opensource.org/licenses/MIT).
 
@@ -35,21 +27,22 @@ or concerns with licensing, please contact techsupport@sparkfun.com.
 Distributed as-is; no warranty is given.
 ******************************************************************************/
 
-#include "SparkFunLSM6DS3.h"
+#include "SparkFunLSM6DS0.h"
 #include "Wire.h"
-#include "SPI.h"
+// #include "SPI.h"
 
 uint16_t errorsAndWarnings = 0;
 
-LSM6DS3Core myIMU( I2C_MODE, 0x6B );
-//LSM6DS3Core myIMU( SPI_MODE, 10 );
+LSM6DS0Core myIMU( I2C_MODE, 0x6B );
+//LSM6DS0Core myIMU( SPI_MODE, 10 );
 
 void setup()
 {
-	Serial.begin(9600);
+	Serial.begin(115200);
 	delay(1000); //relax...
 	Serial.println("Processor came out of reset.\n");
 
+  Wire.begin();
 	//Call .beginCore() to configure the IMU
 	if( myIMU.beginCore() != 0 )
 	{
@@ -65,11 +58,11 @@ void setup()
 
 	//Write something to a base page location to make sure it gets preserved
 	//Then, read it back
-	if( myIMU.writeRegister( LSM6DS3_ACC_GYRO_FIFO_CTRL1, 0xF0 ) != 0 )
+	if( myIMU.writeRegister( LSM6DS0_ACC_GYRO_FIFO_CTRL1, 0xF0 ) != 0 )
 	{
 		errorsAndWarnings++;
 	}
-	if( myIMU.readRegister(&dataVariable, LSM6DS3_ACC_GYRO_FIFO_CTRL1) != 0 )
+	if( myIMU.readRegister(&dataVariable, LSM6DS0_ACC_GYRO_FIFO_CTRL1) != 0 )
 	{
 		errorsAndWarnings++;
 	}
@@ -85,12 +78,12 @@ void setup()
 
 	//Write something to a the embedded page at the same address
 	//Then, read it back
-	if( myIMU.writeRegister( LSM6DS3_ACC_GYRO_SLV1_SUBADD, 0xA5 ) != 0 )
+	if( myIMU.writeRegister( LSM6DS0_ACC_GYRO_SLV1_SUBADD, 0xA5 ) != 0 )
 	{
 		errorsAndWarnings++;
 	}
 	//Now read it back and display it
-	if( myIMU.readRegister(&dataVariable, LSM6DS3_ACC_GYRO_SLV1_SUBADD) != 0 )
+	if( myIMU.readRegister(&dataVariable, LSM6DS0_ACC_GYRO_SLV1_SUBADD) != 0 )
 	{
 		errorsAndWarnings++;
 	}
@@ -103,7 +96,7 @@ void setup()
 	{
 		errorsAndWarnings++;
 	}  
-	if( myIMU.readRegister(&dataVariable, LSM6DS3_ACC_GYRO_FIFO_CTRL1) != 0 )
+	if( myIMU.readRegister(&dataVariable, LSM6DS0_ACC_GYRO_FIFO_CTRL1) != 0 )
 	{
 		errorsAndWarnings++;
 	}

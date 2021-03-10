@@ -1,13 +1,14 @@
 /******************************************************************************
 MultiSPI.ino
 
-Marshall Taylor @ SparkFun Electronics
-May 20, 2015
-https://github.com/sparkfun/LSM6DS3_Breakout
-https://github.com/sparkfun/SparkFun_LSM6DS3_Arduino_Library
+Original Library written for the LSM6DS3 by Marshall Taylor @ SparkFun Electronics
+Updated to modern SparkFun practices for the LSM6DS0 by Elias Santistevan @ SparkFun Electronics
+March, 2021
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0_Arduino_Library
 
 Description:
-Example using up to two LSM6DS3s on the same SPI channel, with different CS pins.
+Example using up to two LSM6DS0's on the same SPI channel, with different CS pins.
 If only one sensor is attached, this sketch reports failure on that channel and
 runs with the single sensor instead.
 
@@ -15,19 +16,6 @@ Resources:
 Uses Wire.h for i2c operation
 Uses SPI.h for SPI operation
 Either can be omitted if not used
-
-Development environment specifics:
-Arduino IDE 1.6.4
-Teensy loader 1.23
-
-Hardware connections
-***CAUTION -- SPI pins can not be connected directly to 5v IO***
-
-Connect SDA/SDI lines to pin 11 through level shifters (MOSI)
-Connect SCL pin lines to pin 13 through level shifters (SCLK)
-Connect SDO/SA0 lines to pin 12 through level shifters (MISO)
-Connect CS to free pins through level shifters.  This example uses 9 and 10.
-Connect GND and ***3.3v*** power to the IMU.  The sensors are not 5v tolerant.
 
 (Multiple SPI devices share pins except for the Chip Select lines which
 are unique for each device on the bus.)
@@ -40,21 +28,22 @@ or concerns with licensing, please contact techsupport@sparkfun.com.
 Distributed as-is; no warranty is given.
 ******************************************************************************/
 
-#include "SparkFunLSM6DS3.h"
+#include "SparkFunLSM6DS0.h"
 #include "Wire.h"
 #include "SPI.h"
 
 //Create two instances of the driver class
-LSM6DS3 SensorOne( SPI_MODE, 10 );
-LSM6DS3 SensorTwo( SPI_MODE, 9 );
+LSM6DS0 SensorOne( SPI_MODE, 10 );
+LSM6DS0 SensorTwo( SPI_MODE, 9 );
 
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(1000); //relax...
   Serial.println("Processor came out of reset.\n");
   
+  Wire.begin();
   //Call .begin() to configure the IMUs
   if( SensorOne.begin() != 0 )
   {

@@ -59,6 +59,8 @@ LSM6DS0Core::LSM6DS0Core( uint8_t busType, uint8_t inputArg) : commInterface(I2C
 	}
 	if( commInterface == SPI_MODE )
 	{
+    SPIClass &spiPort;
+    _spiPort = &spiPort; 
 		chipSelectPin = inputArg;
 	}
 
@@ -74,26 +76,22 @@ status_t LSM6DS0Core::beginCore(void)
 		break;
 
 	case SPI_MODE:
-		// start the SPI library:
-		// Maximum SPI frequency is 10MHz, could divide by 2 here:
-		SPI.setClockDivider(SPI_CLOCK_DIV4);
 		// Data is read and written MSb first.
-		SPI.setBitOrder(MSBFIRST);
-		// Data is captured on rising edge of clock (CPHA = 0)
-		// Base value of the clock is HIGH (CPOL = 1)
+		// Maximum SPI frequency is 10MHz, could divide by 2 here:
+    uint16_t spiPortSpeed = 10000000;
 
-		// MODE3 for 328p operation
 #ifdef __AVR__
-		SPI.setDataMode(SPI_MODE3);
-#else
+    mySpiSettings = SPISettings(spiPortSpeed, MSBFIRST, SPI_MODE1);
 #endif
-
 		// MODE0 for Teensy 3.1 operation
 #ifdef __MK20DX256__
-		SPI.setDataMode(SPI_MODE0);
-#else
+    mySpiSettings = SPISettings(spiPortSpeed, MSBFIRST, SPI_MODE0);
 #endif
 		
+#ifdef ESP32
+    mySpiSettings = SPISettings(spiPortSpeed, SPI_MSBFIRST, SPI_MODE1);
+#endif
+
 		// initalize the  data ready and chip select pins:
 		pinMode(chipSelectPin, OUTPUT);
 		digitalWrite(chipSelectPin, HIGH);
@@ -170,12 +168,13 @@ status_t LSM6DS0Core::readRegisterRegion(uint8_t *outputPointer , uint8_t offset
 
 	case SPI_MODE:
 		// take the chip select low to select the device:
+    _spiPort->beginTransaction(mySpiSettings);
 		digitalWrite(chipSelectPin, LOW);
 		// send the device the register you want to read:
-		SPI.transfer(offset | 0x80);  //Ored with "read request" bit
+		_spiPort->transfer(offset | 0x80);  //Ored with "read request" bit
 		while ( i < length ) // slave may send less than requested
 		{
-			c = SPI.transfer(0x00); // receive a byte as character
+			c = _spiPort->transfer(0x00); // receive a byte as character
 			if( c == 0xFF )
 			{
 				//May have problem
@@ -192,6 +191,7 @@ status_t LSM6DS0Core::readRegisterRegion(uint8_t *outputPointer , uint8_t offset
 		}
 		// take the chip select high to de-select:
 		digitalWrite(chipSelectPin, HIGH);
+    _spiPort->endTransaction();
 		break;
 
 	default:
@@ -235,12 +235,14 @@ status_t LSM6DS0Core::readRegister(uint8_t* outputPointer, uint8_t offset) {
 	case SPI_MODE:
 		// take the chip select low to select the device:
 		digitalWrite(chipSelectPin, LOW);
+    _spiPort->beginTransaction(mySpiSettings); 
 		// send the device the register you want to read:
-		SPI.transfer(offset | 0x80);  //Ored with "read request" bit
+		_spiPort->transfer(offset | 0x80);  //Ored with "read request" bit
 		// send a value of 0 to read the first byte returned:
-		result = SPI.transfer(0x00);
+		result = _spiPort->transfer(0x00);
 		// take the chip select high to de-select:
 		digitalWrite(chipSelectPin, HIGH);
+    _spiPort->endTransaction(); 
 		
 		if( result == 0xFF )
 		{
@@ -270,7 +272,7 @@ status_t LSM6DS0Core::readRegisterInt16( int16_t* outputPointer, uint8_t offset 
 {
 	uint8_t myBuffer[2];
 	status_t returnError = readRegisterRegion(myBuffer, offset, 2);  //Does memory transfer
-	int16_t output = (int16_t)myBuffer[0] | int16_t(myBuffer[1] << 8);
+	int16_t output = static_cast<int16_t>(myBuffer[0]) | static_cast<int16_t>(myBuffer[1] << 8);
 	
 	*outputPointer = output;
 	return returnError;
@@ -301,14 +303,16 @@ status_t LSM6DS0Core::writeRegister(uint8_t offset, uint8_t dataToWrite) {
 
 	case SPI_MODE:
 		// take the chip select low to select the device:
+    _spiPort->beginTransaction(mySpiSettings); 
 		digitalWrite(chipSelectPin, LOW);
 		// send the device the register you want to read:
-		SPI.transfer(offset);
+		_spiPort->transfer(offset);
 		// send a value of 0 to read the first byte returned:
-		SPI.transfer(dataToWrite);
+		_spiPort->transfer(dataToWrite);
 		// decrement the number of bytes left to read:
 		// take the chip select high to de-select:
 		digitalWrite(chipSelectPin, HIGH);
+    _spiPort->endTransaction(); 
 		break;
 		
 		//No way to check error on this write (Except to read back but that's not reliable)

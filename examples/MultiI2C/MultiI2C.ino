@@ -1,13 +1,14 @@
 /******************************************************************************
 MultiI2C.ino
 
-Marshall Taylor @ SparkFun Electronics
-May 20, 2015
-https://github.com/sparkfun/LSM6DS3_Breakout
-https://github.com/sparkfun/SparkFun_LSM6DS3_Arduino_Library
+Original Library written for the LSM6DS3 by Marshall Taylor @ SparkFun Electronics
+Updated to modern SparkFun practices for the LSM6DS0 by Elias Santistevan @ SparkFun Electronics
+March, 2021
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0_Arduino_Library
 
 Description:
-Example using up to two LSM6DS3s on the same I2C channel.  If only one sensor
+Example using up to two LSM6DS0s on the same I2C channel.  If only one sensor
 is attached, this sketch reports failure on that channel and runs with the
 single sensor instead.
 
@@ -16,16 +17,7 @@ Uses Wire.h for i2c operation
 Uses SPI.h for SPI operation
 Either can be omitted if not used
 
-Development environment specifics:
-Arduino IDE 1.6.4
-Teensy loader 1.23
-
-Hardware connections
-Connect I2C SDA line to A4
-Connect I2C SCL line to A5
-Connect GND and ***3.3v*** power to the IMU.  The sensors are not 5v tolerant.
-
-(Multiple I2C devices use the same pins.  Up to two LSM6DS3s are allowed.  Use
+(Multiple I2C devices use the same pins.  Up to two LSM6DS0's are allowed.  Use
 the solder jumper to select address 0x6A or 0x6B)
 
 This code is released under the [MIT License](http://opensource.org/licenses/MIT).
@@ -36,21 +28,22 @@ or concerns with licensing, please contact techsupport@sparkfun.com.
 Distributed as-is; no warranty is given.
 ******************************************************************************/
 
-#include "SparkFunLSM6DS3.h"
+#include "SparkFunLSM6DS0.h"
 #include "Wire.h"
-#include "SPI.h"
+//#include "SPI.h"
 
 //Create two instances of the driver class
-LSM6DS3 SensorOne( I2C_MODE, 0x6A );
-LSM6DS3 SensorTwo( I2C_MODE, 0x6B );
+LSM6DS0 SensorOne( I2C_MODE, 0x6A );
+LSM6DS0 SensorTwo( I2C_MODE, 0x6B );
 
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(1000); //relax...
   Serial.println("Processor came out of reset.\n");
   
+  Wire.begin();
   //Call .begin() to configure the IMUs
   if( SensorOne.begin() != 0 )
   {
