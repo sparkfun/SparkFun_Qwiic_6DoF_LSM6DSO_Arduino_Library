@@ -54,6 +54,8 @@ LSM6DS0Core::LSM6DS0Core( uint8_t busType, uint8_t inputArg) : commInterface(I2C
 	if( commInterface == I2C_MODE )
 	{
 		I2CAddress = inputArg;
+    TwoWire &wirePort = Wire; 
+    _i2cPort = &wirePort;
 	}
 	if( commInterface == SPI_MODE )
 	{
@@ -69,12 +71,10 @@ status_t LSM6DS0Core::beginCore(void)
 	switch (commInterface) {
 
 	case I2C_MODE:
-		Wire.begin();
 		break;
 
 	case SPI_MODE:
 		// start the SPI library:
-		SPI.begin();
 		// Maximum SPI frequency is 10MHz, could divide by 2 here:
 		SPI.setClockDivider(SPI_CLOCK_DIV4);
 		// Data is read and written MSb first.
@@ -148,19 +148,19 @@ status_t LSM6DS0Core::readRegisterRegion(uint8_t *outputPointer , uint8_t offset
 	switch (commInterface) {
 
 	case I2C_MODE:
-		Wire.beginTransmission(I2CAddress);
-		Wire.write(offset);
-		if( Wire.endTransmission() != 0 )
+		_i2cPort->beginTransmission(I2CAddress);
+		_i2cPort->write(offset);
+		if( _i2cPort->endTransmission() != 0 )
 		{
 			returnError = IMU_HW_ERROR;
 		}
 		else  //OK, all worked, keep going
 		{
 			// request 6 bytes from slave device
-			Wire.requestFrom(I2CAddress, length);
-			while ( (Wire.available()) && (i < length))  // slave may send less than requested
+			_i2cPort->requestFrom(I2CAddress, length);
+			while ( (_i2cPort->available()) && (i < length))  // slave may send less than requested
 			{
-				c = Wire.read(); // receive a byte as character
+				c = _i2cPort->read(); // receive a byte as character
 				*outputPointer = c;
 				outputPointer++;
 				i++;
@@ -219,16 +219,16 @@ status_t LSM6DS0Core::readRegister(uint8_t* outputPointer, uint8_t offset) {
 	switch (commInterface) {
 
 	case I2C_MODE:
-		Wire.beginTransmission(I2CAddress);
-		Wire.write(offset);
-		if( Wire.endTransmission() != 0 )
+		_i2cPort->beginTransmission(I2CAddress);
+		_i2cPort->write(offset);
+		if( _i2cPort->endTransmission() != 0 )
 		{
 			returnError = IMU_HW_ERROR;
 		}
-		Wire.requestFrom(I2CAddress, numBytes);
-		while ( Wire.available() ) // slave may send less than requested
+		_i2cPort->requestFrom(I2CAddress, numBytes);
+		while ( _i2cPort->available() ) // slave may send less than requested
 		{
-			result = Wire.read(); // receive a byte as a proper uint8_t
+			result = _i2cPort->read(); // receive a byte as a proper uint8_t
 		}
 		break;
 
@@ -290,10 +290,10 @@ status_t LSM6DS0Core::writeRegister(uint8_t offset, uint8_t dataToWrite) {
 	switch (commInterface) {
 	case I2C_MODE:
 		//Write the byte
-		Wire.beginTransmission(I2CAddress);
-		Wire.write(offset);
-		Wire.write(dataToWrite);
-		if( Wire.endTransmission() != 0 )
+		_i2cPort->beginTransmission(I2CAddress);
+		_i2cPort->write(offset);
+		_i2cPort->write(dataToWrite);
+		if( _i2cPort->endTransmission() != 0 )
 		{
 			returnError = IMU_HW_ERROR;
 		}
