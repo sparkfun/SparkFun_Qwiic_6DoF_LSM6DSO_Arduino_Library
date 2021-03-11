@@ -486,7 +486,7 @@ status_t LSM6DS0::begin()
 
 	//Set the ODR bit
 	readRegister(&dataToWrite, LSM6DS0_ACC_GYRO_CTRL4_C);
-	dataToWrite &= ~((uint8_t)LSM6DS0_ACC_GYRO_BW_SCAL_ODR_ENABLED);
+	dataToWrite &= ~(static_cast<uint8_t>(LSM6DS0_ACC_GYRO_BW_SCAL_ODR_ENABLED));
 	if ( settings.accelODROff == 1) {
 		dataToWrite |= LSM6DS0_ACC_GYRO_BW_SCAL_ODR_ENABLED;
 	}
@@ -646,7 +646,7 @@ float LSM6DS0::readFloatAccelZ( void )
 
 float LSM6DS0::calcAccel( int16_t input )
 {
-	float output = (float)input * 0.061 * (settings.accelRange >> 1) / 1000;
+	float output = static_cast<float>(input) * 0.061 * (settings.accelRange >> 1) / 1000;
 	return output;
 }
 
@@ -731,7 +731,7 @@ float LSM6DS0::calcGyro( int16_t input )
 		gyroRangeDivisor = 2;
 	}
 
-	float output = (float)input * 4.375 * (gyroRangeDivisor) / 1000;
+	float output = static_cast<float>(input) * 4.375 * (gyroRangeDivisor) / 1000;
 	return output;
 }
 
@@ -749,7 +749,7 @@ int16_t LSM6DS0::readRawTemp( void )
 
 float LSM6DS0::readTempC( void )
 {
-	float output = (float)readRawTemp() / 16; //divide by 16 to scale
+	float output = static_cast<float>( readRawTemp() ) / 16; //divide by 16 to scale
 	output += 25; //Add 25 degrees to remove offset
 
 	return output;
@@ -758,7 +758,7 @@ float LSM6DS0::readTempC( void )
 
 float LSM6DS0::readTempF( void )
 {
-	float output = (float)readRawTemp() / 16; //divide by 16 to scale
+	float output = static_cast<float>( readRawTemp() ) / 16; //divide by 16 to scale
 	output += 25; //Add 25 degrees to remove offset
 	output = (output * 9) / 5 + 32;
 
