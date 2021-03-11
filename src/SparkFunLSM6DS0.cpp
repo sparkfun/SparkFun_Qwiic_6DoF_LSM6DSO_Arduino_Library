@@ -27,10 +27,6 @@ Distributed as-is; no warranty is given.
 //See SparkFunLSM6DS0.h for additional topology notes.
 
 #include "SparkFunLSM6DS0.h"
-#include "stdint.h"
-
-#include "Wire.h"
-#include "SPI.h"
 
 //****************************************************************************//
 //
@@ -54,13 +50,11 @@ LSM6DS0Core::LSM6DS0Core( uint8_t busType, uint8_t inputArg) : commInterface(I2C
 	if( commInterface == I2C_MODE )
 	{
 		I2CAddress = inputArg;
-    TwoWire &wirePort = Wire; 
-    _i2cPort = &wirePort;
+    _i2cPort = &Wire;
 	}
 	if( commInterface == SPI_MODE )
 	{
-    SPIClass &spiPort;
-    _spiPort = &spiPort; 
+    _spiPort = &SPI; 
 		chipSelectPin = inputArg;
 	}
 
@@ -69,6 +63,7 @@ LSM6DS0Core::LSM6DS0Core( uint8_t busType, uint8_t inputArg) : commInterface(I2C
 status_t LSM6DS0Core::beginCore(void)
 {
 	status_t returnError = IMU_SUCCESS;
+  uint32_t spiPortSpeed = 10000000;
 
 	switch (commInterface) {
 
@@ -78,7 +73,6 @@ status_t LSM6DS0Core::beginCore(void)
 	case SPI_MODE:
 		// Data is read and written MSb first.
 		// Maximum SPI frequency is 10MHz, could divide by 2 here:
-    uint16_t spiPortSpeed = 10000000;
 
 #ifdef __AVR__
     mySpiSettings = SPISettings(spiPortSpeed, MSBFIRST, SPI_MODE1);
@@ -327,7 +321,7 @@ status_t LSM6DS0Core::writeRegister(uint8_t offset, uint8_t dataToWrite) {
 status_t LSM6DS0Core::embeddedPage( void )
 {
   uint8_t tempVal; 
-  readRegister(&tempval,  LSM6DS0_ACC_GYRO_RAM_ACCESS)
+  readRegister(&tempVal,  LSM6DS0_ACC_GYRO_RAM_ACCESS);
   tempVal = tempVal | 0x80;
 	status_t returnError = writeRegister( LSM6DS0_ACC_GYRO_RAM_ACCESS, tempVal );
 	
@@ -560,7 +554,7 @@ status_t LSM6DS0::begin()
 
   readRegister(&tempRegVal, LSM6DS0_ACC_GYRO_FIFO_CTRL3); 
   // Clear Gyro bits
-  tempRegVal &= 0F; 
+  tempRegVal &= 0x0F; 
   // Merge Gyro bits
   tempRegVal |= tempAccelRate; 
   writeRegister(LSM6DS0_ACC_GYRO_FIFO_CTRL3, tempRegVal);
@@ -795,11 +789,11 @@ void LSM6DS0::fifoBegin( void ) {
   tempFIFO_CTRL4 &= 0xF8;
   // Merge bits
   tempFIFO_CTRL4 |= settings.fifoModeWord;
-	if (settings.gyroFifoEnabled == 1 | accelFifoEnabled == 1)
+	if (settings.gyroFifoEnabled == 1 | settings.accelFifoEnabled == 1)
 	{
 		//Decimation is calculated as max rate between accel and gyro
     //Clear decimation bits
-    tempFIFO_CTRL4 &= 3F; 
+    tempFIFO_CTRL4 &= 0x3F; 
     // Merge bits
 		tempFIFO_CTRL4 |= (settings.gyroAccelDecimation << 6);
   }
@@ -832,7 +826,7 @@ fifoData LSM6DS0::fifoRead( void ) {
 	//Pull the last data from the fifo
   uint8_t tempTagByte; 
   uint8_t tempAccumulator;  
-  fifoData = tempFifoData; 
+  fifoData tempFifoData; 
   
 
   readRegister(&tempTagByte, LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_TAG);

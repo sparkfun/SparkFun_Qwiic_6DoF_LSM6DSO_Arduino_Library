@@ -27,7 +27,10 @@ Distributed as-is; no warranty is given.
 #ifndef __LSM6DS0IMU_H__
 #define __LSM6DS0IMU_H__
 
-#include "stdint.h"
+#include <stdint.h>
+#include <Wire.h>
+#include <SPI.h>
+#include <Arduino.h>
 
 #define I2C_MODE 0
 #define SPI_MODE 1
@@ -89,6 +92,9 @@ private:
 	uint8_t I2CAddress;
 	uint8_t chipSelectPin;
 
+  TwoWire *_i2cPort;
+  SPIClass *_spiPort;
+
 };
 
 //This struct holds the settings the driver uses to do calculations
@@ -137,11 +143,11 @@ public:
 
 //This is the highest level class of the driver.
 //
-//  class LSM6DS0 inherits the core and makes use of the beginCore()
+//class LSM6DS0 inherits the core and makes use of the beginCore()
 //method through it's own begin() method.  It also contains the
 //settings struct to hold user settings.
 
-class LSM6DS0 : public LSM6DS3Core
+class LSM6DS0 : public LSM6DS0Core
 {
 public:
 	//IMU settings
