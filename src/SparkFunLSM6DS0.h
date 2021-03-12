@@ -379,7 +379,7 @@ private:
 #define LSM6DS0_ACC_GYRO_MAG_OFFZ_L                   0x31
 #define LSM6DS0_ACC_GYRO_MAG_OFFZ_H                   0x32
 
-// Fifo Tags
+// Fifo Tags - not a complete list. 
 typedef enum {
   GYROSCOPE_DATA = 0x01,
   ACCELEROMETER_DATA,
@@ -395,14 +395,6 @@ typedef enum {
   GYRO_DATA_2xC,
   GYRO_DATA_3xC,
 } LSM6DS0_FIFO_TAGS_t; 
-
-/*******************************************************************************
-* Register      : TEST_PAGE
-* Address       : 0X00
-* Bit Group Name: FLASH_PAGE
-* Permission    : RW
-*******************************************************************************/
-#define FLASH_PAGE    0x40
 
 /*******************************************************************************
 * Register      : RAM_ACCESS
@@ -437,40 +429,10 @@ typedef enum {
 	LSM6DS0_ACC_GYRO_RAM_PAGE_ENABLED 		 = 0x80,
 } LSM6DS0_ACC_GYRO_RAM_PAGE_t;
 
-/*******************************************************************************
-* Register      : SENSOR_SYNC_TIME
-* Address       : 0X04
-* Bit Group Name: TPH
-* Permission    : RW
-*******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_TPH_MASK  	0xFF
-#define  	LSM6DS0_ACC_GYRO_TPH_POSITION  	0
-
-/*******************************************************************************
-* Register      : SENSOR_SYNC_EN
-* Address       : 0X05
-* Bit Group Name: SYNC_EN
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	LSM6DS0_ACC_GYRO_SYNC_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SYNC_EN_ENABLED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_SYNC_EN_t;
-
-/*******************************************************************************
-* Register      : SENSOR_SYNC_EN
-* Address       : 0X05
-* Bit Group Name: HP_RST
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	LSM6DS0_ACC_GYRO_HP_RST_RST_OFF 		 = 0x00,
-	LSM6DS0_ACC_GYRO_HP_RST_RST_ON 		 = 0x02,
-} LSM6DS0_ACC_GYRO_HP_RST_t;
 
 /*******************************************************************************
 * Register      : FIFO_CTRL1
-* Address       : 0X06
+* Address       : 0X07
 * Bit Group Name: WTM_FIFO
 * Permission    : RW
 *******************************************************************************/
@@ -481,7 +443,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FIFO_CTRL2
-* Address       : 0X07
+* Address       : 0X08
 * Bit Group Name: TIM_PEDO_FIFO_DRDY
 * Permission    : RW
 *******************************************************************************/
@@ -492,7 +454,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FIFO_CTRL2
-* Address       : 0X07
+* Address       : 0X08
 * Bit Group Name: TIM_PEDO_FIFO_EN
 * Permission    : RW
 *******************************************************************************/
@@ -503,7 +465,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FIFO_CTRL3
-* Address       : 0X08
+* Address       : 0X09
 * Bit Group Name: DEC_FIFO_XL
 * Permission    : RW
 *******************************************************************************/
@@ -1835,14 +1797,14 @@ typedef enum {
 } LSM6DS0_ACC_GYRO_TILT_EN_t;
 
 /*******************************************************************************
-* Register      : TAP_CFG1
-* Address       : 0X58
+* Register      : EMB_FUNC_EN_A
+* Address       : 0X04
 * Bit Group Name: PEDO_EN
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_PEDO_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_PEDO_EN_ENABLED 		 = 0x40,
+	LSM6DS0_ACC_GYRO_PEDO_EN_DISABLED 	 = 0x00,
+	LSM6DS0_ACC_GYRO_PEDO_EN_ENABLED 		 = 0x80,
 } LSM6DS0_ACC_GYRO_PEDO_EN_t;
 
 /*******************************************************************************
