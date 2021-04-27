@@ -15,7 +15,7 @@ Either can be omitted if not used
 Development environment specifics:
 Arduino IDE 1.6.4
 Teensy loader 1.23
-
+0
 This code is released under the [MIT License](http://opensource.org/licenses/MIT).
 
 Please review the LICENSE.md file included with this example. If you have any questions 
@@ -104,7 +104,7 @@ status_t LSM6DS0Core::beginCore(void)
 	//Check the ID register to determine if the operation was a success.
 	uint8_t readCheck;
 	readRegister(&readCheck, LSM6DS0_ACC_GYRO_WHO_AM_I_REG);
-	if( readCheck != 0x69 )
+	if( readCheck != 0x6C )
 	{
 		returnError = IMU_HW_ERROR;
 	}
