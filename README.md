@@ -1,13 +1,10 @@
-SparkFun LSM6DS3 Arduino Library
+SparkFun Qwiic 6DoF LSM6DS0 Breakout Arduino Library
 ========================================
 
-![LSM6DS3 Breakout](https://cdn.sparkfun.com/assets/learn_tutorials/4/1/6/perspective.jpg)
+[![SparkFun Qwiic 6DoF LSM6DSO Breakout](https://cdn.sparkfun.com/assets/parts/1/7/2/4/2/18020-SparkFun_6_Degrees_of_Freedom_Breakout_-_LSM6DSO__Qwiic_-01.jpg)](https://www.sparkfun.com/products/18020)
 
-[*LSM6DS3 Breakout (SEN-13339)*](https://www.sparkfun.com/products/13339)
+[*SparkFun Qwiic 6DoF LSM6DSO Breakout  (SEN-18020)*](https://www.sparkfun.com/products/18020)
 
-This is an arduino IDE library to control the LSM6DS3.  It can be configured to use I2C or SPI with 2 instances per I2C channel or any number of SPI instances.  The top-level driver, class LSM6DS3, contains an inner driver LSM6DS3Core, a settings struct, and float-based math functions for conversion from raw to meaningful numbers.
-
-This has been tested with Arduino Uno and Teensy 3.1 architectures.
 
 Repository Contents
 -------------------
@@ -35,19 +32,19 @@ Documentation
 --------------
 
 * **[Installing an Arduino Library Guide](https://learn.sparkfun.com/tutorials/installing-an-arduino-library)** - Basic information on how to install an Arduino library.
-* **[Product Repository](https://github.com/sparkfun/LSM6DS3_Breakout/)** - Main repository (including hardware files) for the LSM6DS3 Breakout.
-* **[Hookup Guide](https://learn.sparkfun.com/tutorials/lsm6ds3-breakout-hookup-guide)** - Basic hookup guide for the LSM6DS3 Breakout.
+* **[Product Repository](https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DSO)** - Main repository (including hardware files) for the LSM6DSO Breakout.
+* **[Hookup Guide](https://learn.sparkfun.com/tutorials/1664)** 
 
 Products that use this Library 
 ---------------------------------
 
-* [SEN-13339](https://www.sparkfun.com/products/13339)- LSM6DS3 Breakout board
+* [SEN-18020](https://www.sparkfun.com/products/18020)
 
 Version History
 ---------------
 
-* [V 1.0.0](https://github.com/sparkfun/SparkFun_LSM6DS3_Arduino_Library/releases/tag/V_1.0.0) -- Initial commit of Arduino 1.6-compatible library.
-
+* V 1.0.0
+* 
 License Information
 -------------------
 
