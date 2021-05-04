@@ -1,4 +1,4 @@
-SparkFun Qwiic 6DoF LSM6DS0 Breakout Arduino Library
+SparkFun Qwiic 6DoF LSM6DSO Breakout Arduino Library
 ========================================
 
 [![SparkFun Qwiic 6DoF LSM6DSO Breakout](https://cdn.sparkfun.com/assets/parts/1/7/2/4/2/18020-SparkFun_6_Degrees_of_Freedom_Breakout_-_LSM6DSO__Qwiic_-01.jpg)](https://www.sparkfun.com/products/18020)
