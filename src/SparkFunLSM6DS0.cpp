@@ -357,8 +357,7 @@ LSM6DS0::LSM6DS0( uint8_t busType, uint8_t inputArg ) : LSM6DS0Core( busType, in
 	settings.accelEnabled = 1;
 	settings.accelODROff = 1;
 	settings.accelRange = 16;      //Max G force readable.  Can be: 2, 4, 8, 16
-	settings.accelSampleRate = 416;  //Hz.  Can be: 13, 26, 52, 104, 208, 416, 833, 1666, 3332, 6664, 13330
-	settings.accelBandWidth = 100;  //Hz.  Can be: 50, 100, 200, 400;
+	settings.accelSampleRate = 416;  //Hz.  Can be: 1.6 (16), 12.5 (125), 26, 52, 104, 208, 416, 833, 1660, 3330, 6660
 	settings.accelFifoEnabled = 1;  //Set to include accelerometer in the FIFO
 
 	settings.tempEnabled = 1;
@@ -398,32 +397,16 @@ status_t LSM6DS0::begin()
 	dataToWrite = 0; //Start Fresh!
 	if ( settings.accelEnabled == 1) {
 		//Build config reg
-		//First patch in filter bandwidth
-		switch (settings.accelBandWidth) {
-		case 50:
-			dataToWrite |= LSM6DS0_ACC_GYRO_BW_XL_50Hz;
-			break;
-		case 100:
-			dataToWrite |= LSM6DS0_ACC_GYRO_BW_XL_100Hz;
-			break;
-		case 200:
-			dataToWrite |= LSM6DS0_ACC_GYRO_BW_XL_200Hz;
-			break;
-		default:  //set default case to max passthrough
-		case 400:
-			dataToWrite |= LSM6DS0_ACC_GYRO_BW_XL_400Hz;
-			break;
-		}
 		//Next, patch in full scale
 		switch (settings.accelRange) {
 		case 2:
-			dataToWrite |= LSM6DS0_ACC_GYRO_FS_XL_2g;
+			dataToWrite |= LSM6DS0_ACC_FS_XL_2g;
 			break;
 		case 4:
-			dataToWrite |= LSM6DS0_ACC_GYRO_FS_XL_4g;
+			dataToWrite |= LSM6DS0_ACC_FS_XL_4g;
 			break;
 		case 8:
-			dataToWrite |= LSM6DS0_ACC_GYRO_FS_XL_8g;
+			dataToWrite |= LSM6DS0_ACC_FS_XL_8g;
 			break;
 		default:  //set default case to 16(max)
 		case 16:
@@ -432,39 +415,39 @@ status_t LSM6DS0::begin()
 		}
 		//Lastly, patch in accelerometer ODR
 		switch (settings.accelSampleRate) {
-		case 13:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_13Hz;
+		case 16:
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_1_6Hz;
+			break;
+		case 125:
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_12_5Hz;
 			break;
 		case 26:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_26Hz;
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_26Hz;
 			break;
 		case 52:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_52Hz;
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_52Hz;
 			break;
 		default:  //Set default to 104
 		case 104:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_104Hz;
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_104Hz;
 			break;
 		case 208:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_208Hz;
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_208Hz;
 			break;
 		case 416:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_416Hz;
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_416Hz;
 			break;
 		case 833:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_833Hz;
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_833Hz;
 			break;
 		case 1660:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_1660Hz;
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_1660Hz;
 			break;
 		case 3330:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_3330Hz;
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_3330Hz;
 			break;
 		case 6660:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_6660Hz;
-			break;
-		case 13330:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_XL_13330Hz;
+			tempAccelRate |= LSM6DS0_ACC_ODR_XL_6660Hz;
 			break;
 		}
 	}
@@ -485,11 +468,11 @@ status_t LSM6DS0::begin()
   writeRegister(LSM6DS0_ACC_GYRO_FIFO_CTRL3, tempRegVal);
 
 	//Set the ODR bit
-	readRegister(&dataToWrite, LSM6DS0_ACC_GYRO_CTRL4_C);
-	dataToWrite &= ~(static_cast<uint8_t>(LSM6DS0_ACC_GYRO_BW_SCAL_ODR_ENABLED));
-	if ( settings.accelODROff == 1) {
-		dataToWrite |= LSM6DS0_ACC_GYRO_BW_SCAL_ODR_ENABLED;
-	}
+	//readRegister(&dataToWrite, LSM6DS0_ACC_GYRO_CTRL4_C);
+	//dataToWrite &= ~(static_cast<uint8_t>(LSM6DS0_ACC_GYRO_BW_SCAL_ODR_ENABLED));
+	//if ( settings.accelODROff == 1) {
+	//	dataToWrite |= LSM6DS0_ACC_GYRO_BW_SCAL_ODR_ENABLED;
+//	}
 	writeRegister(LSM6DS0_ACC_GYRO_CTRL4_C, dataToWrite);
 
 	//Setup the gyroscope**********************************************
@@ -518,30 +501,36 @@ status_t LSM6DS0::begin()
 		}
 		//Lastly, patch in gyro ODR
 		switch (settings.gyroSampleRate) {
-		case 13:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_G_13Hz;
+		case 125:
+			tempAccelRate |= LSM6DS0_GYRO_ODR_G_12_5Hz;
 			break;
 		case 26:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_G_26Hz;
+			tempAccelRate |= LSM6DS0_GYRO_ODR_G_26Hz;
 			break;
 		case 52:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_G_52Hz;
+			tempAccelRate |= LSM6DS0_GYRO_ODR_G_52Hz;
 			break;
 		default:  //Set default to 104
 		case 104:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_G_104Hz;
+			tempAccelRate |= LSM6DS0_GYRO_ODR_G_104Hz;
 			break;
 		case 208:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_G_208Hz;
+			tempAccelRate |= LSM6DS0_GYRO_ODR_G_208Hz;
 			break;
 		case 416:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_G_416Hz;
+			tempAccelRate |= LSM6DS0_GYRO_ODR_G_416Hz;
 			break;
 		case 833:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_G_833Hz;
+			tempAccelRate |= LSM6DS0_GYRO_ODR_G_833Hz;
 			break;
 		case 1660:
-			tempAccelRate |= LSM6DS0_ACC_GYRO_ODR_G_1660Hz;
+			tempAccelRate |= LSM6DS0_GYRO_ODR_G_1660Hz;
+			break;
+		case 3330:
+			tempAccelRate |= LSM6DS0_GYRO_ODR_G_3330Hz;
+			break;
+		case 6660:
+			tempAccelRate |= LSM6DS0_GYRO_ODR_G_6660Hz;
 			break;
 		}
 	}
@@ -561,11 +550,8 @@ status_t LSM6DS0::begin()
 
 	//Setup the internal temperature sensor
 	if ( settings.tempEnabled == 1) {
+    writeRegister(LSM6DS0_ACC_GYRO_FIFO_CTRL4, 0x30); 
 	}
-
-	//Return WHO AM I reg  //Not no mo!
-	uint8_t result;
-	readRegister(&result, LSM6DS0_ACC_GYRO_WHO_AM_I_REG);
 
 	return returnError;
 }

@@ -40,10 +40,10 @@ Distributed as-is; no warranty is given.
 ******************************************************************************/
 
 #include "SparkFunLSM6DS0.h"
-// #include "Wire.h"
-#include "SPI.h"
+#include "Wire.h"
+//#include "SPI.h"
 
-LSM6DS0 myIMU( SPI_MODE, 10 );
+LSM6DS0 myIMU( I2C_MODE );
 
 void setup() {
   //Over-ride default settings if desired

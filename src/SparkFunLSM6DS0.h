@@ -206,17 +206,17 @@ private:
 
 
 /************** Device Register  *******************/
-#define LSM6DS0_ACC_GYRO_TEST_PAGE  			0X00
-#define LSM6DS0_ACC_GYRO_RAM_ACCESS  			0X01
+#define LSM6DS0_ACC_GYRO_TEST_PAGE  			0x00
+#define LSM6DS0_ACC_GYRO_RAM_ACCESS  			0x01
 
 // #define LSM6DS0_ACC_GYRO_SENSOR_SYNC_TIME  		0X04 Removed in LSM6DS0: 0x03- 0x06 Reserved NOT USED in CPP
 // #define LSM6DS0_ACC_GYRO_SENSOR_SYNC_EN  		0X05 NOT USED in CPP
 
 // Increment all by one due to RESERVED registers
-#define LSM6DS0_ACC_GYRO_FIFO_CTRL1  			0X07
-#define LSM6DS0_ACC_GYRO_FIFO_CTRL2  			0X08
-#define LSM6DS0_ACC_GYRO_FIFO_CTRL3  			0X09
-#define LSM6DS0_ACC_GYRO_FIFO_CTRL4  			0X0A
+#define LSM6DS0_ACC_GYRO_FIFO_CTRL1  			0x07
+#define LSM6DS0_ACC_GYRO_FIFO_CTRL2  			0x08
+#define LSM6DS0_ACC_GYRO_FIFO_CTRL3  			0x09
+#define LSM6DS0_ACC_GYRO_FIFO_CTRL4  			0x0A
 
 // #define LSM6DS0_ACC_GYRO_FIFO_CTRL5  			0X0A Removed in LSM6DS0
 // #define LSM6DS0_ACC_GYRO_ORIENT_CFG_G  			0X0B NOT USED in CPP
@@ -225,34 +225,34 @@ private:
 #define COUNTER_BDR_REG1 0x0B // Added 
 #define COUNTER_BDR_REG2 0x0C // Added
 
-#define LSM6DS0_ACC_GYRO_INT1_CTRL  			0X0D
-#define LSM6DS0_ACC_GYRO_INT2_CTRL  			0X0E
-#define LSM6DS0_ACC_GYRO_WHO_AM_I_REG  			0X0F
-#define LSM6DS0_ACC_GYRO_CTRL1_XL  			0X10
-#define LSM6DS0_ACC_GYRO_CTRL2_G  			0X11
-#define LSM6DS0_ACC_GYRO_CTRL3_C  			0X12
-#define LSM6DS0_ACC_GYRO_CTRL4_C  			0X13
-#define LSM6DS0_ACC_GYRO_CTRL5_C  			0X14
-#define LSM6DS0_ACC_GYRO_CTRL6_G  			0X15
-#define LSM6DS0_ACC_GYRO_CTRL7_G  			0X16
-#define LSM6DS0_ACC_GYRO_CTRL8_XL  			0X17
-#define LSM6DS0_ACC_GYRO_CTRL9_XL  			0X18
-#define LSM6DS0_ACC_GYRO_CTRL10_C  			0X19
+#define LSM6DS0_ACC_GYRO_INT1_CTRL  			0x0D
+#define LSM6DS0_ACC_GYRO_INT2_CTRL  			0x0E
+#define LSM6DS0_ACC_GYRO_WHO_AM_I_REG  			0x0F
+#define LSM6DS0_ACC_GYRO_CTRL1_XL  			0x10
+#define LSM6DS0_ACC_GYRO_CTRL2_G  			0x11
+#define LSM6DS0_ACC_GYRO_CTRL3_C  			0x12
+#define LSM6DS0_ACC_GYRO_CTRL4_C  			0x13
+#define LSM6DS0_ACC_GYRO_CTRL5_C  			0x14
+#define LSM6DS0_ACC_GYRO_CTRL6_G  			0x15
+#define LSM6DS0_ACC_GYRO_CTRL7_G  			0x16
+#define LSM6DS0_ACC_GYRO_CTRL8_XL  			0x17
+#define LSM6DS0_ACC_GYRO_CTRL9_XL  			0x18
+#define LSM6DS0_ACC_GYRO_CTRL10_C  			0x19
 
 // #define LSM6DS0_ACC_GYRO_MASTER_CONFIG  		0X1A NOT USED IN CPP
-#define LSM6DS0_ALL_INT_SRC  		0X1A // Added - output only i.e. READ
-#define LSM6DS0_ACC_GYRO_WAKE_UP_SRC  			0X1B
-#define LSM6DS0_ACC_GYRO_TAP_SRC  			0X1C
-#define LSM6DS0_ACC_GYRO_D6D_SRC  			0X1D
-#define LSM6DS0_ACC_GYRO_STATUS_REG  			0X1E
-#define LSM6DS0_ACC_GYRO_OUT_TEMP_L  			0X20
-#define LSM6DS0_ACC_GYRO_OUT_TEMP_H  			0X21
-#define LSM6DS0_ACC_GYRO_OUTX_L_G  			0X22
-#define LSM6DS0_ACC_GYRO_OUTX_H_G  			0X23
-#define LSM6DS0_ACC_GYRO_OUTY_L_G  			0X24
-#define LSM6DS0_ACC_GYRO_OUTY_H_G  			0X25
-#define LSM6DS0_ACC_GYRO_OUTZ_L_G  			0X26
-#define LSM6DS0_ACC_GYRO_OUTZ_H_G  			0X27
+#define LSM6DS0_ALL_INT_SRC  		0x1A // Added - output only i.e. READ
+#define LSM6DS0_ACC_GYRO_WAKE_UP_SRC  			0x1B
+#define LSM6DS0_ACC_GYRO_TAP_SRC  			0x1C
+#define LSM6DS0_ACC_GYRO_D6D_SRC  			0x1D
+#define LSM6DS0_ACC_GYRO_STATUS_REG  			0x1E
+#define LSM6DS0_ACC_GYRO_OUT_TEMP_L  			0x20
+#define LSM6DS0_ACC_GYRO_OUT_TEMP_H  			0x21
+#define LSM6DS0_ACC_GYRO_OUTX_L_G  			0x22
+#define LSM6DS0_ACC_GYRO_OUTX_H_G  			0x23
+#define LSM6DS0_ACC_GYRO_OUTY_L_G  			0x24
+#define LSM6DS0_ACC_GYRO_OUTY_H_G  			0x25
+#define LSM6DS0_ACC_GYRO_OUTZ_L_G  			0x26
+#define LSM6DS0_ACC_GYRO_OUTZ_H_G  			0x27
 
 //#define LSM6DS0_ACC_GYRO_OUTX_L_XL  			0X28 // ----------OLD NAME -------
 //#define LSM6DS0_ACC_GYRO_OUTX_H_XL  			0X29
@@ -261,12 +261,12 @@ private:
 //#define LSM6DS0_ACC_GYRO_OUTZ_L_XL  			0X2C
 //#define LSM6DS0_ACC_GYRO_OUTZ_H_XL  			0X2D // ------------^^------------
 
-#define LSM6DS0_ACC_GYRO_OUTX_L_A  			0X28 // ----------NEW NAME -------
-#define LSM6DS0_ACC_GYRO_OUTX_H_A  			0X29
-#define LSM6DS0_ACC_GYRO_OUTY_L_A  			0X2A
-#define LSM6DS0_ACC_GYRO_OUTY_H_A  			0X2B
-#define LSM6DS0_ACC_GYRO_OUTZ_L_A  			0X2C
-#define LSM6DS0_ACC_GYRO_OUTZ_H_A  			0X2D // ------------^^------------
+#define LSM6DS0_ACC_GYRO_OUTX_L_A  			0x28 // ----------NEW NAME -------
+#define LSM6DS0_ACC_GYRO_OUTX_H_A  			0x29
+#define LSM6DS0_ACC_GYRO_OUTY_L_A  			0x2A
+#define LSM6DS0_ACC_GYRO_OUTY_H_A  			0x2B
+#define LSM6DS0_ACC_GYRO_OUTZ_L_A  			0x2C
+#define LSM6DS0_ACC_GYRO_OUTZ_H_A  			0x2D // ------------^^------------
 
 //  #define LSM6DS0_ACC_GYRO_SENSORHUB1_REG  		0X2E Reserved 0x2E - 0x34 NOT  USED in CPP ------------
 //  #define LSM6DS0_ACC_GYRO_SENSORHUB2_REG  		0X2F
@@ -276,45 +276,45 @@ private:
 //  #define LSM6DS0_ACC_GYRO_SENSORHUB6_REG  		0X33
 //  #define LSM6DS0_ACC_GYRO_SENSORHUB7_REG  		0X34 //  --------------^^----------------------
 
-#define LSM6DS0_EMB_FUNC_STATUS_MP  		0X35
-#define LSM6DS0_FSM_FUNC_STATUS_A_MP  		0X36
-#define LSM6DS0_FSM_FUNC_STATUS_B_MP  		0X37
-#define STATUS_MASTER_MAINPAGE  		0X39
+#define LSM6DS0_EMB_FUNC_STATUS_MP  		0x35
+#define LSM6DS0_FSM_FUNC_STATUS_A_MP  		0x36
+#define LSM6DS0_FSM_FUNC_STATUS_B_MP  		0x37
+#define STATUS_MASTER_MAINPAGE  		0x39
 
-//#define LSM6DS0_ACC_GYRO_SENSORHUB8_REG  		0X35 //------Replaced NOT USED---------
-//#define LSM6DS0_ACC_GYRO_SENSORHUB9_REG  		0X36
-//#define LSM6DS0_ACC_GYRO_SENSORHUB10_REG  		0X37
-//#define LSM6DS0_ACC_GYRO_SENSORHUB11_REG  		0X38
-//#define LSM6DS0_ACC_GYRO_SENSORHUB12_REG  		0X39// ---------^^------------
+//#define LSM6DS0_ACC_GYRO_SENSORHUB8_REG  		0x35 //------Replaced NOT USED---------
+//#define LSM6DS0_ACC_GYRO_SENSORHUB9_REG  		0x36
+//#define LSM6DS0_ACC_GYRO_SENSORHUB10_REG  		0x37
+//#define LSM6DS0_ACC_GYRO_SENSORHUB11_REG  		0x38
+//#define LSM6DS0_ACC_GYRO_SENSORHUB12_REG  		0x39// ---------^^------------
 
-#define LSM6DS0_ACC_GYRO_FIFO_STATUS1  			0X3A
-#define LSM6DS0_ACC_GYRO_FIFO_STATUS2  			0X3B
-//#define LSM6DS0_ACC_GYRO_FIFO_STATUS3  			0X3C //------Replaced ------NOT // USED
-//#define LSM6DS0_ACC_GYRO_FIFO_STATUS4  			0X3D NOT USED
+#define LSM6DS0_ACC_GYRO_FIFO_STATUS1  			0x3A
+#define LSM6DS0_ACC_GYRO_FIFO_STATUS2  			0x3B
+//#define LSM6DS0_ACC_GYRO_FIFO_STATUS3  			0x3C //------Replaced ------NOT // USED
+//#define LSM6DS0_ACC_GYRO_FIFO_STATUS4  			0x3D NOT USED
 
-//#define LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_L  		0X3E  FIND REPLACEMENT
-//#define LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_H  		0X3F ////--------^^-------------FIND REPLACEMENT
+//#define LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_L  		0x3E  FIND REPLACEMENT
+//#define LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_H  		0x3F ////--------^^-------------FIND REPLACEMENT
 
-#define LSM6DS0_ACC_GYRO_TIMESTAMP0_REG  		0X40
-#define LSM6DS0_ACC_GYRO_TIMESTAMP1_REG  		0X41
-#define LSM6DS0_ACC_GYRO_TIMESTAMP2_REG  		0X42
+#define LSM6DS0_ACC_GYRO_TIMESTAMP0_REG  		0x40
+#define LSM6DS0_ACC_GYRO_TIMESTAMP1_REG  		0x41
+#define LSM6DS0_ACC_GYRO_TIMESTAMP2_REG  		0x42
 
-#define LSM6DS0_ACC_GYRO_TIMESTAMP3_REG  		0X43 // Added
+#define LSM6DS0_ACC_GYRO_TIMESTAMP3_REG  		0x43 // Added
 
-// #define LSM6DS0_ACC_GYRO_STEP_COUNTER_L  		0X4B Reserved 0x44-55 NOT USED
-// #define LSM6DS0_ACC_GYRO_STEP_COUNTER_H  		0X4C NOT USED
-// #define LSM6DS0_ACC_GYRO_FUNC_SRC  			0X53 NOT USED
+// #define LSM6DS0_ACC_GYRO_STEP_COUNTER_L  		0x4B Reserved 0x44-55 NOT USED
+// #define LSM6DS0_ACC_GYRO_STEP_COUNTER_H  		0x4C NOT USED
+// #define LSM6DS0_ACC_GYRO_FUNC_SRC  			0x53 NOT USED
 
-#define LSM6DS0_ACC_GYRO_TAP_CFG0  			0X56 // Added
-#define LSM6DS0_ACC_GYRO_TAP_CFG1  			0X57 // Changed to 0x57
-#define LSM6DS0_ACC_GYRO_TAP_CFG2  			0X58 // Added
-#define LSM6DS0_ACC_GYRO_TAP_THS_6D  			0X59
-#define LSM6DS0_ACC_GYRO_INT_DUR2  			0X5A
-#define LSM6DS0_ACC_GYRO_WAKE_UP_THS  			0X5B
-#define LSM6DS0_ACC_GYRO_WAKE_UP_DUR  			0X5C
-#define LSM6DS0_ACC_GYRO_FREE_FALL  			0X5D
-#define LSM6DS0_ACC_GYRO_MD1_CFG  			0X5E
-#define LSM6DS0_ACC_GYRO_MD2_CFG  			0X5F
+#define LSM6DS0_ACC_GYRO_TAP_CFG0  			0x56 // Added
+#define LSM6DS0_ACC_GYRO_TAP_CFG1  			0x57 // Changed to 0x57
+#define LSM6DS0_ACC_GYRO_TAP_CFG2  			0x58 // Added
+#define LSM6DS0_ACC_GYRO_TAP_THS_6D  			0x59
+#define LSM6DS0_ACC_GYRO_INT_DUR2  			0x5A
+#define LSM6DS0_ACC_GYRO_WAKE_UP_THS  			0x5B
+#define LSM6DS0_ACC_GYRO_WAKE_UP_DUR  			0x5C
+#define LSM6DS0_ACC_GYRO_FREE_FALL  			0x5D
+#define LSM6DS0_ACC_GYRO_MD1_CFG  			0x5E
+#define LSM6DS0_ACC_GYRO_MD2_CFG  			0x5F
 
 /************** Access Device RAM  *******************/
 
@@ -398,7 +398,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : RAM_ACCESS
-* Address       : 0X01
+* Address       : 0x01
 * Bit Group Name: PROG_RAM1
 * Permission    : RW
 *******************************************************************************/
@@ -409,7 +409,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : RAM_ACCESS
-* Address       : 0X01
+* Address       : 0x01
 * Bit Group Name: CUSTOMROM1
 * Permission    : RW
 *******************************************************************************/
@@ -420,7 +420,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : RAM_ACCESS
-* Address       : 0X01
+* Address       : 0x01
 * Bit Group Name: RAM_PAGE
 * Permission    : RW
 *******************************************************************************/
@@ -431,157 +431,92 @@ typedef enum {
 
 
 /*******************************************************************************
-* Register      : FIFO_CTRL1
-* Address       : 0X07
-* Bit Group Name: WTM_FIFO
-* Permission    : RW
-*******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_WTM_FIFO_CTRL1_MASK  	0xFF
-#define  	LSM6DS0_ACC_GYRO_WTM_FIFO_CTRL1_POSITION  	0
-#define  	LSM6DS0_ACC_GYRO_WTM_FIFO_CTRL2_MASK  	0x0F
-#define  	LSM6DS0_ACC_GYRO_WTM_FIFO_CTRL2_POSITION  	0
-
-/*******************************************************************************
-* Register      : FIFO_CTRL2
-* Address       : 0X08
-* Bit Group Name: TIM_PEDO_FIFO_DRDY
+* Register      : FIFO_CTRL3
+* Address       : 0x09
+* Bit Group Name: BDR_GY
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TIM_PEDO_FIFO_DRDY_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TIM_PEDO_FIFO_DRDY_ENABLED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_TIM_PEDO_FIFO_DRDY_t;
-
-/*******************************************************************************
-* Register      : FIFO_CTRL2
-* Address       : 0X08
-* Bit Group Name: TIM_PEDO_FIFO_EN
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	LSM6DS0_ACC_GYRO_TIM_PEDO_FIFO_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TIM_PEDO_FIFO_EN_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_TIM_PEDO_FIFO_EN_t;
+	LSM6DS0_ACC_GYRO_FIFO_BDR_NOT_BATCHED = 0x00,
+	LSM6DS0_ACC_GYRO_FIFO_BDR_12_5        = 0x01,
+	LSM6DS0_ACC_GYRO_FIFO_BDR_26          = 0x02,
+	LSM6DS0_ACC_GYRO_FIFO_BDR_52          = 0x03,
+	LSM6DS0_ACC_GYRO_FIFO_BDR_104         = 0x04,
+	LSM6DS0_ACC_GYRO_FIFO_BDR_208         = 0x05
+	LSM6DS0_ACC_GYRO_FIFO_BDR_417         = 0x06,
+	LSM6DS0_ACC_GYRO_FIFO_BDR_833         = 0x07,
+	LSM6DS0_ACC_GYRO_FIFO_BDR_1667        = 0x08,
+	LSM6DS0_ACC_GYRO_FIFO_BDR_3333        = 0x09,
+	LSM6DS0_ACC_GYRO_FIFO_BDR_6667        = 0x0A,
+	LSM6DS0_ACC_GYRO_FIFO_BDR_6_5         = 0x0B
+} LSM6DS0_ACC_GYRO_ODR_FIFO_t;
 
 /*******************************************************************************
 * Register      : FIFO_CTRL3
-* Address       : 0X09
-* Bit Group Name: DEC_FIFO_XL
+* Address       : 0x09
+* Bit Group Name: BDR_Xl
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_DATA_NOT_IN_FIFO 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_NO_DECIMATION 		 = 0x01,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_DECIMATION_BY_2 		 = 0x02,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_DECIMATION_BY_3 		 = 0x03,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_DECIMATION_BY_4 		 = 0x04,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_DECIMATION_BY_8 		 = 0x05,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_DECIMATION_BY_16 		 = 0x06,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_DECIMATION_BY_32 		 = 0x07,
-} LSM6DS0_ACC_GYRO_DEC_FIFO_XL_t;
+	LSM6DS0_ACC_ACC_FIFO_BDR_NOT_BATCHED = 0x00,
+	LSM6DS0_ACC_ACC_FIFO_BDR_12_5        = 0x01,
+	LSM6DS0_ACC_ACC_FIFO_BDR_26          = 0x02,
+	LSM6DS0_ACC_ACC_FIFO_BDR_52          = 0x03,
+	LSM6DS0_ACC_ACC_FIFO_BDR_104         = 0x04,
+	LSM6DS0_ACC_ACC_FIFO_BDR_208         = 0x05
+	LSM6DS0_ACC_ACC_FIFO_BDR_417         = 0x06,
+	LSM6DS0_ACC_ACC_FIFO_BDR_833         = 0x07,
+	LSM6DS0_ACC_ACC_FIFO_BDR_1667        = 0x08,
+	LSM6DS0_ACC_ACC_FIFO_BDR_3333        = 0x09,
+	LSM6DS0_ACC_ACC_FIFO_BDR_6667        = 0x0A,
+	LSM6DS0_ACC_ACC_FIFO_BDR_6_5         = 0x0B
+} LSM6DS0_ACC_ACC_ODR_FIFO_t;
 
-/*******************************************************************************
-* Register      : FIFO_CTRL3
-* Address       : 0X08
-* Bit Group Name: DEC_FIFO_G
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	LSM6DS0_ACC_GYRO_DEC_FIFO_G_DATA_NOT_IN_FIFO 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_G_NO_DECIMATION 		 = 0x08,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_G_DECIMATION_BY_2 		 = 0x10,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_G_DECIMATION_BY_3 		 = 0x18,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_G_DECIMATION_BY_4 		 = 0x20,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_G_DECIMATION_BY_8 		 = 0x28,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_G_DECIMATION_BY_16 		 = 0x30,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_G_DECIMATION_BY_32 		 = 0x38,
-} LSM6DS0_ACC_GYRO_DEC_FIFO_G_t;
 
 /*******************************************************************************
 * Register      : FIFO_CTRL4
-* Address       : 0X09
-* Bit Group Name: DEC_FIFO_SLV0
+* Address       : 0x0A
+* Bit Group Name: DEC_TS_BATCH
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV0_DATA_NOT_IN_FIFO 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV0_NO_DECIMATION 		 = 0x01,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV0_DECIMATION_BY_2 		 = 0x02,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV0_DECIMATION_BY_3 		 = 0x03,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV0_DECIMATION_BY_4 		 = 0x04,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV0_DECIMATION_BY_8 		 = 0x05,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV0_DECIMATION_BY_16 		 = 0x06,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV0_DECIMATION_BY_32 		 = 0x07,
-} LSM6DS0_ACC_GYRO_DEC_FIFO_SLV0_t;
+	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_G_DATA_NOT_IN_FIFO 	= 0x00,
+	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_G_DECIMATION_BY_1 		= 0x01, //Default
+	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_G_DECIMATION_BY_8 		= 0x02,
+	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_G_DECIMATION_BY_32 	= 0x03
+} LSM6DS0_ACC_GYRO_DEC_FIFO_XL_G_t;
 
 /*******************************************************************************
 * Register      : FIFO_CTRL4
-* Address       : 0X09
-* Bit Group Name: DEC_FIFO_SLV1
+* Address       : 0x0A
+* Bit Group Name: ODR_T_BATCH_
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV1_DATA_NOT_IN_FIFO 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV1_NO_DECIMATION 		 = 0x08,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV1_DECIMATION_BY_2 		 = 0x10,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV1_DECIMATION_BY_3 		 = 0x18,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV1_DECIMATION_BY_4 		 = 0x20,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV1_DECIMATION_BY_8 		 = 0x28,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV1_DECIMATION_BY_16 		 = 0x30,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_SLV1_DECIMATION_BY_32 		 = 0x38,
-} LSM6DS0_ACC_GYRO_DEC_FIFO_SLV1_t;
+	LSM6DS0_TEMPERATURE_ODR_BATCH_NOT_IN_FIFO = 0x00,
+	LSM6DS0_TEMPERATURE_ODR_BATCH_RATE_1_6    = 0x01,
+	LSM6DS0_TEMPERATURE_ODR_BATCH_RATE_12_5   = 0x02,
+	LSM6DS0_TEMPERATURE_ODR_BATCH_RATE_52     = 0x03
+} LSM6DS0_TEMPERATURE_ODR_BATCH_t;
 
 /*******************************************************************************
 * Register      : FIFO_CTRL4
-* Address       : 0X09
-* Bit Group Name: HI_DATA_ONLY
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	LSM6DS0_ACC_GYRO_HI_DATA_ONLY_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_HI_DATA_ONLY_ENABLED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_HI_DATA_ONLY_t;
-
-/*******************************************************************************
-* Register      : FIFO_CTRL5
-* Address       : 0X0A
+* Address       : 0x0A
 * Bit Group Name: FIFO_MODE
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FIFO_MODE_BYPASS 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_FIFO 		 = 0x01,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_STREAM 		 = 0x02,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_STF 		 = 0x03,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_BTS 		 = 0x04,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_DYN_STREAM 		 = 0x05,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_DYN_STREAM_2 		 = 0x06,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_BTF 		 = 0x07,
-} LSM6DS0_ACC_GYRO_FIFO_MODE_t;
-
-/*******************************************************************************
-* Register      : FIFO_CTRL5
-* Address       : 0X0A
-* Bit Group Name: ODR_FIFO
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	LSM6DS0_ACC_GYRO_ODR_FIFO_10Hz 		 = 0x08,
-	LSM6DS0_ACC_GYRO_ODR_FIFO_25Hz 		 = 0x10,
-	LSM6DS0_ACC_GYRO_ODR_FIFO_50Hz 		 = 0x18,
-	LSM6DS0_ACC_GYRO_ODR_FIFO_100Hz 		 = 0x20,
-	LSM6DS0_ACC_GYRO_ODR_FIFO_200Hz 		 = 0x28,
-	LSM6DS0_ACC_GYRO_ODR_FIFO_400Hz 		 = 0x30,
-	LSM6DS0_ACC_GYRO_ODR_FIFO_800Hz 		 = 0x38,
-	LSM6DS0_ACC_GYRO_ODR_FIFO_1600Hz 		 = 0x40,
-	LSM6DS0_ACC_GYRO_ODR_FIFO_3300Hz 		 = 0x48,
-	LSM6DS0_ACC_GYRO_ODR_FIFO_6600Hz 		 = 0x50,
-	LSM6DS0_ACC_GYRO_ODR_FIFO_13300Hz 		 = 0x58,
+	LSM6DS0_ACC_GYRO_FIFO_MODE_DISABLED       = 0x00,
+	LSM6DS0_ACC_GYRO_FIFO_MODE_STOP_WHEN_FULL = 0x01,
+	LSM6DS0_ACC_GYRO_FIFO_MODE_CONT_TO_FIFO   = 0x03,
+	LSM6DS0_ACC_GYRO_FIFO_MODE_BYPASS_TO_CONT = 0x04,
+	LSM6DS0_ACC_GYRO_FIFO_MODE_CONTINUOUS     = 0x06,
+	LSM6DS0_ACC_GYRO_FIFO_MODE_BYPASS_TO_FIFO = 0x07
 } LSM6DS0_ACC_GYRO_ODR_FIFO_t;
 
 /*******************************************************************************
 * Register      : ORIENT_CFG_G
-* Address       : 0X0B
+* Address       : 0x0B
 * Bit Group Name: ORIENT
 * Permission    : RW
 *******************************************************************************/
@@ -596,7 +531,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : ORIENT_CFG_G
-* Address       : 0X0B
+* Address       : 0x0B
 * Bit Group Name: SIGN_Z_G
 * Permission    : RW
 *******************************************************************************/
@@ -607,7 +542,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : ORIENT_CFG_G
-* Address       : 0X0B
+* Address       : 0x0B
 * Bit Group Name: SIGN_Y_G
 * Permission    : RW
 *******************************************************************************/
@@ -618,7 +553,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : ORIENT_CFG_G
-* Address       : 0X0B
+* Address       : 0x0B
 * Bit Group Name: SIGN_X_G
 * Permission    : RW
 *******************************************************************************/
@@ -629,7 +564,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : REFERENCE_G
-* Address       : 0X0C
+* Address       : 0x0C
 * Bit Group Name: REF_G
 * Permission    : RW
 *******************************************************************************/
@@ -638,7 +573,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT1_CTRL
-* Address       : 0X0D
+* Address       : 0x0D
 * Bit Group Name: INT1_DRDY_XL
 * Permission    : RW
 *******************************************************************************/
@@ -649,7 +584,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT1_CTRL
-* Address       : 0X0D
+* Address       : 0x0D
 * Bit Group Name: INT1_DRDY_G
 * Permission    : RW
 *******************************************************************************/
@@ -660,7 +595,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT1_CTRL
-* Address       : 0X0D
+* Address       : 0x0D
 * Bit Group Name: INT1_BOOT
 * Permission    : RW
 *******************************************************************************/
@@ -671,7 +606,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT1_CTRL
-* Address       : 0X0D
+* Address       : 0x0D
 * Bit Group Name: INT1_FTH
 * Permission    : RW
 *******************************************************************************/
@@ -682,7 +617,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT1_CTRL
-* Address       : 0X0D
+* Address       : 0x0D
 * Bit Group Name: INT1_OVR
 * Permission    : RW
 *******************************************************************************/
@@ -693,7 +628,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT1_CTRL
-* Address       : 0X0D
+* Address       : 0x0D
 * Bit Group Name: INT1_FSS5
 * Permission    : RW
 *******************************************************************************/
@@ -704,7 +639,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT1_CTRL
-* Address       : 0X0D
+* Address       : 0x0D
 * Bit Group Name: INT1_SIGN_MOT
 * Permission    : RW
 *******************************************************************************/
@@ -715,7 +650,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT1_CTRL
-* Address       : 0X0D
+* Address       : 0x0D
 * Bit Group Name: INT1_PEDO
 * Permission    : RW
 *******************************************************************************/
@@ -726,7 +661,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT2_CTRL
-* Address       : 0X0E
+* Address       : 0x0E
 * Bit Group Name: INT2_DRDY_XL
 * Permission    : RW
 *******************************************************************************/
@@ -737,7 +672,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT2_CTRL
-* Address       : 0X0E
+* Address       : 0x0E
 * Bit Group Name: INT2_DRDY_G
 * Permission    : RW
 *******************************************************************************/
@@ -748,7 +683,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT2_CTRL
-* Address       : 0X0E
+* Address       : 0x0E
 * Bit Group Name: INT2_FTH
 * Permission    : RW
 *******************************************************************************/
@@ -759,7 +694,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT2_CTRL
-* Address       : 0X0E
+* Address       : 0x0E
 * Bit Group Name: INT2_OVR
 * Permission    : RW
 *******************************************************************************/
@@ -770,7 +705,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT2_CTRL
-* Address       : 0X0E
+* Address       : 0x0E
 * Bit Group Name: INT2_FSS5
 * Permission    : RW
 *******************************************************************************/
@@ -781,7 +716,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT2_CTRL
-* Address       : 0X0E
+* Address       : 0x0E
 * Bit Group Name: INT2_SIGN_MOT
 * Permission    : RW
 *******************************************************************************/
@@ -792,7 +727,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT2_CTRL
-* Address       : 0X0E
+* Address       : 0x0E
 * Bit Group Name: INT2_PEDO
 * Permission    : RW
 *******************************************************************************/
@@ -803,63 +738,66 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WHO_AM_I
-* Address       : 0X0F
+* Address       : 0x0F
 * Bit Group Name: WHO_AM_I_BIT
 * Permission    : RO
 *******************************************************************************/
 #define  	LSM6DS0_ACC_GYRO_WHO_AM_I_BIT_MASK  	0xFF
 #define  	LSM6DS0_ACC_GYRO_WHO_AM_I_BIT_POSITION  	0
 
-/*******************************************************************************
-* Register      : CTRL1_XL
-* Address       : 0X10
-* Bit Group Name: BW_XL
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	LSM6DS0_ACC_GYRO_BW_XL_400Hz 		 = 0x00,
-	LSM6DS0_ACC_GYRO_BW_XL_200Hz 		 = 0x01,
-	LSM6DS0_ACC_GYRO_BW_XL_100Hz 		 = 0x02,
-	LSM6DS0_ACC_GYRO_BW_XL_50Hz 		 = 0x03,
-} LSM6DS0_ACC_GYRO_BW_XL_t;
 
 /*******************************************************************************
 * Register      : CTRL1_XL
-* Address       : 0X10
+* Address       : 0x10
+* Bits          : [1]
+* Bit Group Name: LPF2_XL_EN
+* Permission    : RW
+*******************************************************************************/
+typedef enum {
+	LSM6DS0_ACC_LPF2_XL_DISABLE = 0x00,
+	LSM6DS0_ACC_LPF2_XL_EN      = 0x02
+} LSM6DS0_ACC_LPF2_XL_t;
+
+/*******************************************************************************
+* Register      : CTRL1_XL
+* Address       : 0x10
+* Bits          : [3:2]
 * Bit Group Name: FS_XL
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FS_XL_2g 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FS_XL_16g 		 = 0x04,
-	LSM6DS0_ACC_GYRO_FS_XL_4g 		 = 0x08,
-	LSM6DS0_ACC_GYRO_FS_XL_8g 		 = 0x0C,
-} LSM6DS0_ACC_GYRO_FS_XL_t;
+	LSM6DS0_ACC_FS_XL_2g 		 = 0x00,
+	LSM6DS0_ACC_FS_XL_16g 		 = 0x04,
+	LSM6DS0_ACC_FS_XL_4g 		 = 0x08,
+	LSM6DS0_ACC_FS_XL_8g 		 = 0x0C,
+} LSM6DS0_ACC_FS_XL_t;
 
 /*******************************************************************************
 * Register      : CTRL1_XL
-* Address       : 0X10
+* Address       : 0x10
+* Bits          : [7:4]
 * Bit Group Name: ODR_XL
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_ODR_XL_POWER_DOWN 		 = 0x00,
-	LSM6DS0_ACC_GYRO_ODR_XL_13Hz 		         = 0x10,
-	LSM6DS0_ACC_GYRO_ODR_XL_26Hz 		         = 0x20,
-	LSM6DS0_ACC_GYRO_ODR_XL_52Hz 		         = 0x30,
-	LSM6DS0_ACC_GYRO_ODR_XL_104Hz 		 = 0x40,
-	LSM6DS0_ACC_GYRO_ODR_XL_208Hz 		 = 0x50,
-	LSM6DS0_ACC_GYRO_ODR_XL_416Hz 		 = 0x60,
-	LSM6DS0_ACC_GYRO_ODR_XL_833Hz 		 = 0x70,
-	LSM6DS0_ACC_GYRO_ODR_XL_1660Hz 		 = 0x80,
-	LSM6DS0_ACC_GYRO_ODR_XL_3330Hz 		 = 0x90,
-	LSM6DS0_ACC_GYRO_ODR_XL_6660Hz 		 = 0xA0,
-	LSM6DS0_ACC_GYRO_ODR_XL_13330Hz 		 = 0xB0,
-} LSM6DS0_ACC_GYRO_ODR_XL_t;
+	LSM6DS0_ACC_ODR_XL_POWER_DOWN = 0x00, // Low Power only
+	LSM6DS0_ACC_ODR_XL_1_6Hz      = 0xB0, // Low Power only
+	LSM6DS0_ACC_ODR_XL_12_5Hz     = 0x10, // Low Power only
+	LSM6DS0_ACC_ODR_XL_26Hz       = 0x20, // Low Power only
+	LSM6DS0_ACC_ODR_XL_52Hz       = 0x30, // Low Power only 
+	LSM6DS0_ACC_ODR_XL_104Hz      = 0x40, // Normal Mode
+	LSM6DS0_ACC_ODR_XL_208Hz      = 0x50, // Normal Mode
+	LSM6DS0_ACC_ODR_XL_416Hz      = 0x60, // High performance
+	LSM6DS0_ACC_ODR_XL_833Hz      = 0x70, // High Performance 
+	LSM6DS0_ACC_ODR_XL_1660Hz    = 0x80, // High Performance
+	LSM6DS0_ACC_ODR_XL_3330Hz    = 0x90, // High Performance
+	LSM6DS0_ACC_ODR_XL_6660Hz    = 0xA0 // High Performance
+} LSM6DS0_ACC_ODR_XL_t;
 
 /*******************************************************************************
 * Register      : CTRL2_G
-* Address       : 0X11
+* Address       : 0x11
+* Bit           : [1]
 * Bit Group Name: FS_125
 * Permission    : RW
 *******************************************************************************/
@@ -870,38 +808,42 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL2_G
-* Address       : 0X11
+* Address       : 0x11
+* Bit           : [3:2]
 * Bit Group Name: FS_G
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
 	LSM6DS0_ACC_GYRO_FS_G_245dps 		 = 0x00,
 	LSM6DS0_ACC_GYRO_FS_G_500dps 		 = 0x04,
-	LSM6DS0_ACC_GYRO_FS_G_1000dps 		 = 0x08,
-	LSM6DS0_ACC_GYRO_FS_G_2000dps 		 = 0x0C,
+	LSM6DS0_ACC_GYRO_FS_G_1000dps 		= 0x08,
+	LSM6DS0_ACC_GYRO_FS_G_2000dps 		= 0x0C,
 } LSM6DS0_ACC_GYRO_FS_G_t;
 
 /*******************************************************************************
 * Register      : CTRL2_G
-* Address       : 0X11
+* Address       : 0x11
+* Bit           : [7:4]
 * Bit Group Name: ODR_G
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_ODR_G_POWER_DOWN 		 = 0x00,
-	LSM6DS0_ACC_GYRO_ODR_G_13Hz 		 = 0x10,
-	LSM6DS0_ACC_GYRO_ODR_G_26Hz 		 = 0x20,
-	LSM6DS0_ACC_GYRO_ODR_G_52Hz 		 = 0x30,
-	LSM6DS0_ACC_GYRO_ODR_G_104Hz 		 = 0x40,
-	LSM6DS0_ACC_GYRO_ODR_G_208Hz 		 = 0x50,
-	LSM6DS0_ACC_GYRO_ODR_G_416Hz 		 = 0x60,
-	LSM6DS0_ACC_GYRO_ODR_G_833Hz 		 = 0x70,
-	LSM6DS0_ACC_GYRO_ODR_G_1660Hz 		 = 0x80,
-} LSM6DS0_ACC_GYRO_ODR_G_t;
+	LSM6DS0_GYRO_ODR_G_DISABLE = 0x00, // Low Power only
+	LSM6DS0_GYRO_ODR_G_12_5Hz  = 0x10, // Low Power only
+	LSM6DS0_GYRO_ODR_G_26Hz    = 0x20, // Low Power only
+	LSM6DS0_GYRO_ODR_G_52Hz    = 0x30, // Low Power only
+	LSM6DS0_GYRO_ODR_G_104Hz   = 0x40, // Normal Mode
+	LSM6DS0_GYRO_ODR_G_208Hz   = 0x50, // Normal Mode
+	LSM6DS0_GYRO_ODR_G_416Hz   = 0x60, // High performance
+	LSM6DS0_GYRO_ODR_G_833Hz   = 0x70, // High Performance
+	LSM6DS0_GYRO_ODR_G_1660Hz  = 0x80, // High Performance
+	LSM6DS0_GYRO_ODR_G_3330Hz  = 0x90, // High Performance
+	LSM6DS0_GYRO_ODR_G_6660Hz  = 0xA0 // High Performance
+} LSM6DS0_GYRO_ODR_G_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C
-* Address       : 0X12
+* Address       : 0x12
 * Bit Group Name: SW_RESET
 * Permission    : RW
 *******************************************************************************/
@@ -912,7 +854,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL3_C
-* Address       : 0X12
+* Address       : 0x12
 * Bit Group Name: BLE
 * Permission    : RW
 *******************************************************************************/
@@ -923,7 +865,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL3_C
-* Address       : 0X12
+* Address       : 0x12
 * Bit Group Name: IF_INC
 * Permission    : RW
 *******************************************************************************/
@@ -934,7 +876,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL3_C
-* Address       : 0X12
+* Address       : 0x12
 * Bit Group Name: SIM
 * Permission    : RW
 *******************************************************************************/
@@ -945,7 +887,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL3_C
-* Address       : 0X12
+* Address       : 0x12
 * Bit Group Name: PP_OD
 * Permission    : RW
 *******************************************************************************/
@@ -956,7 +898,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL3_C
-* Address       : 0X12
+* Address       : 0x12
 * Bit Group Name: INT_ACT_LEVEL
 * Permission    : RW
 *******************************************************************************/
@@ -967,7 +909,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL3_C
-* Address       : 0X12
+* Address       : 0x12
 * Bit Group Name: BDU
 * Permission    : RW
 *******************************************************************************/
@@ -978,7 +920,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL3_C
-* Address       : 0X12
+* Address       : 0x12
 * Bit Group Name: BOOT
 * Permission    : RW
 *******************************************************************************/
@@ -989,7 +931,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL4_C
-* Address       : 0X13
+* Address       : 0x13
 * Bit Group Name: STOP_ON_FTH
 * Permission    : RW
 *******************************************************************************/
@@ -1000,7 +942,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL4_C
-* Address       : 0X13
+* Address       : 0x13
 * Bit Group Name: MODE3_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1011,7 +953,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL4_C
-* Address       : 0X13
+* Address       : 0x13
 * Bit Group Name: I2C_DISABLE
 * Permission    : RW
 *******************************************************************************/
@@ -1022,7 +964,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL4_C
-* Address       : 0X13
+* Address       : 0x13
 * Bit Group Name: DRDY_MSK
 * Permission    : RW
 *******************************************************************************/
@@ -1033,7 +975,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL4_C
-* Address       : 0X13
+* Address       : 0x13
 * Bit Group Name: FIFO_TEMP_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1044,7 +986,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL4_C
-* Address       : 0X13
+* Address       : 0x13
 * Bit Group Name: INT2_ON_INT1
 * Permission    : RW
 *******************************************************************************/
@@ -1055,7 +997,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL4_C
-* Address       : 0X13
+* Address       : 0x13
 * Bit Group Name: SLEEP_G
 * Permission    : RW
 *******************************************************************************/
@@ -1066,7 +1008,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL4_C
-* Address       : 0X13
+* Address       : 0x13
 * Bit Group Name: BW_SCAL_ODR
 * Permission    : RW
 *******************************************************************************/
@@ -1077,7 +1019,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL5_C
-* Address       : 0X14
+* Address       : 0x14
 * Bit Group Name: ST_XL
 * Permission    : RW
 *******************************************************************************/
@@ -1090,7 +1032,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL5_C
-* Address       : 0X14
+* Address       : 0x14
 * Bit Group Name: ST_G
 * Permission    : RW
 *******************************************************************************/
@@ -1103,7 +1045,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL6_G
-* Address       : 0X15
+* Address       : 0x15
 * Bit Group Name: LP_XL
 * Permission    : RW
 *******************************************************************************/
@@ -1114,7 +1056,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL6_G
-* Address       : 0X15
+* Address       : 0x15
 * Bit Group Name: DEN_LVL2_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1125,7 +1067,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL6_G
-* Address       : 0X15
+* Address       : 0x15
 * Bit Group Name: DEN_LVL_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1136,7 +1078,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL6_G
-* Address       : 0X15
+* Address       : 0x15
 * Bit Group Name: DEN_EDGE_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1147,7 +1089,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL7_G
-* Address       : 0X16
+* Address       : 0x16
 * Bit Group Name: HPM_G
 * Permission    : RW
 *******************************************************************************/
@@ -1160,7 +1102,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL7_G
-* Address       : 0X16
+* Address       : 0x16
 * Bit Group Name: HP_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1171,7 +1113,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL7_G
-* Address       : 0X16
+* Address       : 0x16
 * Bit Group Name: LP_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1182,7 +1124,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL8_XL
-* Address       : 0X17
+* Address       : 0x17
 * Bit Group Name: FDS
 * Permission    : RW
 *******************************************************************************/
@@ -1193,7 +1135,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL9_XL
-* Address       : 0X18
+* Address       : 0x18
 * Bit Group Name: XEN_XL
 * Permission    : RW
 *******************************************************************************/
@@ -1204,7 +1146,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL9_XL
-* Address       : 0X18
+* Address       : 0x18
 * Bit Group Name: YEN_XL
 * Permission    : RW
 *******************************************************************************/
@@ -1215,7 +1157,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL9_XL
-* Address       : 0X18
+* Address       : 0x18
 * Bit Group Name: ZEN_XL
 * Permission    : RW
 *******************************************************************************/
@@ -1226,7 +1168,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL10_C
-* Address       : 0X19
+* Address       : 0x19
 * Bit Group Name: SIGN_MOTION_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1237,7 +1179,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL10_C
-* Address       : 0X19
+* Address       : 0x19
 * Bit Group Name: PEDO_RST_STEP
 * Permission    : RW
 *******************************************************************************/
@@ -1248,7 +1190,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL10_C
-* Address       : 0X19
+* Address       : 0x19
 * Bit Group Name: XEN_G
 * Permission    : RW
 *******************************************************************************/
@@ -1259,7 +1201,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL10_C
-* Address       : 0X19
+* Address       : 0x19
 * Bit Group Name: YEN_G
 * Permission    : RW
 *******************************************************************************/
@@ -1270,7 +1212,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL10_C
-* Address       : 0X19
+* Address       : 0x19
 * Bit Group Name: ZEN_G
 * Permission    : RW
 *******************************************************************************/
@@ -1281,7 +1223,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : CTRL10_C
-* Address       : 0X19
+* Address       : 0x19
 * Bit Group Name: FUNC_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1292,7 +1234,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
-* Address       : 0X1A
+* Address       : 0x1A
 * Bit Group Name: MASTER_ON
 * Permission    : RW
 *******************************************************************************/
@@ -1303,7 +1245,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
-* Address       : 0X1A
+* Address       : 0x1A
 * Bit Group Name: IRON_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1314,7 +1256,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
-* Address       : 0X1A
+* Address       : 0x1A
 * Bit Group Name: PASS_THRU_MODE
 * Permission    : RW
 *******************************************************************************/
@@ -1325,7 +1267,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
-* Address       : 0X1A
+* Address       : 0x1A
 * Bit Group Name: PULL_UP_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1336,7 +1278,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
-* Address       : 0X1A
+* Address       : 0x1A
 * Bit Group Name: START_CONFIG
 * Permission    : RW
 *******************************************************************************/
@@ -1347,7 +1289,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
-* Address       : 0X1A
+* Address       : 0x1A
 * Bit Group Name: DATA_VAL_SEL_FIFO
 * Permission    : RW
 *******************************************************************************/
@@ -1358,7 +1300,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
-* Address       : 0X1A
+* Address       : 0x1A
 * Bit Group Name: DRDY_ON_INT1
 * Permission    : RW
 *******************************************************************************/
@@ -1369,7 +1311,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
-* Address       : 0X1B
+* Address       : 0x1B
 * Bit Group Name: Z_WU
 * Permission    : RO
 *******************************************************************************/
@@ -1380,7 +1322,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
-* Address       : 0X1B
+* Address       : 0x1B
 * Bit Group Name: Y_WU
 * Permission    : RO
 *******************************************************************************/
@@ -1391,7 +1333,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
-* Address       : 0X1B
+* Address       : 0x1B
 * Bit Group Name: X_WU
 * Permission    : RO
 *******************************************************************************/
@@ -1402,7 +1344,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
-* Address       : 0X1B
+* Address       : 0x1B
 * Bit Group Name: WU_EV_STATUS
 * Permission    : RO
 *******************************************************************************/
@@ -1413,7 +1355,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
-* Address       : 0X1B
+* Address       : 0x1B
 * Bit Group Name: SLEEP_EV_STATUS
 * Permission    : RO
 *******************************************************************************/
@@ -1424,7 +1366,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
-* Address       : 0X1B
+* Address       : 0x1B
 * Bit Group Name: FF_EV_STATUS
 * Permission    : RO
 *******************************************************************************/
@@ -1435,7 +1377,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_SRC
-* Address       : 0X1C
+* Address       : 0x1C
 * Bit Group Name: Z_TAP
 * Permission    : RO
 *******************************************************************************/
@@ -1446,7 +1388,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_SRC
-* Address       : 0X1C
+* Address       : 0x1C
 * Bit Group Name: Y_TAP
 * Permission    : RO
 *******************************************************************************/
@@ -1457,7 +1399,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_SRC
-* Address       : 0X1C
+* Address       : 0x1C
 * Bit Group Name: X_TAP
 * Permission    : RO
 *******************************************************************************/
@@ -1468,7 +1410,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_SRC
-* Address       : 0X1C
+* Address       : 0x1C
 * Bit Group Name: TAP_SIGN
 * Permission    : RO
 *******************************************************************************/
@@ -1479,7 +1421,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_SRC
-* Address       : 0X1C
+* Address       : 0x1C
 * Bit Group Name: DOUBLE_TAP_EV_STATUS
 * Permission    : RO
 *******************************************************************************/
@@ -1490,7 +1432,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_SRC
-* Address       : 0X1C
+* Address       : 0x1C
 * Bit Group Name: SINGLE_TAP_EV_STATUS
 * Permission    : RO
 *******************************************************************************/
@@ -1501,7 +1443,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_SRC
-* Address       : 0X1C
+* Address       : 0x1C
 * Bit Group Name: TAP_EV_STATUS
 * Permission    : RO
 *******************************************************************************/
@@ -1512,7 +1454,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : D6D_SRC
-* Address       : 0X1D
+* Address       : 0x1D
 * Bit Group Name: DSD_XL
 * Permission    : RO
 *******************************************************************************/
@@ -1523,7 +1465,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : D6D_SRC
-* Address       : 0X1D
+* Address       : 0x1D
 * Bit Group Name: DSD_XH
 * Permission    : RO
 *******************************************************************************/
@@ -1534,7 +1476,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : D6D_SRC
-* Address       : 0X1D
+* Address       : 0x1D
 * Bit Group Name: DSD_YL
 * Permission    : RO
 *******************************************************************************/
@@ -1545,7 +1487,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : D6D_SRC
-* Address       : 0X1D
+* Address       : 0x1D
 * Bit Group Name: DSD_YH
 * Permission    : RO
 *******************************************************************************/
@@ -1556,7 +1498,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : D6D_SRC
-* Address       : 0X1D
+* Address       : 0x1D
 * Bit Group Name: DSD_ZL
 * Permission    : RO
 *******************************************************************************/
@@ -1567,7 +1509,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : D6D_SRC
-* Address       : 0X1D
+* Address       : 0x1D
 * Bit Group Name: DSD_ZH
 * Permission    : RO
 *******************************************************************************/
@@ -1578,7 +1520,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : D6D_SRC
-* Address       : 0X1D
+* Address       : 0x1D
 * Bit Group Name: D6D_EV_STATUS
 * Permission    : RO
 *******************************************************************************/
@@ -1589,7 +1531,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : STATUS_REG
-* Address       : 0X1E
+* Address       : 0x1E
 * Bit Group Name: XLDA
 * Permission    : RO
 *******************************************************************************/
@@ -1600,7 +1542,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : STATUS_REG
-* Address       : 0X1E
+* Address       : 0x1E
 * Bit Group Name: GDA
 * Permission    : RO
 *******************************************************************************/
@@ -1611,7 +1553,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : STATUS_REG
-* Address       : 0X1E
+* Address       : 0x1E
 * Bit Group Name: EV_BOOT
 * Permission    : RO
 *******************************************************************************/
@@ -1622,7 +1564,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FIFO_STATUS1
-* Address       : 0X3A
+* Address       : 0x3A
 * Bit Group Name: DIFF_FIFO
 * Permission    : RO
 *******************************************************************************/
@@ -1633,7 +1575,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FIFO_STATUS2
-* Address       : 0X3B
+* Address       : 0x3B
 * Bit Group Name: FIFO_EMPTY
 * Permission    : RO
 *******************************************************************************/
@@ -1644,7 +1586,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FIFO_STATUS2
-* Address       : 0X3B
+* Address       : 0x3B
 * Bit Group Name: FIFO_FULL
 * Permission    : RO
 *******************************************************************************/
@@ -1655,7 +1597,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FIFO_STATUS2
-* Address       : 0X3B
+* Address       : 0x3B
 * Bit Group Name: OVERRUN
 * Permission    : RO
 *******************************************************************************/
@@ -1666,7 +1608,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FIFO_STATUS2
-* Address       : 0X3B
+* Address       : 0x3B
 * Bit Group Name: WTM
 * Permission    : RO
 *******************************************************************************/
@@ -1677,7 +1619,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FIFO_STATUS3
-* Address       : 0X3C
+* Address       : 0x3C
 * Bit Group Name: FIFO_PATTERN
 * Permission    : RO
 *******************************************************************************/
@@ -1688,7 +1630,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FUNC_SRC
-* Address       : 0X53
+* Address       : 0x53
 * Bit Group Name: SENS_HUB_END
 * Permission    : RO
 *******************************************************************************/
@@ -1699,7 +1641,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FUNC_SRC
-* Address       : 0X53
+* Address       : 0x53
 * Bit Group Name: SOFT_IRON_END
 * Permission    : RO
 *******************************************************************************/
@@ -1710,7 +1652,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FUNC_SRC
-* Address       : 0X53
+* Address       : 0x53
 * Bit Group Name: PEDO_EV_STATUS
 * Permission    : RO
 *******************************************************************************/
@@ -1721,7 +1663,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FUNC_SRC
-* Address       : 0X53
+* Address       : 0x53
 * Bit Group Name: TILT_EV_STATUS
 * Permission    : RO
 *******************************************************************************/
@@ -1732,7 +1674,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FUNC_SRC
-* Address       : 0X53
+* Address       : 0x53
 * Bit Group Name: SIGN_MOT_EV_STATUS
 * Permission    : RO
 *******************************************************************************/
@@ -1743,7 +1685,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_CFG1
-* Address       : 0X58
+* Address       : 0x58
 * Bit Group Name: LIR
 * Permission    : RW
 *******************************************************************************/
@@ -1754,7 +1696,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_CFG1
-* Address       : 0X58
+* Address       : 0x58
 * Bit Group Name: TAP_Z_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1765,7 +1707,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_CFG1
-* Address       : 0X58
+* Address       : 0x58
 * Bit Group Name: TAP_Y_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1776,7 +1718,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_CFG1
-* Address       : 0X58
+* Address       : 0x58
 * Bit Group Name: TAP_X_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1787,7 +1729,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_CFG1
-* Address       : 0X58
+* Address       : 0x58
 * Bit Group Name: TILT_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1798,7 +1740,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : EMB_FUNC_EN_A
-* Address       : 0X04
+* Address       : 0x04
 * Bit Group Name: PEDO_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1809,7 +1751,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_CFG1
-* Address       : 0X58
+* Address       : 0x58
 * Bit Group Name: TIMER_EN
 * Permission    : RW
 *******************************************************************************/
@@ -1820,7 +1762,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_THS_6D
-* Address       : 0X59
+* Address       : 0x59
 * Bit Group Name: TAP_THS
 * Permission    : RW
 *******************************************************************************/
@@ -1829,7 +1771,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : TAP_THS_6D
-* Address       : 0X59
+* Address       : 0x59
 * Bit Group Name: SIXD_THS
 * Permission    : RW
 *******************************************************************************/
@@ -1842,7 +1784,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT_DUR2
-* Address       : 0X5A
+* Address       : 0x5A
 * Bit Group Name: SHOCK
 * Permission    : RW
 *******************************************************************************/
@@ -1851,7 +1793,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT_DUR2
-* Address       : 0X5A
+* Address       : 0x5A
 * Bit Group Name: QUIET
 * Permission    : RW
 *******************************************************************************/
@@ -1860,7 +1802,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : INT_DUR2
-* Address       : 0X5A
+* Address       : 0x5A
 * Bit Group Name: DUR
 * Permission    : RW
 *******************************************************************************/
@@ -1869,7 +1811,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_THS
-* Address       : 0X5B
+* Address       : 0x5B
 * Bit Group Name: WK_THS
 * Permission    : RW
 *******************************************************************************/
@@ -1878,7 +1820,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_THS
-* Address       : 0X5B
+* Address       : 0x5B
 * Bit Group Name: INACTIVITY_ON
 * Permission    : RW
 *******************************************************************************/
@@ -1889,7 +1831,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_THS
-* Address       : 0X5B
+* Address       : 0x5B
 * Bit Group Name: SINGLE_DOUBLE_TAP
 * Permission    : RW
 *******************************************************************************/
@@ -1900,7 +1842,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_DUR
-* Address       : 0X5C
+* Address       : 0x5C
 * Bit Group Name: SLEEP_DUR
 * Permission    : RW
 *******************************************************************************/
@@ -1909,7 +1851,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_DUR
-* Address       : 0X5C
+* Address       : 0x5C
 * Bit Group Name: TIMER_HR
 * Permission    : RW
 *******************************************************************************/
@@ -1920,7 +1862,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : WAKE_UP_DUR
-* Address       : 0X5C
+* Address       : 0x5C
 * Bit Group Name: WAKE_DUR
 * Permission    : RW
 *******************************************************************************/
@@ -1929,7 +1871,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FREE_FALL
-* Address       : 0X5D
+* Address       : 0x5D
 * Bit Group Name: FF_DUR
 * Permission    : RW
 *******************************************************************************/
@@ -1941,7 +1883,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : FREE_FALL
-* Address       : 0X5D
+* Address       : 0x5D
 * Bit Group Name: FF_THS
 * Permission    : RW
 *******************************************************************************/
@@ -1958,7 +1900,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD1_CFG
-* Address       : 0X5E
+* Address       : 0x5E
 * Bit Group Name: INT1_TIMER
 * Permission    : RW
 *******************************************************************************/
@@ -1969,7 +1911,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD1_CFG
-* Address       : 0X5E
+* Address       : 0x5E
 * Bit Group Name: INT1_TILT
 * Permission    : RW
 *******************************************************************************/
@@ -1980,7 +1922,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD1_CFG
-* Address       : 0X5E
+* Address       : 0x5E
 * Bit Group Name: INT1_6D
 * Permission    : RW
 *******************************************************************************/
@@ -1991,7 +1933,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD1_CFG
-* Address       : 0X5E
+* Address       : 0x5E
 * Bit Group Name: INT1_TAP
 * Permission    : RW
 *******************************************************************************/
@@ -2002,7 +1944,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD1_CFG
-* Address       : 0X5E
+* Address       : 0x5E
 * Bit Group Name: INT1_FF
 * Permission    : RW
 *******************************************************************************/
@@ -2013,7 +1955,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD1_CFG
-* Address       : 0X5E
+* Address       : 0x5E
 * Bit Group Name: INT1_WU
 * Permission    : RW
 *******************************************************************************/
@@ -2024,7 +1966,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD1_CFG
-* Address       : 0X5E
+* Address       : 0x5E
 * Bit Group Name: INT1_SINGLE_TAP
 * Permission    : RW
 *******************************************************************************/
@@ -2035,7 +1977,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD1_CFG
-* Address       : 0X5E
+* Address       : 0x5E
 * Bit Group Name: INT1_SLEEP
 * Permission    : RW
 *******************************************************************************/
@@ -2046,7 +1988,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD2_CFG
-* Address       : 0X5F
+* Address       : 0x5F
 * Bit Group Name: INT2_TIMER
 * Permission    : RW
 *******************************************************************************/
@@ -2057,7 +1999,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD2_CFG
-* Address       : 0X5F
+* Address       : 0x5F
 * Bit Group Name: INT2_TILT
 * Permission    : RW
 *******************************************************************************/
@@ -2068,7 +2010,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD2_CFG
-* Address       : 0X5F
+* Address       : 0x5F
 * Bit Group Name: INT2_6D
 * Permission    : RW
 *******************************************************************************/
@@ -2079,7 +2021,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD2_CFG
-* Address       : 0X5F
+* Address       : 0x5F
 * Bit Group Name: INT2_TAP
 * Permission    : RW
 *******************************************************************************/
@@ -2090,7 +2032,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD2_CFG
-* Address       : 0X5F
+* Address       : 0x5F
 * Bit Group Name: INT2_FF
 * Permission    : RW
 *******************************************************************************/
@@ -2101,7 +2043,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD2_CFG
-* Address       : 0X5F
+* Address       : 0x5F
 * Bit Group Name: INT2_WU
 * Permission    : RW
 *******************************************************************************/
@@ -2112,7 +2054,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD2_CFG
-* Address       : 0X5F
+* Address       : 0x5F
 * Bit Group Name: INT2_SINGLE_TAP
 * Permission    : RW
 *******************************************************************************/
@@ -2123,7 +2065,7 @@ typedef enum {
 
 /*******************************************************************************
 * Register      : MD2_CFG
-* Address       : 0X5F
+* Address       : 0x5F
 * Bit Group Name: INT2_SLEEP
 * Permission    : RW
 *******************************************************************************/
