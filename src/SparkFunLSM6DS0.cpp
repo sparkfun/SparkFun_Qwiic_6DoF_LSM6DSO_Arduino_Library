@@ -396,8 +396,7 @@ status_t LSM6DS0::begin()
 	//Setup the accelerometer******************************
 	dataToWrite = 0; //Start Fresh!
 	if ( settings.accelEnabled == 1) {
-		//Build config reg
-		//Next, patch in full scale
+    //Range
 		switch (settings.accelRange) {
 		case 2:
 			dataToWrite |= LSM6DS0_ACC_FS_XL_2g;
@@ -413,7 +412,7 @@ status_t LSM6DS0::begin()
 			dataToWrite |= LSM6DS0_ACC_GYRO_FS_XL_16g;
 			break;
 		}
-		//Lastly, patch in accelerometer ODR
+		// Accelerometer ODR
 		switch (settings.accelSampleRate) {
 		case 16:
 			tempAccelRate |= LSM6DS0_ACC_ODR_XL_1_6Hz;
@@ -456,7 +455,6 @@ status_t LSM6DS0::begin()
 		//dataToWrite already = 0 (powerdown);
 	}
 
-	//Now, write the patched together data
 	writeRegister(LSM6DS0_ACC_GYRO_CTRL1_XL, dataToWrite);
 
   uint8_t tempRegVal; 
