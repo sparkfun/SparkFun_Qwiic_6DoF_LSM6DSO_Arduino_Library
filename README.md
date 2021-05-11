@@ -5,6 +5,7 @@ SparkFun Qwiic 6DoF LSM6DSO Breakout Arduino Library
 
 [*SparkFun Qwiic 6DoF LSM6DSO Breakout  (SEN-18020)*](https://www.sparkfun.com/products/18020)
 
+Arduino library support to control the SparkFun Qwiic 6DoF LSM6DSO. It can be configured to use I2C or SPI with 2 instances per I2C channel or any number of SPI instances.
 
 Repository Contents
 -------------------
@@ -24,8 +25,8 @@ Example Briefs
 * LowLevelExample - Demonstrates using only the core driver without math and settings overhead
 * MemoryPagingExample - Demonstrates switching between memory pages
 * MinimalistExample - The **easiest** configuration
-* MultiI2C - Using two LSM6DS3s over I2C
-* MultiSPI - Using two LSM6DS3s over SPI
+* MultiI2C - Using two LSM6DSOs over I2C
+* MultiSPI - Using two LSM6DSOs over SPI
 * Pedometer - Embedded function demonstrating step-counting feature
 
 Documentation
