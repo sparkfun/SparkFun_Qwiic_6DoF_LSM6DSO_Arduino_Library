@@ -32,15 +32,20 @@ Distributed as-is; no warranty is given.
 LSM6DS0 myIMU; //Default constructor is I2C, addr 0x6B
 
 void setup() {
-  // put your setup code here, to run once:
+
   Serial.begin(115200);
-  delay(1000); //relax...
-  Serial.println("Processor came out of reset.\n");
   
   //Call .begin() to configure the IMU
   Wire.begin();
-  myIMU.begin();
-  
+  if( !myIMU.begin() )
+    Serial.println("Ready.");
+  else { 
+    Serial.println("Could not communicate with the accelerometer.");
+    Serial.println("Freezing.");
+    while(1);
+  }
+
+  delay(1000);
 }
 
 
@@ -69,5 +74,5 @@ void loop()
   Serial.print(" Degrees F = ");
   Serial.println(myIMU.readTempF(), 4);
   
-  delay(1000);
+  delay(500); //Delay should be at least 1/ODR -> default ODR = 416 
 }

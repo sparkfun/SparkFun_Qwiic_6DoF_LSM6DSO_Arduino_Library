@@ -386,12 +386,11 @@ LSM6DS0::LSM6DS0( uint8_t busType, uint8_t inputArg ) : LSM6DS0Core( busType, in
 //****************************************************************************//
 status_t LSM6DS0::begin()
 {
-	//Check the settings structure values to determine how to setup the device
 	uint8_t dataToWrite = 0;  //Temporary variable
-	uint8_t tempAccelRate = 0;  //Temporary variable
 
-	//Begin the inherited core.  This gets the physical wires connected
 	status_t returnError = beginCore();
+  if( returnError != IMU_SUCCESS ) 
+    return returnError;
 
 	//Setup the accelerometer******************************
 	dataToWrite = 0; //Start Fresh!
@@ -409,76 +408,55 @@ status_t LSM6DS0::begin()
 			break;
 		default:  //set default case to 16(max)
 		case 16:
-			dataToWrite |= LSM6DS0_ACC_GYRO_FS_XL_16g;
+			dataToWrite |= LSM6DS0_ACC_FS_XL_16g;
 			break;
 		}
 		// Accelerometer ODR
 		switch (settings.accelSampleRate) {
 		case 16:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_1_6Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_1_6Hz;
 			break;
 		case 125:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_12_5Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_12_5Hz;
 			break;
 		case 26:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_26Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_26Hz;
 			break;
 		case 52:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_52Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_52Hz;
 			break;
 		default:  //Set default to 104
 		case 104:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_104Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_104Hz;
 			break;
 		case 208:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_208Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_208Hz;
 			break;
 		case 416:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_416Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_416Hz;
 			break;
 		case 833:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_833Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_833Hz;
 			break;
 		case 1660:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_1660Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_1660Hz;
 			break;
 		case 3330:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_3330Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_3330Hz;
 			break;
 		case 6660:
-			tempAccelRate |= LSM6DS0_ACC_ODR_XL_6660Hz;
+			dataToWrite |= LSM6DS0_ACC_ODR_XL_6660Hz;
 			break;
 		}
 	}
-	else
-	{
-		//dataToWrite already = 0 (powerdown);
-	}
 
+  // Write Accelerometer Settings....
 	writeRegister(LSM6DS0_ACC_GYRO_CTRL1_XL, dataToWrite);
 
-  uint8_t tempRegVal; 
-  readRegister(&tempRegVal, LSM6DS0_ACC_GYRO_FIFO_CTRL3); 
-  // Clear the accel bits
-  tempRegVal &= 0xF0; 
-  // Merge the accel bits
-  tempRegVal |= tempAccelRate; 
-  writeRegister(LSM6DS0_ACC_GYRO_FIFO_CTRL3, tempRegVal);
-
-	//Set the ODR bit
-	//readRegister(&dataToWrite, LSM6DS0_ACC_GYRO_CTRL4_C);
-	//dataToWrite &= ~(static_cast<uint8_t>(LSM6DS0_ACC_GYRO_BW_SCAL_ODR_ENABLED));
-	//if ( settings.accelODROff == 1) {
-	//	dataToWrite |= LSM6DS0_ACC_GYRO_BW_SCAL_ODR_ENABLED;
-//	}
-	writeRegister(LSM6DS0_ACC_GYRO_CTRL4_C, dataToWrite);
-
 	//Setup the gyroscope**********************************************
-	dataToWrite = 0; //Start Fresh!
-  tempAccelRate = 0;
+	dataToWrite = 0; // Clear variable
+
 	if ( settings.gyroEnabled == 1) {
-		//Build config reg
-		//First, patch in full scale
 		switch (settings.gyroRange) {
 		case 125:
 			dataToWrite |= LSM6DS0_ACC_GYRO_FS_125_ENABLED;
@@ -497,63 +475,61 @@ status_t LSM6DS0::begin()
 			dataToWrite |= LSM6DS0_ACC_GYRO_FS_G_2000dps;
 			break;
 		}
-		//Lastly, patch in gyro ODR
-		switch (settings.gyroSampleRate) {
+		switch (settings.gyroSampleRate) { 
 		case 125:
-			tempAccelRate |= LSM6DS0_GYRO_ODR_G_12_5Hz;
+			dataToWrite |= LSM6DS0_GYRO_ODR_G_12_5Hz;
 			break;
 		case 26:
-			tempAccelRate |= LSM6DS0_GYRO_ODR_G_26Hz;
+			dataToWrite |= LSM6DS0_GYRO_ODR_G_26Hz;
 			break;
 		case 52:
-			tempAccelRate |= LSM6DS0_GYRO_ODR_G_52Hz;
+			dataToWrite |= LSM6DS0_GYRO_ODR_G_52Hz;
 			break;
 		default:  //Set default to 104
 		case 104:
-			tempAccelRate |= LSM6DS0_GYRO_ODR_G_104Hz;
+			dataToWrite |= LSM6DS0_GYRO_ODR_G_104Hz;
 			break;
 		case 208:
-			tempAccelRate |= LSM6DS0_GYRO_ODR_G_208Hz;
+			dataToWrite |= LSM6DS0_GYRO_ODR_G_208Hz;
 			break;
 		case 416:
-			tempAccelRate |= LSM6DS0_GYRO_ODR_G_416Hz;
+			dataToWrite |= LSM6DS0_GYRO_ODR_G_416Hz;
 			break;
 		case 833:
-			tempAccelRate |= LSM6DS0_GYRO_ODR_G_833Hz;
+			dataToWrite |= LSM6DS0_GYRO_ODR_G_833Hz;
 			break;
 		case 1660:
-			tempAccelRate |= LSM6DS0_GYRO_ODR_G_1660Hz;
+			dataToWrite |= LSM6DS0_GYRO_ODR_G_1660Hz;
 			break;
 		case 3330:
-			tempAccelRate |= LSM6DS0_GYRO_ODR_G_3330Hz;
+			dataToWrite |= LSM6DS0_GYRO_ODR_G_3330Hz;
 			break;
 		case 6660:
-			tempAccelRate |= LSM6DS0_GYRO_ODR_G_6660Hz;
+			dataToWrite |= LSM6DS0_GYRO_ODR_G_6660Hz;
 			break;
 		}
 	}
-	else
-	{
-		//dataToWrite already = 0 (powerdown);
-	}
-	//Write the byte
+	
+  // Write the gyroscope settings. 
 	writeRegister(LSM6DS0_ACC_GYRO_CTRL2_G, dataToWrite);
-
-  readRegister(&tempRegVal, LSM6DS0_ACC_GYRO_FIFO_CTRL3); 
-  // Clear Gyro bits
-  tempRegVal &= 0x0F; 
-  // Merge Gyro bits
-  tempRegVal |= tempAccelRate; 
-  writeRegister(LSM6DS0_ACC_GYRO_FIFO_CTRL3, tempRegVal);
-
-	//Setup the internal temperature sensor
-	if ( settings.tempEnabled == 1) {
-    writeRegister(LSM6DS0_ACC_GYRO_FIFO_CTRL4, 0x30); 
-	}
+  setBlockDataUpdate(true);
 
 	return returnError;
 }
+// Address:0x12 CTRL3_C , bit[6] default value is: 0x00
+// This function sets the BDU (Block Data Update) bit. Use when not employing
+// the FIFO buffer.
+bool LSM6DS0::setBlockDataUpdate(bool enable){
 
+  status_t returnError = writeRegister(LSM6DS0_ACC_GYRO_CTRL3_C, 0x40);  			
+
+  if( returnError != IMU_SUCCESS )
+    return false;
+  else 
+    return true;
+
+
+}
 //****************************************************************************//
 //
 //  Accelerometer section
@@ -576,6 +552,7 @@ int16_t LSM6DS0::readRawAccelX( void )
 	}
 	return output;
 }
+
 float LSM6DS0::readFloatAccelX( void )
 {
 	float output = calcAccel(readRawAccelX());

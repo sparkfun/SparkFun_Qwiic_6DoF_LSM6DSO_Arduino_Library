@@ -100,6 +100,8 @@ private:
 //This struct holds the settings the driver uses to do calculations
 struct SensorSettings {
 public:
+
+
 	//Gyro settings
 	uint8_t gyroEnabled;
 	uint16_t gyroRange;
@@ -165,6 +167,7 @@ public:
 	//Call to apply SensorSettings
 	status_t begin(void);
 
+  bool setBlockDataUpdate(bool);
 	//Returns the raw bits from the sensor cast as 16-bit signed integers
 	int16_t readRawAccelX( void );
 	int16_t readRawAccelY( void );
@@ -217,10 +220,6 @@ private:
 #define LSM6DS0_ACC_GYRO_FIFO_CTRL2  			0x08
 #define LSM6DS0_ACC_GYRO_FIFO_CTRL3  			0x09
 #define LSM6DS0_ACC_GYRO_FIFO_CTRL4  			0x0A
-
-// #define LSM6DS0_ACC_GYRO_FIFO_CTRL5  			0X0A Removed in LSM6DS0
-// #define LSM6DS0_ACC_GYRO_ORIENT_CFG_G  			0X0B NOT USED in CPP
-// #define LSM6DS0_ACC_GYRO_REFERENCE_G  			0X0C NOT USED in CPP
 
 #define COUNTER_BDR_REG1 0x0B // Added 
 #define COUNTER_BDR_REG2 0x0C // Added
@@ -426,7 +425,7 @@ typedef enum {
 *******************************************************************************/
 typedef enum {
 	LSM6DS0_ACC_GYRO_RAM_PAGE_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_RAM_PAGE_ENABLED 		 = 0x80,
+	LSM6DS0_ACC_GYRO_RAM_PAGE_ENABLED 		 = 0x80
 } LSM6DS0_ACC_GYRO_RAM_PAGE_t;
 
 
@@ -437,19 +436,19 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FIFO_BDR_NOT_BATCHED = 0x00,
-	LSM6DS0_ACC_GYRO_FIFO_BDR_12_5        = 0x01,
-	LSM6DS0_ACC_GYRO_FIFO_BDR_26          = 0x02,
-	LSM6DS0_ACC_GYRO_FIFO_BDR_52          = 0x03,
-	LSM6DS0_ACC_GYRO_FIFO_BDR_104         = 0x04,
-	LSM6DS0_ACC_GYRO_FIFO_BDR_208         = 0x05
-	LSM6DS0_ACC_GYRO_FIFO_BDR_417         = 0x06,
-	LSM6DS0_ACC_GYRO_FIFO_BDR_833         = 0x07,
-	LSM6DS0_ACC_GYRO_FIFO_BDR_1667        = 0x08,
-	LSM6DS0_ACC_GYRO_FIFO_BDR_3333        = 0x09,
-	LSM6DS0_ACC_GYRO_FIFO_BDR_6667        = 0x0A,
-	LSM6DS0_ACC_GYRO_FIFO_BDR_6_5         = 0x0B
-} LSM6DS0_ACC_GYRO_ODR_FIFO_t;
+	LSM6DS0_GYRO_FIFO_BDR_NOT_BATCHED = 0x00,
+	LSM6DS0_GYRO_FIFO_BDR_12_5        = 0x01,
+	LSM6DS0_GYRO_FIFO_BDR_26          = 0x02,
+	LSM6DS0_GYRO_FIFO_BDR_52          = 0x03,
+	LSM6DS0_GYRO_FIFO_BDR_104         = 0x04,
+	LSM6DS0_GYRO_FIFO_BDR_208         = 0x05,
+	LSM6DS0_GYRO_FIFO_BDR_417         = 0x06,
+	LSM6DS0_GYRO_FIFO_BDR_833         = 0x07,
+	LSM6DS0_GYRO_FIFO_BDR_1667        = 0x08,
+	LSM6DS0_GYRO_FIFO_BDR_3333        = 0x09,
+	LSM6DS0_GYRO_FIFO_BDR_6667        = 0x0A,
+	LSM6DS0_GYRO_FIFO_BDR_6_5         = 0x0B
+} LSM6DS0_ACC_GYRO_BDR_GY_FIFO_t;
 
 /*******************************************************************************
 * Register      : FIFO_CTRL3
@@ -458,19 +457,19 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_ACC_FIFO_BDR_NOT_BATCHED = 0x00,
-	LSM6DS0_ACC_ACC_FIFO_BDR_12_5        = 0x01,
-	LSM6DS0_ACC_ACC_FIFO_BDR_26          = 0x02,
-	LSM6DS0_ACC_ACC_FIFO_BDR_52          = 0x03,
-	LSM6DS0_ACC_ACC_FIFO_BDR_104         = 0x04,
-	LSM6DS0_ACC_ACC_FIFO_BDR_208         = 0x05
-	LSM6DS0_ACC_ACC_FIFO_BDR_417         = 0x06,
-	LSM6DS0_ACC_ACC_FIFO_BDR_833         = 0x07,
-	LSM6DS0_ACC_ACC_FIFO_BDR_1667        = 0x08,
-	LSM6DS0_ACC_ACC_FIFO_BDR_3333        = 0x09,
-	LSM6DS0_ACC_ACC_FIFO_BDR_6667        = 0x0A,
-	LSM6DS0_ACC_ACC_FIFO_BDR_6_5         = 0x0B
-} LSM6DS0_ACC_ACC_ODR_FIFO_t;
+	LSM6DS0_ACC_FIFO_BDR_NOT_BATCHED = 0x00,
+	LSM6DS0_ACC_FIFO_BDR_12_5        = 0x01,
+	LSM6DS0_ACC_FIFO_BDR_26          = 0x02,
+	LSM6DS0_ACC_FIFO_BDR_52          = 0x03,
+	LSM6DS0_ACC_FIFO_BDR_104         = 0x04,
+	LSM6DS0_ACC_FIFO_BDR_208         = 0x05,
+	LSM6DS0_ACC_FIFO_BDR_417         = 0x06,
+	LSM6DS0_ACC_FIFO_BDR_833         = 0x07,
+	LSM6DS0_ACC_FIFO_BDR_1667        = 0x08,
+	LSM6DS0_ACC_FIFO_BDR_3333        = 0x09,
+	LSM6DS0_ACC_FIFO_BDR_6667        = 0x0A,
+	LSM6DS0_ACC_FIFO_BDR_6_5         = 0x0B
+} LSM6DS0_ACC_GYRO_BDR_XL_FIFO_t;
 
 
 /*******************************************************************************
