@@ -266,7 +266,7 @@ status_t LSM6DS0Core::readRegisterInt16( int16_t* outputPointer, uint8_t offset 
 {
 	uint8_t myBuffer[2];
 	status_t returnError = readRegisterRegion(myBuffer, offset, 2);  //Does memory transfer
-	int16_t output = static_cast<int16_t>(myBuffer[0]) | static_cast<int16_t>(myBuffer[1] << 8);
+	int16_t output = myBuffer[0] | static_cast<uint16_t>(myBuffer[1] << 8);
 	
 	*outputPointer = output;
 	return returnError;
@@ -352,18 +352,14 @@ LSM6DS0::LSM6DS0( uint8_t busType, uint8_t inputArg ) : LSM6DS0Core( busType, in
 	settings.gyroSampleRate = 416;   //Hz.  Can be: 13, 26, 52, 104, 208, 416, 833, 1666
 	settings.gyroBandWidth = 400;  //Hz.  Can be: 50, 100, 200, 400;
 	settings.gyroFifoEnabled = 1;  //Set to include gyro in FIFO
-	settings.gyroAccelDecimation = 1;  //set 1 for on /1
+	settings.gyroAccelDecimation = 1;  //Set to include gyro in FIFO
 
 	settings.accelEnabled = 1;
-	settings.accelODROff = 1;
 	settings.accelRange = 16;      //Max G force readable.  Can be: 2, 4, 8, 16
 	settings.accelSampleRate = 416;  //Hz.  Can be: 1.6 (16), 12.5 (125), 26, 52, 104, 208, 416, 833, 1660, 3330, 6660
 	settings.accelFifoEnabled = 1;  //Set to include accelerometer in the FIFO
 
 	settings.tempEnabled = 1;
-
-	//Select interface mode
-	settings.commMode = 1;  //Can be modes 1, 2 or 3
 
 	//FIFO control data
 	settings.fifoThreshold = 3000;  //Can be 0 to 4096 (16 bit bytes)
@@ -710,17 +706,23 @@ int16_t LSM6DS0::readRawTemp( void )
 
 float LSM6DS0::readTempC( void )
 {
-	float output = static_cast<float>( readRawTemp() ) / 16; //divide by 16 to scale
-	output += 25; //Add 25 degrees to remove offset
+	int16_t temp = (readRawTemp()); 
+  int8_t msbTemp = (temp & 0xFF00) >> 8;  
+  float tempFloat = static_cast<float>(msbTemp);
+  float lsbTemp =  temp & 0x00FF;
 
-	return output;
+  lsbTemp /= 256;
+  
+  tempFloat += lsbTemp; 
+	tempFloat += 25; //Add 25 degrees to remove offset
+
+	return tempFloat;
 
 }
 
 float LSM6DS0::readTempF( void )
 {
-	float output = static_cast<float>( readRawTemp() ) / 16; //divide by 16 to scale
-	output += 25; //Add 25 degrees to remove offset
+	float output = readTempC(); 
 	output = (output * 9) / 5 + 32;
 
 	return output;
