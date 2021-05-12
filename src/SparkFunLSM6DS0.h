@@ -766,7 +766,7 @@ typedef enum {
 *******************************************************************************/
 typedef enum {
 	LSM6DS0_ACC_FS_XL_2g 		 = 0x00,
-	LSM6DS0_ACC_FS_XL_16g 		 = 0x04,
+  LSM6DS0_ACC_FS_XL_16g  	 = 0x04,
 	LSM6DS0_ACC_FS_XL_4g 		 = 0x08,
 	LSM6DS0_ACC_FS_XL_8g 		 = 0x0C,
 } LSM6DS0_ACC_FS_XL_t;

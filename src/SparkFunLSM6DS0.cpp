@@ -140,7 +140,7 @@ status_t LSM6DS0Core::readRegisterRegion(uint8_t outputPointer[] , uint8_t offse
 
 		_i2cPort->beginTransmission(I2CAddress);
 		_i2cPort->write(offset);
-		if( _i2cPort->endTransmission() != 0 )
+		if( _i2cPort->endTransmission(false) != 0 )
 			return IMU_HW_ERROR;
 
     _i2cPort->requestFrom(I2CAddress, numBytes);
@@ -248,6 +248,7 @@ status_t LSM6DS0Core::readRegisterInt16(int16_t* outputPointer, uint8_t offset)
 //
 //****************************************************************************//
 status_t LSM6DS0Core::writeRegister(uint8_t offset, uint8_t dataToWrite) {
+
 	status_t returnError = IMU_SUCCESS;
 	switch (commInterface) {
 	case I2C_MODE:
@@ -321,7 +322,7 @@ LSM6DS0::LSM6DS0( uint8_t busType, uint8_t inputArg ) : LSM6DS0Core( busType, in
 	settings.gyroAccelDecimation = 1;  //Set to include gyro in FIFO
 
 	settings.accelEnabled = 1;
-	settings.accelRange = 16;      //Max G force readable.  Can be: 2, 4, 8, 16
+	settings.accelRange = 8;      //Max G force readable.  Can be: 2, 4, 8, 16
 	settings.accelSampleRate = 416;  //Hz.  Can be: 1.6 (16), 12.5 (125), 26, 52, 104, 208, 416, 833, 1660, 3330, 6660
 	settings.accelFifoEnabled = 1;  //Set to include accelerometer in the FIFO
 
@@ -497,26 +498,21 @@ bool LSM6DS0::setBlockDataUpdate(bool enable){
 //  Accelerometer section
 //
 //****************************************************************************//
-int16_t LSM6DS0::readRawAccelX( void )
-{
+int16_t LSM6DS0::readRawAccelX( void ) {
+
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUTX_L_A );
 	if( errorLevel != IMU_SUCCESS )
 	{
 		if( errorLevel == IMU_ALL_ONES_WARNING )
-		{
 			allOnesCounter++;
-		}
 		else
-		{
 			nonSuccessCounter++;
-		}
 	}
 	return output;
 }
 
-float LSM6DS0::readFloatAccelX( void )
-{
+float LSM6DS0::readFloatAccelX( void ) {
 	float output = calcAccel(readRawAccelX());
 	return output;
 }
@@ -528,16 +524,13 @@ int16_t LSM6DS0::readRawAccelY( void )
 	if( errorLevel != IMU_SUCCESS )
 	{
 		if( errorLevel == IMU_ALL_ONES_WARNING )
-		{
 			allOnesCounter++;
-		}
 		else
-		{
 			nonSuccessCounter++;
-		}
 	}
 	return output;
 }
+
 float LSM6DS0::readFloatAccelY( void )
 {
 	float output = calcAccel(readRawAccelY());
@@ -551,16 +544,13 @@ int16_t LSM6DS0::readRawAccelZ( void )
 	if( errorLevel != IMU_SUCCESS )
 	{
 		if( errorLevel == IMU_ALL_ONES_WARNING )
-		{
 			allOnesCounter++;
-		}
 		else
-		{
 			nonSuccessCounter++;
-		}
 	}
 	return output;
 }
+
 float LSM6DS0::readFloatAccelZ( void )
 {
 	float output = calcAccel(readRawAccelZ());
@@ -569,7 +559,49 @@ float LSM6DS0::readFloatAccelZ( void )
 
 float LSM6DS0::calcAccel( int16_t input )
 {
-	float output = static_cast<float>(input) * 0.061 * (settings.accelRange >> 1) / 1000;
+  uint8_t accelRange; 
+  uint8_t scale;
+  float output;
+
+  readRegister(&accelRange, LSM6DS0_ACC_GYRO_CTRL1_XL);
+  scale = (accelRange >> 1) & 0x01;
+  accelRange = (accelRange >> 2) & (0x03);  
+  
+  if( scale == 0 ) {
+    switch( accelRange ){
+      case 0:// Register value 0: 2g
+        output = (static_cast<float>(input) * (.061)) / 1000;
+        break;
+      case 1: //Register value 1 : 16g
+        output = (static_cast<float>(input) * (.488)) / 1000;
+        break;
+      case 2: //Register value 2 : 4g
+        output = (static_cast<float>(input) * (.122)) / 1000;
+        break;
+      case 3://Register value 3: 8g
+        output = (static_cast<float>(input) * (.244)) / 1000;
+        break;
+    }
+  }
+
+  if( scale == 1 ){
+    switch( accelRange ){
+      case 0: //Register value 0: 2g
+        output = (static_cast<float>(input) * (0.061)) / 1000;
+        break;
+      case 1://Register value 1: 2g
+        output = (static_cast<float>(input) * (0.061)) / 1000;
+        break;
+      case 2://Register value 2: 4g
+        output = (static_cast<float>(input) * (.122)) / 1000;
+        break;
+      case 3://Register value 3: 8g
+        output = (static_cast<float>(input) * (.244)) / 1000;
+        break;
+    }
+
+  }
+
 	return output;
 }
 
