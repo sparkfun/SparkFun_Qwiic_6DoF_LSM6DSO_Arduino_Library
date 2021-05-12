@@ -315,7 +315,7 @@ LSM6DS0::LSM6DS0( uint8_t busType, uint8_t inputArg ) : LSM6DS0Core( busType, in
 	//Construct with these default settings
 
 	settings.gyroEnabled = 1;  //Can be 0 or 1
-	settings.gyroRange = 2000;   //Max deg/s.  Can be: 125, 245, 500, 1000, 2000
+	settings.gyroRange = 500;   //Max deg/s.  Can be: 125, 250, 500, 1000, 2000
 	settings.gyroSampleRate = 416;   //Hz.  Can be: 13, 26, 52, 104, 208, 416, 833, 1666
 	settings.gyroBandWidth = 400;  //Hz.  Can be: 50, 100, 200, 400;
 	settings.gyroFifoEnabled = 1;  //Set to include gyro in FIFO
@@ -599,7 +599,6 @@ float LSM6DS0::calcAccel( int16_t input )
         output = (static_cast<float>(input) * (.244)) / 1000;
         break;
     }
-
   }
 
 	return output;
@@ -610,84 +609,100 @@ float LSM6DS0::calcAccel( int16_t input )
 //  Gyroscope section
 //
 //****************************************************************************//
-int16_t LSM6DS0::readRawGyroX( void )
-{
+int16_t LSM6DS0::readRawGyroX( void ) {
+
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUTX_L_G );
-	if( errorLevel != IMU_SUCCESS )
-	{
+
+	if( errorLevel != IMU_SUCCESS ) {
 		if( errorLevel == IMU_ALL_ONES_WARNING )
-		{
 			allOnesCounter++;
-		}
 		else
-		{
 			nonSuccessCounter++;
-		}
 	}
+
 	return output;
 }
-float LSM6DS0::readFloatGyroX( void )
-{
+
+float LSM6DS0::readFloatGyroX( void ) {
+
 	float output = calcGyro(readRawGyroX());
 	return output;
 }
 
-int16_t LSM6DS0::readRawGyroY( void )
-{
+int16_t LSM6DS0::readRawGyroY( void ) {
+
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUTY_L_G );
-	if( errorLevel != IMU_SUCCESS )
-	{
+
+	if( errorLevel != IMU_SUCCESS ) {
 		if( errorLevel == IMU_ALL_ONES_WARNING )
-		{
 			allOnesCounter++;
-		}
 		else
-		{
 			nonSuccessCounter++;
-		}
 	}
+
 	return output;
 }
-float LSM6DS0::readFloatGyroY( void )
-{
+
+float LSM6DS0::readFloatGyroY( void ) {
+  
 	float output = calcGyro(readRawGyroY());
 	return output;
 }
 
-int16_t LSM6DS0::readRawGyroZ( void )
-{
+int16_t LSM6DS0::readRawGyroZ( void ) {
+
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUTZ_L_G );
-	if( errorLevel != IMU_SUCCESS )
-	{
+
+	if( errorLevel != IMU_SUCCESS ) {
 		if( errorLevel == IMU_ALL_ONES_WARNING )
-		{
 			allOnesCounter++;
-		}
 		else
-		{
 			nonSuccessCounter++;
-		}
 	}
+
 	return output;
 }
-float LSM6DS0::readFloatGyroZ( void )
-{
+
+float LSM6DS0::readFloatGyroZ( void ) {
+
 	float output = calcGyro(readRawGyroZ());
 	return output;
+
 }
 
-float LSM6DS0::calcGyro( int16_t input )
-{
-	uint8_t gyroRangeDivisor = settings.gyroRange / 125;
-	if ( settings.gyroRange == 245 ) {
-		gyroRangeDivisor = 2;
-	}
+float LSM6DS0::calcGyro( int16_t input ) {
 
-	float output = static_cast<float>(input) * 4.375 * (gyroRangeDivisor) / 1000;
-	return output;
+	uint8_t gyroRange;  
+  uint8_t fullScale;
+  float output; 
+
+  readRegister(&gyroRange, LSM6DS0_ACC_GYRO_CTRL2_G) ;
+  fullScale = (gyroRange >> 1) & 0x01; 
+  gyroRange = (gyroRange >> 2) & 0x03; 
+
+  if( fullScale )
+    output = (static_cast<float>(input) * 4.375)/1000;
+  else {
+    switch( gyroRange ){
+      case 0:
+        output = (static_cast<float>(input) * 8.75)/1000;
+        break;
+      case 1:
+        output = (static_cast<float>(input) * 17.50)/1000;
+        break;
+      case 2:
+        output = (static_cast<float>(input) * 35)/1000;
+        break;
+      case 3:
+        output = (static_cast<float>(input) * 70)/1000;
+        break;
+    }
+  }
+
+  return output;
 }
 
 //****************************************************************************//
