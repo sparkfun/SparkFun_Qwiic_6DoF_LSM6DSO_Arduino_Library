@@ -120,7 +120,7 @@ status_t LSM6DS0Core::beginCore(void)
 //  Parameters:
 //    *outputPointer -- Pass &variable (base address of) to save read data to
 //    offset -- register to read
-//    length -- number of bytes to read
+//    numBytes -- number of bytes to read
 //
 //  Note:  Does not know if the target memory space is an array or not, or
 //    if there is the array is big enough.  if the variable passed is only
@@ -128,71 +128,48 @@ status_t LSM6DS0Core::beginCore(void)
 //    other memory!
 //
 //****************************************************************************//
-status_t LSM6DS0Core::readRegisterRegion(uint8_t *outputPointer , uint8_t offset, uint8_t length)
+status_t LSM6DS0Core::readRegisterRegion(uint8_t outputPointer[] , uint8_t offset, uint8_t numBytes)
 {
 	status_t returnError = IMU_SUCCESS;
 
 	//define pointer that will point to the external space
-	uint8_t i = 0;
-	uint8_t c = 0;
-	uint8_t tempFFCounter = 0;
 
-	switch (commInterface) {
+	switch( commInterface ){
 
 	case I2C_MODE:
+
 		_i2cPort->beginTransmission(I2CAddress);
 		_i2cPort->write(offset);
 		if( _i2cPort->endTransmission() != 0 )
-		{
-			returnError = IMU_HW_ERROR;
-		}
-		else  //OK, all worked, keep going
-		{
-			// request 6 bytes from slave device
-			_i2cPort->requestFrom(I2CAddress, length);
-			while ( (_i2cPort->available()) && (i < length))  // slave may send less than requested
-			{
-				c = _i2cPort->read(); // receive a byte as character
-				*outputPointer = c;
-				outputPointer++;
-				i++;
-			}
-		}
-		break;
+			return IMU_HW_ERROR;
+
+    _i2cPort->requestFrom(I2CAddress, numBytes);
+    for(size_t i = 0; i < numBytes; i++){
+       outputPointer[i] =  _i2cPort->read(); 
+    }
+
+    if( _i2cPort->endTransmission() != 0 )
+      return IMU_HW_ERROR;
+    else
+      return IMU_SUCCESS;
 
 	case SPI_MODE:
-		// take the chip select low to select the device:
+
     _spiPort->beginTransaction(mySpiSettings);
 		digitalWrite(chipSelectPin, LOW);
 		// send the device the register you want to read:
 		_spiPort->transfer(offset | 0x80);  //Ored with "read request" bit
-		while ( i < length ) // slave may send less than requested
-		{
-			c = _spiPort->transfer(0x00); // receive a byte as character
-			if( c == 0xFF )
-			{
-				//May have problem
-				tempFFCounter++;
-			}
-			*outputPointer = c;
-			outputPointer++;
-			i++;
+
+		for(size_t i = 0; i < numBytes; i++ ) {
+			outputPointer[i] = _spiPort->transfer(0x00); // receive a byte as character
 		}
-		if( tempFFCounter == i )
-		{
-			//Ok, we've recieved all ones, report
-			returnError = IMU_ALL_ONES_WARNING;
-		}
-		// take the chip select high to de-select:
+
 		digitalWrite(chipSelectPin, HIGH);
     _spiPort->endTransaction();
-		break;
 
-	default:
-		break;
-	}
+    return IMU_SUCCESS;
 
-	return returnError;
+  }
 }
 
 //****************************************************************************//
@@ -207,24 +184,23 @@ status_t LSM6DS0Core::readRegisterRegion(uint8_t *outputPointer , uint8_t offset
 status_t LSM6DS0Core::readRegister(uint8_t* outputPointer, uint8_t offset) {
 	//Return value
 	uint8_t result;
-	uint8_t numBytes = 1;
-	status_t returnError = IMU_SUCCESS;
+	status_t returnError; 
 
 	switch (commInterface) {
 
 	case I2C_MODE:
+
 		_i2cPort->beginTransmission(I2CAddress);
 		_i2cPort->write(offset);
 		if( _i2cPort->endTransmission() != 0 )
-		{
 			returnError = IMU_HW_ERROR;
-		}
-		_i2cPort->requestFrom(I2CAddress, numBytes);
-		while ( _i2cPort->available() ) // slave may send less than requested
-		{
-			result = _i2cPort->read(); // receive a byte as a proper uint8_t
-		}
-		break;
+
+		_i2cPort->requestFrom(static_cast<uint8_t>(I2CAddress), static_cast<uint8_t>(1));
+    *outputPointer = _i2cPort->read(); // receive a byte as a proper uint8_t
+    if( _i2cPort->endTransmission() != 0) 
+      return IMU_HW_ERROR;
+    else
+      return IMU_SUCCESS;
 
 	case SPI_MODE:
 		// take the chip select low to select the device:
@@ -233,24 +209,14 @@ status_t LSM6DS0Core::readRegister(uint8_t* outputPointer, uint8_t offset) {
 		// send the device the register you want to read:
 		_spiPort->transfer(offset | 0x80);  //Ored with "read request" bit
 		// send a value of 0 to read the first byte returned:
-		result = _spiPort->transfer(0x00);
+		*outputPointer = _spiPort->transfer(0x00);
 		// take the chip select high to de-select:
 		digitalWrite(chipSelectPin, HIGH);
     _spiPort->endTransaction(); 
 		
-		if( result == 0xFF )
-		{
-			//we've recieved all ones, report
-			returnError = IMU_ALL_ONES_WARNING;
-		}
-		break;
-
-	default:
-		break;
+      return IMU_SUCCESS; 
 	}
 
-	*outputPointer = result;
-	return returnError;
 }
 
 //****************************************************************************//
@@ -262,7 +228,7 @@ status_t LSM6DS0Core::readRegister(uint8_t* outputPointer, uint8_t offset) {
 //    offset -- register to read
 //
 //****************************************************************************//
-status_t LSM6DS0Core::readRegisterInt16( int16_t* outputPointer, uint8_t offset )
+status_t LSM6DS0Core::readRegisterInt16(int16_t* outputPointer, uint8_t offset) 
 {
 	uint8_t myBuffer[2];
 	status_t returnError = readRegisterRegion(myBuffer, offset, 2);  //Does memory transfer
