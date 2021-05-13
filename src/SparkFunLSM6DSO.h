@@ -35,15 +35,16 @@ Distributed as-is; no warranty is given.
 #define I2C_MODE 0
 #define SPI_MODE 1
 
+
 // Return values 
 typedef enum
 {
 	IMU_SUCCESS,
 	IMU_HW_ERROR,
 	IMU_NOT_SUPPORTED,
-	IMU_GENERIC_ERROR,
 	IMU_OUT_OF_BOUNDS,
 	IMU_ALL_ONES_WARNING,
+	IMU_GENERIC_ERROR = 0xFF,
 } status_t;
 
 //  This is the core operational class of the driver.
@@ -86,7 +87,7 @@ public:
 
 
 	//Gyro settings
-	uint8_t gyroEnabled;
+	bool gyroEnabled;
 	uint16_t gyroRange;
 	uint16_t gyroSampleRate;
 	uint16_t gyroBandWidth;
@@ -95,7 +96,7 @@ public:
 	uint8_t gyroAccelDecimation;
 
 	//Accelerometer settings
-	uint8_t accelEnabled;
+	bool accelEnabled;
 	uint8_t accelODROff;
 	uint16_t accelRange;
 	uint16_t accelSampleRate;
@@ -103,13 +104,12 @@ public:
 	
 	uint8_t accelFifoEnabled;
 	
-	//Temperature settings
-	uint8_t tempEnabled;
 	
 	//Non-basic mode settings
 	uint8_t commMode;
 	
 	//FIFO control data
+  bool fifoEnabled;  
 	uint16_t fifoThreshold;
 	int16_t fifoSampleRate;
 	uint8_t fifoModeWord;
@@ -134,58 +134,69 @@ public:
 #define ACCEL_DATA_READY 0x01
 #define GYRO_DATA_READY 0x02
 #define TEMP_DATA_READY 0x04
+#define DEFAULT_SETTINGS 0x00
+#define FIFO_SETTINGS 0x01
+#define PEDOMETER_SETTINGS 0x02
 
 class LSM6DSO : public LSM6DSOCore
 {
-public:
-	//IMU settings
-	SensorSettings settings;
+  public:
+    //IMU settings
+    SensorSettings settings;
 
-	//Error checking
-	uint16_t allOnesCounter;
-	uint16_t nonSuccessCounter;
+    //Error checking
+    uint16_t allOnesCounter;
+    uint16_t nonSuccessCounter;
 
-	LSM6DSO( uint8_t busType = I2C_MODE, uint8_t inputArg = 0x6B );
-	~LSM6DSO() = default;
-	
-	//Call to apply SensorSettings
-	status_t begin(void);
+    LSM6DSO( uint8_t busType = I2C_MODE, uint8_t inputArg = 0x6B );
+    ~LSM6DSO() = default;
+    
+    //Call to apply SensorSettings
+    status_t begin(uint8_t settings = DEFAULT_SETTINGS);
+    status_t beginSettings();
 
-  bool setBlockDataUpdate(bool);
-  bool setHighPerfAccel(bool);
-  bool setHighPerfGyro(bool);
 
-  uint8_t getDataReady();
+    bool setAccelRange(uint8_t) ;
+    uint8_t getAccelRange();
+    bool setAccelDataRate(uint16_t) ;
+    float getAccelDataRate();
+    bool setBlockDataUpdate(bool);
+    bool setHighPerfAccel(bool);
+    bool setHighPerfGyro(bool);
 
-	int16_t readRawAccelX( void );
-	int16_t readRawAccelY( void );
-	int16_t readRawAccelZ( void );
-	int16_t readRawGyroX( void );
-	int16_t readRawGyroY( void );
-	int16_t readRawGyroZ( void );
+    uint8_t getDataReady();
+    uint8_t getAccelFullScale();
+    uint8_t getAccelHighPerf();
 
-	float readFloatAccelX( void );
-	float readFloatAccelY( void );
-	float readFloatAccelZ( void );
-	float readFloatGyroX( void );
-	float readFloatGyroY( void );
-	float readFloatGyroZ( void );
+    int16_t readRawAccelX( void );
+    int16_t readRawAccelY( void );
+    int16_t readRawAccelZ( void );
+    int16_t readRawGyroX( void );
+    int16_t readRawGyroY( void );
+    int16_t readRawGyroZ( void );
 
-	int16_t readRawTemp( void );
-	float readTempC( void );
-	float readTempF( void );
+    float readFloatAccelX( void );
+    float readFloatAccelY( void );
+    float readFloatAccelZ( void );
+    float readFloatGyroX( void );
+    float readFloatGyroY( void );
+    float readFloatGyroZ( void );
 
-	//FIFO stuff
-	void fifoBegin( void );
-	void fifoClear( void );
-	fifoData fifoRead( void );
-	uint16_t fifoGetStatus( void );
-	void fifoEnd( void );
-	
-	float calcGyro( int16_t );
-	float calcAccel( int16_t );
+    int16_t readRawTemp( void );
+    float readTempC( void );
+    float readTempF( void );
 
-private:
+    //FIFO stuff
+    void fifoBegin( void );
+    void fifoClear( void );
+    fifoData fifoRead( void );
+    uint16_t fifoGetStatus( void );
+    void fifoEnd( void );
+    
+    float calcGyro( int16_t );
+    float calcAccel( int16_t );
+
+  private:
 
 };
 
@@ -693,6 +704,7 @@ typedef enum {
   FS_XL_16g  	 = 0x04,
 	FS_XL_4g 		 = 0x08,
 	FS_XL_8g 		 = 0x0C,
+  FS_XL_MASK   = 0xF3
 } LSM6DSO_FS_XL_t;
 
 /*******************************************************************************
@@ -714,7 +726,8 @@ typedef enum {
 	ODR_XL_833Hz      = 0x70, // High Performance 
 	ODR_XL_1660Hz    = 0x80, // High Performance
 	ODR_XL_3330Hz    = 0x90, // High Performance
-	ODR_XL_6660Hz    = 0xA0 // High Performance
+	ODR_XL_6660Hz    = 0xA0, // High Performance
+  ODR_XL_MASK      = 0x1F
 } LSM6DSO_ODR_XL_t;
 
 /*******************************************************************************

@@ -311,27 +311,26 @@ LSM6DSO::LSM6DSO( uint8_t busType, uint8_t inputArg ) : LSM6DSOCore( busType, in
 {
 	//Construct with these default settings
 
-	settings.gyroEnabled = 1;  //Can be 0 or 1
+	settings.gyroEnabled = true;  //Can be 0 or 1
 	settings.gyroRange = 500;   //Max deg/s.  Can be: 125, 250, 500, 1000, 2000
 	settings.gyroSampleRate = 416;   //Hz.  Can be: 13, 26, 52, 104, 208, 416, 833, 1666
 	settings.gyroBandWidth = 400;  //Hz.  Can be: 50, 100, 200, 400;
 	settings.gyroFifoEnabled = 1;  //Set to include gyro in FIFO
 	settings.gyroAccelDecimation = 1;  //Set to include gyro in FIFO
 
-	settings.accelEnabled = 1;
+	settings.accelEnabled = true;
 	settings.accelRange = 8;      //Max G force readable.  Can be: 2, 4, 8, 16
 	settings.accelSampleRate = 416;  //Hz.  Can be: 1.6 (16), 12.5 (125), 26, 52, 104, 208, 416, 833, 1660, 3330, 6660
 	settings.accelFifoEnabled = 1;  //Set to include accelerometer in the FIFO
 
-	settings.tempEnabled = 1;
-
-	//FIFO control data
+  settings.fifoEnabled = true;
 	settings.fifoThreshold = 3000;  //Can be 0 to 4096 (16 bit bytes)
-	//settings.fifoSampleRate = 10;  //default 10Hz
+	settings.fifoSampleRate = 416; 
 	settings.fifoModeWord = 0;  //Default off
 
 	allOnesCounter = 0;
 	nonSuccessCounter = 0;
+
 
 }
 
@@ -344,7 +343,18 @@ LSM6DSO::LSM6DSO( uint8_t busType, uint8_t inputArg ) : LSM6DSOCore( busType, in
 //  "myIMU.settings.accelEnabled = 1;" to configure before calling .begin();
 //
 //****************************************************************************//
-status_t LSM6DSO::begin()
+status_t LSM6DSO::begin(uint8_t settings){
+
+	status_t returnError = beginCore();
+  if( returnError != IMU_SUCCESS ) 
+    return returnError;
+
+  if( settings == DEFAULT_SETTINGS ){
+    setAccelRange(8);
+  }
+}
+
+status_t LSM6DSO::beginSettings()
 {
 	uint8_t dataToWrite = 0;  //Temporary variable
 
@@ -548,6 +558,246 @@ bool LSM6DSO::setHighPerfGyro(bool enable){
 //  Accelerometer section
 //
 //****************************************************************************//
+
+// Address: 0x10 , bit[4:3]: default value is: 0x00 (2g) 
+// Sets the acceleration range of the accleromter portion of the IMU.
+bool LSM6DSO::setAccelRange(uint8_t range) {
+
+  if( range < 0  | range > 16)
+    return false; 
+
+  uint8_t regVal;
+  uint8_t fullScale; 
+  status_t returnError = readRegister(&regVal, CTRL1_XL);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+
+  fullScale = getAccelFullScale();
+
+  // Can't have 16g with XL_FS_MODE == 1
+  if( fullScale == 1 && range == 16 )
+    range = 8;
+
+  regVal &= FS_XL_MASK;
+
+  switch (range) {
+    case 2:
+      regVal |= FS_XL_2g;
+      break;
+    case 4:
+      regVal |= FS_XL_4g;
+      break;
+    case 8:
+      regVal |= FS_XL_8g;
+      break;
+    case 16:
+      regVal |= FS_XL_16g;
+      break;
+    default:
+      break;
+  }
+
+  returnError = writeRegister(CTRL1_XL, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x10 , bit[4:3]: default value is: 0x00 (2g) 
+// Gets the acceleration range of the accleromter portion of the IMU.
+// The value is dependent on the full scale bit (see getAccelFullScale).
+uint8_t LSM6DSO::getAccelRange(){
+
+  uint8_t regVal;
+  uint8_t fullScale;
+  status_t returnError = readRegister(&regVal, CTRL1_XL);
+
+  if( returnError != IMU_SUCCESS )
+    return IMU_GENERIC_ERROR;
+
+  fullScale = getAccelFullScale();  
+  regVal = (regVal & 0x0C) >> 2; 
+
+  if( fullScale == 1 ){
+    switch( regVal ){
+      case 0: 
+        return 2;
+      case 1:
+        return 2;
+      case 2:
+        return 4;
+      case 3:
+        return 8;
+      }
+    }
+
+  else if( fullScale == 0 ){
+    switch( regVal ){
+      case 0: 
+        return 2;
+      case 1:
+        return 16;
+      case 2:
+        return 4;
+      case 3:
+        return 8;
+      }
+  }
+
+  else
+    return IMU_GENERIC_ERROR;
+
+}
+
+// Address: 0x10, bit[7:4]: default value is: 0x00 (Power Down)
+// Sets the output data rate of the accelerometer there-by enabling it. 
+bool LSM6DSO::setAccelDataRate(uint16_t rate) {
+
+
+  if( rate < 16  | rate > 6660) 
+    return false; 
+
+  uint8_t regVal;
+  uint8_t highPerf;
+  status_t returnError = readRegister(&regVal, CTRL1_XL);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+
+  highPerf = getAccelHighPerf();
+
+  // Can't have 1.6Hz and have high performance mode enabled.
+  if( highPerf == 0 && rate == 16 ) 
+    rate = 125;
+
+  regVal &= ODR_XL_MASK;
+
+  switch (settings.accelSampleRate) {
+    case 16:
+      regVal |= ODR_XL_1_6Hz;
+      break;
+    case 125:
+      regVal |= ODR_XL_12_5Hz;
+      break;
+    case 26:
+      regVal |= ODR_XL_26Hz;
+      break;
+    case 52:
+      regVal |= ODR_XL_52Hz;
+      break;
+    case 104:
+      regVal |= ODR_XL_104Hz;
+      break;
+    case 208:
+      regVal |= ODR_XL_208Hz;
+      break;
+    case 416:
+      regVal |= ODR_XL_416Hz;
+      break;
+    case 833:
+      regVal |= ODR_XL_833Hz;
+      break;
+    case 1660:
+      regVal |= ODR_XL_1660Hz;
+      break;
+    case 3330:
+      regVal |= ODR_XL_3330Hz;
+      break;
+    case 6660:
+      regVal |= ODR_XL_6660Hz;
+      break;
+    default:
+      break;
+  }
+
+  returnError = writeRegister(CTRL1_XL, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x10, bit[7:4]: default value is: 0x00 (Power Down)
+// Gets the output data rate of the accelerometer checking if high performance
+// mode is enabled in which case the lowest possible data rate is 12.5Hz.
+float LSM6DSO::getAccelDataRate(){
+
+  uint8_t regVal;
+  uint8_t highPerf;
+
+  status_t returnError = readRegister(&regVal, CTRL1_XL);
+  highPerf = getAccelHighPerf();
+
+  if( returnError != IMU_SUCCESS )
+    return IMU_GENERIC_ERROR;
+
+   regVal =  (regVal & 0xF0) >> 4; 
+
+   switch( regVal ){ 
+     case 0:
+       return 0;
+     case ODR_XL_1_6Hz: // Can't have 1.6 and high performance mode
+       if( highPerf == 0 )
+         return 12.5;
+       return 1.6;
+     case ODR_XL_12_5Hz:
+       return 12.5;
+     case ODR_XL_26Hz:
+       return 26.0;
+     case ODR_XL_52Hz:
+       return 52.0;
+     case ODR_XL_104Hz:
+       return 104.0;
+     case ODR_XL_208Hz:
+       return 208.0;
+     case ODR_XL_416Hz:
+       return 416.0;
+     case ODR_XL_833Hz:
+       return 833.0;
+     case ODR_XL_1660Hz:
+       return 1660.0;
+     case ODR_XL_3330Hz:
+       return 3330.0;
+     case ODR_XL_6660Hz:
+       return 6660.0;
+      default:
+        return static_cast<float>(IMU_GENERIC_ERROR);
+   }
+
+}
+
+// Address: 0x15, bit[4]: default value is: 0x00 (Enabled)
+// Checks wheter high performance is enabled or disabled. 
+uint8_t LSM6DSO::getAccelHighPerf(){
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, CTRL6_C);
+
+  if( returnError != IMU_SUCCESS )
+    return IMU_GENERIC_ERROR;
+  else
+    return ((regVal & 0x10) >> 4); 
+
+}
+
+// Address: 0x17, bit[2]: default value is: 0x00 
+// Checks whether the acclerometer is using "old" full scale or "new", see
+// datasheet for more information.
+uint8_t LSM6DSO::getAccelFullScale(){
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, CTRL8_XL);
+
+  if( returnError != IMU_SUCCESS )
+    return IMU_GENERIC_ERROR;
+  else
+    return ((regVal & 0x02) >> 1); 
+}
+
 int16_t LSM6DSO::readRawAccelX( void ) {
 
 	int16_t output;

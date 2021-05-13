@@ -48,7 +48,7 @@ LSM6DS0 myIMU( I2C_MODE );
 void setup() {
   //Over-ride default settings if desired
   myIMU.settings.gyroEnabled = 1;  //Can be 0 or 1
-  myIMU.settings.gyroRange = 2000;   //Max deg/s.  Can be: 125, 245, 500, 1000, 2000
+  myIMU.settings.gyroRange = 2000;   //Max deg/s.  Can be: 125, 250, 500, 1000, 2000
   myIMU.settings.gyroSampleRate = 833;   //Hz.  Can be: 13, 26, 52, 104, 208, 416, 833, 1666
   myIMU.settings.gyroBandWidth = 200;  //Hz.  Can be: 50, 100, 200, 400;
   myIMU.settings.gyroFifoEnabled = 1;  //Set to include gyro in FIFO
