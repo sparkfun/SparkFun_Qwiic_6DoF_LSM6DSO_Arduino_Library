@@ -495,15 +495,38 @@ bool LSM6DS0::setBlockDataUpdate(bool enable){
 }
 
 
-bool LSM6DS0::setHighPerformance(bool enable){
+bool LSM6DS0::setHighPerfAccel(bool enable){
 
   uint8_t regVal;
   status_t returnError = readRegister(&regVal, LSM6DS0_ACC_GYRO_CTRL6_C);
   if( returnError != IMU_SUCCESS )
     return false; 
 
-  regVal |= enable; 
+  if( enable )
+    regVal |= LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_ENABLE; 
+  else
+    regVal |= LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_DISABLE; 
+
   returnError = writeRegister(LSM6DS0_ACC_GYRO_CTRL6_C, regVal);
+  if( returnError != IMU_SUCCESS )
+    return false; 
+  else
+    return true;
+}
+
+bool LSM6DS0::setHighPerfGyro(bool enable){
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, LSM6DS0_ACC_GYRO_CTRL7_G);
+  if( returnError != IMU_SUCCESS )
+    return false; 
+
+  if( enable )
+    regVal |= LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_ENABLE; 
+  else
+    regVal |= LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_DISABLE; 
+
+  returnError = writeRegister(LSM6DS0_ACC_GYRO_CTRL7_G, regVal);
   if( returnError != IMU_SUCCESS )
     return false; 
   else

@@ -168,7 +168,8 @@ public:
 	status_t begin(void);
 
   bool setBlockDataUpdate(bool);
-  bool setHighPerformance(bool);
+  bool setHighPerfAccel(bool);
+  bool setHighPerfGyro(bool);
 	//Returns the raw bits from the sensor cast as 16-bit signed integers
 	int16_t readRawAccelX( void );
 	int16_t readRawAccelY( void );
@@ -1081,9 +1082,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_HIGH_PERF_ENABLED 		 = 0x00, //Default
-	LSM6DS0_ACC_GYRO_HIGH_PERF_DISABLE 		 = 0x10,
-} LSM6DS0_ACC_GYRO_HIGH_PERF_t;
+	LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_ENABLE 		 = 0x00, //Default
+	LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_DISABLE 		 = 0x10,
+} LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_t;
 
 /*******************************************************************************
 * Register      : CTRL6_C
@@ -1102,37 +1103,37 @@ typedef enum {
 /*******************************************************************************
 * Register      : CTRL7_G
 * Address       : 0x16
-* Bit Group Name: HPM_G
+* Bit Group Name: G_HM_MODE
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_HPM_G_NORMAL_MODE 		 = 0x00,
-	LSM6DS0_ACC_GYRO_HPM_G_REF_SIGNAL 		 = 0x10,
-	LSM6DS0_ACC_GYRO_HPM_G_NORMAL_MODE_2 		 = 0x20,
-	LSM6DS0_ACC_GYRO_HPM_G_AUTO_RESET_ON_INT 		 = 0x30,
-} LSM6DS0_ACC_GYRO_HPM_G_t;
+	LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_ENABLE 		 = 0x00,
+	LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_DISABLE 		 = 0x80
+} LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_t;
 
 /*******************************************************************************
 * Register      : CTRL7_G
 * Address       : 0x16
-* Bit Group Name: HP_EN
+* Bit Group Name: HP_EN_G
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_HP_EN_DISABLED 		 = 0x00,
+	LSM6DS0_ACC_GYRO_HP_EN_DISABLED 	 = 0x00,
 	LSM6DS0_ACC_GYRO_HP_EN_ENABLED 		 = 0x40,
 } LSM6DS0_ACC_GYRO_HP_EN_t;
 
 /*******************************************************************************
 * Register      : CTRL7_G
 * Address       : 0x16
-* Bit Group Name: LP_EN
+* Bit Group Name: HPM_G
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_LP_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_LP_EN_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_LP_EN_t;
+	LSM6DS0_ACC_GYRO_HPM_G_16mHz  = 0x00,
+	LSM6DS0_ACC_GYRO_HPM_G_65mHz  = 0x20,
+	LSM6DS0_ACC_GYRO_HPM_G_260mHz = 0x30,
+	LSM6DS0_ACC_GYRO_HPM_G_1_04Hz = 0x40,
+} LSM6DS0_ACC_GYRO_HPM_G_t;
 
 /*******************************************************************************
 * Register      : CTRL8_XL
