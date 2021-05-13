@@ -472,10 +472,23 @@ status_t LSM6DSO::begin()
 	
   // Write the gyroscope settings. 
 	writeRegister(CTRL2_G, dataToWrite);
-  setBlockDataUpdate(true);
 
 	return returnError;
 }
+
+// Address: 0x1E , bit[2:0]: default value is: 0x00
+// Checks if there is new accelerometer, gyro, or temperature data.
+uint8_t LSM6DSO::getDataReady(){
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, STATUS_REG);
+  
+  if( returnError != IMU_SUCCESS )
+    return static_cast<uint8_t>(returnError);
+  else
+    return regVal; 
+}
+
 // Address:0x12 CTRL3_C , bit[6] default value is: 0x00
 // This function sets the BDU (Block Data Update) bit. Use when not employing
 // the FIFO buffer.

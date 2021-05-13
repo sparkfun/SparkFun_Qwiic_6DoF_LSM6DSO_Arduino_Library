@@ -30,6 +30,7 @@ Distributed as-is; no warranty is given.
 // #include "SPI.h"
 
 LSM6DSO myIMU; //Default constructor is I2C, addr 0x6B
+int data; 
 
 void setup() {
 
@@ -51,26 +52,41 @@ void setup() {
 
 void loop()
 {
-  //Get all parameters
-  Serial.print("\nAccelerometer:\n");
-  Serial.print(" X = ");
-  Serial.println(myIMU.readFloatAccelX(), 4);
-  Serial.print(" Y = ");
-  Serial.println(myIMU.readFloatAccelY(), 4);
-  Serial.print(" Z = ");
-  Serial.println(myIMU.readFloatAccelZ(), 4);
+  
+  data = myIMU.getDataReady();
 
-  Serial.print("\nGyroscope:\n");
-  Serial.print(" X = ");
-  Serial.println(myIMU.readFloatGyroX(), 4);
-  Serial.print(" Y = ");
-  Serial.println(myIMU.readFloatGyroY(), 4);
-  Serial.print(" Z = ");
-  Serial.println(myIMU.readFloatGyroZ(), 4);
+  
+  if( (data & ACCEL_DATA_READY) == ACCEL_DATA_READY ){
 
-  Serial.print("\nThermometer:\n");
-  Serial.print(" Degrees C = ");
-  Serial.println(myIMU.readTempF(), 4);
+    Serial.print("\nAccelerometer:\n");
+    Serial.print(" X = ");
+    Serial.println(myIMU.readFloatAccelX(), 4);
+    Serial.print(" Y = ");
+    Serial.println(myIMU.readFloatAccelY(), 4);
+    Serial.print(" Z = ");
+    Serial.println(myIMU.readFloatAccelZ(), 4);
+
+  }
+
+  if( (data & GYRO_DATA_READY) == GYRO_DATA_READY ){
+
+    Serial.print("\nGyroscope:\n");
+    Serial.print(" X = ");
+    Serial.println(myIMU.readFloatGyroX(), 4);
+    Serial.print(" Y = ");
+    Serial.println(myIMU.readFloatGyroY(), 4);
+    Serial.print(" Z = ");
+    Serial.println(myIMU.readFloatGyroZ(), 4);
+
+  }
+
+  if( (data & TEMP_DATA_READY) ==  TEMP_DATA_READY ){
+
+    Serial.print("\nThermometer:\n");
+    Serial.print(" Degrees C = ");
+    Serial.println(myIMU.readTempF(), 4);
+
+  }
   
   delay(500); //Delay should be at least 1/ODR -> default ODR = 416 
 }

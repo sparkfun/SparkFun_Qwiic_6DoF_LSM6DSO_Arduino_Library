@@ -44,10 +44,9 @@ typedef enum
 	IMU_GENERIC_ERROR,
 	IMU_OUT_OF_BOUNDS,
 	IMU_ALL_ONES_WARNING,
-	//...
 } status_t;
 
-//This is the core operational class of the driver.
+//  This is the core operational class of the driver.
 //  LSM6DSOCore contains only read and write operations towards the IMU.
 //  To use the higher level functions, use the class LSM6DSO which inherits
 //  this class.
@@ -55,35 +54,23 @@ typedef enum
 class LSM6DSOCore
 {
 public:
+
 	LSM6DSOCore( uint8_t );
 	LSM6DSOCore( uint8_t, uint8_t );
 	~LSM6DSOCore() = default;
 	
 	status_t beginCore( void );
 	
-	//The following utilities read and write to the IMU
-
-	//ReadRegisterRegion takes a uint8 array address as input and reads
-	//  a chunk of memory into that array.
 	status_t readRegisterRegion(uint8_t*, uint8_t, uint8_t );
-	
-	//readRegister reads one 8-bit register
 	status_t readRegister(uint8_t*, uint8_t);
-	
-	//Reads two 8-bit regs, LSByte then MSByte order, and concatenates them.
-	//  Acts as a 16-bit read operation
 	status_t readRegisterInt16(int16_t*, uint8_t);
-	
-	//Writes an 8-bit byte;
 	status_t writeRegister(uint8_t, uint8_t);
-	
   status_t enableEmbeddedFunctions(bool);
-	
+
   SPISettings mySpiSettings; 
 	
 private:
 	
-	//Communication stuff
 	uint8_t commInterface;
 	uint8_t I2CAddress;
 	uint8_t chipSelectPin;
@@ -140,10 +127,13 @@ public:
 
 
 //This is the highest level class of the driver.
-//
-//class LSM6DSO inherits the core and makes use of the beginCore()
+//LSM6DSO inherits LSM6DSOcore and makes use of the beginCore()
 //method through it's own begin() method.  It also contains the
 //settings struct to hold user settings.
+
+#define ACCEL_DATA_READY 0x01
+#define GYRO_DATA_READY 0x02
+#define TEMP_DATA_READY 0x04
 
 class LSM6DSO : public LSM6DSOCore
 {
@@ -155,8 +145,6 @@ public:
 	uint16_t allOnesCounter;
 	uint16_t nonSuccessCounter;
 
-	//Constructor generates default SensorSettings.
-	//(over-ride after construction if desired)
 	LSM6DSO( uint8_t busType = I2C_MODE, uint8_t inputArg = 0x6B );
 	~LSM6DSO() = default;
 	
@@ -166,7 +154,9 @@ public:
   bool setBlockDataUpdate(bool);
   bool setHighPerfAccel(bool);
   bool setHighPerfGyro(bool);
-	//Returns the raw bits from the sensor cast as 16-bit signed integers
+
+  uint8_t getDataReady();
+
 	int16_t readRawAccelX( void );
 	int16_t readRawAccelY( void );
 	int16_t readRawAccelZ( void );
@@ -174,7 +164,6 @@ public:
 	int16_t readRawGyroY( void );
 	int16_t readRawGyroZ( void );
 
-	//Returns the values as floats.  Inside, this calls readRaw___();
 	float readFloatAccelX( void );
 	float readFloatAccelY( void );
 	float readFloatAccelZ( void );
@@ -182,7 +171,6 @@ public:
 	float readFloatGyroY( void );
 	float readFloatGyroZ( void );
 
-	//Temperature related methods
 	int16_t readRawTemp( void );
 	float readTempC( void );
 	float readTempF( void );
@@ -201,8 +189,6 @@ private:
 
 };
 
-
-// LSM6DSO Registers
 enum LSM6DSO_REGISTERS {
 
   FUNC_CFG_ACCESS        = 0x01,  
@@ -366,40 +352,6 @@ typedef enum {
   GYRO_DATA_3xC,
 
 } LSM6DSO_FIFO_TAGS_t; 
-
-/*******************************************************************************
-* Register      : RAM_ACCESS
-* Address       : 0x01
-* Bit Group Name: PROG_RAM1
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	PROG_RAM1_DISABLED 		 = 0x00,
-	PROG_RAM1_ENABLED 		 = 0x01,
-} LSM6DSO_PROG_RAM1_t;
-
-/*******************************************************************************
-* Register      : RAM_ACCESS
-* Address       : 0x01
-* Bit Group Name: CUSTOMROM1
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	CUSTOMROM1_DISABLED 		 = 0x00,
-	CUSTOMROM1_ENABLED 		 = 0x04,
-} LSM6DSO_CUSTOMROM1_t;
-
-/*******************************************************************************
-* Register      : RAM_ACCESS
-* Address       : 0x01
-* Bit Group Name: RAM_PAGE
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	RAM_PAGE_DISABLED 		 = 0x00,
-	RAM_PAGE_ENABLED 		 = 0x80
-} LSM6DSO_RAM_PAGE_t;
-
 
 /*******************************************************************************
 * Register      : FIFO_CTRL3
