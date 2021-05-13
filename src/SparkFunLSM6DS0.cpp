@@ -1,11 +1,11 @@
 /******************************************************************************
-SparkFunLSM6DS0.cpp
-LSM6DS0 Arduino and Teensy Driver
+SparkFunLSM6DSO.cpp
+LSM6DSO Arduino and Teensy Driver
 
 Marshall Taylor @ SparkFun Electronics
 May 20, 2015
-https://github.com/sparkfun/LSM6DS0_Breakout
-https://github.com/sparkfun/SparkFun_LSM6DS0_Arduino_Library
+https://github.com/sparkfun/LSM6DSO_Breakout
+https://github.com/sparkfun/SparkFun_LSM6DSO_Arduino_Library
 
 Resources:
 Uses Wire.h for i2c operation
@@ -24,13 +24,13 @@ or concerns with licensing, please contact techsupport@sparkfun.com.
 Distributed as-is; no warranty is given.
 ******************************************************************************/
 
-//See SparkFunLSM6DS0.h for additional topology notes.
+//See SparkFunLSM6DSO.h for additional topology notes.
 
-#include "SparkFunLSM6DS0.h"
+#include "SparkFunLSM6DSO.h"
 
 //****************************************************************************//
 //
-//  LSM6DS0Core functions.
+//  LSM6DSOCore functions.
 //
 //  Construction arguments:
 //  ( uint8_t busType, uint8_t inputArg ),
@@ -38,13 +38,13 @@ Distributed as-is; no warranty is given.
 //    where inputArg is address for I2C_MODE and chip select pin
 //    number for SPI_MODE
 //
-//  For SPI, construct LSM6DS0Core myIMU(SPI_MODE, 10);
-//  For I2C, construct LSM6DS0Core myIMU(I2C_MODE, 0x6B);
+//  For SPI, construct LSM6DSOCore myIMU(SPI_MODE, 10);
+//  For I2C, construct LSM6DSOCore myIMU(I2C_MODE, 0x6B);
 //
 //  Default construction is I2C mode, address 0x6B.
 //
 //****************************************************************************//
-LSM6DS0Core::LSM6DS0Core( uint8_t busType, uint8_t inputArg) : commInterface(I2C_MODE), I2CAddress(0x6B), chipSelectPin(10)
+LSM6DSOCore::LSM6DSOCore( uint8_t busType, uint8_t inputArg) : commInterface(I2C_MODE), I2CAddress(0x6B), chipSelectPin(10)
 {
 	commInterface = busType;
 	if( commInterface == I2C_MODE )
@@ -60,7 +60,7 @@ LSM6DS0Core::LSM6DS0Core( uint8_t busType, uint8_t inputArg) : commInterface(I2C
 
 }
 
-status_t LSM6DS0Core::beginCore(void)
+status_t LSM6DSOCore::beginCore(void)
 {
 	status_t returnError = IMU_SUCCESS;
   uint32_t spiPortSpeed = 10000000;
@@ -128,7 +128,7 @@ status_t LSM6DS0Core::beginCore(void)
 //    other memory!
 //
 //****************************************************************************//
-status_t LSM6DS0Core::readRegisterRegion(uint8_t outputPointer[] , uint8_t offset, uint8_t numBytes)
+status_t LSM6DSOCore::readRegisterRegion(uint8_t outputPointer[] , uint8_t offset, uint8_t numBytes)
 {
 	status_t returnError = IMU_SUCCESS;
 
@@ -181,7 +181,7 @@ status_t LSM6DS0Core::readRegisterRegion(uint8_t outputPointer[] , uint8_t offse
 //    offset -- register to read
 //
 //****************************************************************************//
-status_t LSM6DS0Core::readRegister(uint8_t* outputPointer, uint8_t offset) {
+status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t offset) {
 	//Return value
 	uint8_t result;
 	status_t returnError; 
@@ -228,7 +228,7 @@ status_t LSM6DS0Core::readRegister(uint8_t* outputPointer, uint8_t offset) {
 //    offset -- register to read
 //
 //****************************************************************************//
-status_t LSM6DS0Core::readRegisterInt16(int16_t* outputPointer, uint8_t offset) 
+status_t LSM6DSOCore::readRegisterInt16(int16_t* outputPointer, uint8_t offset) 
 {
 	uint8_t myBuffer[2];
 	status_t returnError = readRegisterRegion(myBuffer, offset, 2);  //Does memory transfer
@@ -247,7 +247,7 @@ status_t LSM6DS0Core::readRegisterInt16(int16_t* outputPointer, uint8_t offset)
 //    dataToWrite -- 8 bit data to write to register
 //
 //****************************************************************************//
-status_t LSM6DS0Core::writeRegister(uint8_t offset, uint8_t dataToWrite) {
+status_t LSM6DSOCore::writeRegister(uint8_t offset, uint8_t dataToWrite) {
 
 	status_t returnError = IMU_SUCCESS;
 	switch (commInterface) {
@@ -285,7 +285,7 @@ status_t LSM6DS0Core::writeRegister(uint8_t offset, uint8_t dataToWrite) {
 	return returnError;
 }
 
-status_t LSM6DS0Core::enableEmbeddedFunctions(bool enable)
+status_t LSM6DSOCore::enableEmbeddedFunctions(bool enable)
 {
   uint8_t tempVal; 
   readRegister(&tempVal, FUNC_CFG_ACCESS);
@@ -307,7 +307,7 @@ status_t LSM6DS0Core::enableEmbeddedFunctions(bool enable)
 //  Construct with same rules as the core ( uint8_t busType, uint8_t inputArg )
 //
 //****************************************************************************//
-LSM6DS0::LSM6DS0( uint8_t busType, uint8_t inputArg ) : LSM6DS0Core( busType, inputArg )
+LSM6DSO::LSM6DSO( uint8_t busType, uint8_t inputArg ) : LSM6DSOCore( busType, inputArg )
 {
 	//Construct with these default settings
 
@@ -344,7 +344,7 @@ LSM6DS0::LSM6DS0( uint8_t busType, uint8_t inputArg ) : LSM6DS0Core( busType, in
 //  "myIMU.settings.accelEnabled = 1;" to configure before calling .begin();
 //
 //****************************************************************************//
-status_t LSM6DS0::begin()
+status_t LSM6DSO::begin()
 {
 	uint8_t dataToWrite = 0;  //Temporary variable
 
@@ -358,54 +358,54 @@ status_t LSM6DS0::begin()
     //Range
 		switch (settings.accelRange) {
 		case 2:
-			dataToWrite |= LSM6DS0_ACC_FS_XL_2g;
+			dataToWrite |= FS_XL_2g;
 			break;
 		case 4:
-			dataToWrite |= LSM6DS0_ACC_FS_XL_4g;
+			dataToWrite |= FS_XL_4g;
 			break;
 		case 8:
-			dataToWrite |= LSM6DS0_ACC_FS_XL_8g;
+			dataToWrite |= FS_XL_8g;
 			break;
 		default:  //set default case to 16(max)
 		case 16:
-			dataToWrite |= LSM6DS0_ACC_FS_XL_16g;
+			dataToWrite |= FS_XL_16g;
 			break;
 		}
 		// Accelerometer ODR
 		switch (settings.accelSampleRate) {
 		case 16:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_1_6Hz;
+			dataToWrite |= ODR_XL_1_6Hz;
 			break;
 		case 125:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_12_5Hz;
+			dataToWrite |= ODR_XL_12_5Hz;
 			break;
 		case 26:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_26Hz;
+			dataToWrite |= ODR_XL_26Hz;
 			break;
 		case 52:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_52Hz;
+			dataToWrite |= ODR_XL_52Hz;
 			break;
 		default:  //Set default to 104
 		case 104:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_104Hz;
+			dataToWrite |= ODR_XL_104Hz;
 			break;
 		case 208:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_208Hz;
+			dataToWrite |= ODR_XL_208Hz;
 			break;
 		case 416:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_416Hz;
+			dataToWrite |= ODR_XL_416Hz;
 			break;
 		case 833:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_833Hz;
+			dataToWrite |= ODR_XL_833Hz;
 			break;
 		case 1660:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_1660Hz;
+			dataToWrite |= ODR_XL_1660Hz;
 			break;
 		case 3330:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_3330Hz;
+			dataToWrite |= ODR_XL_3330Hz;
 			break;
 		case 6660:
-			dataToWrite |= LSM6DS0_ACC_ODR_XL_6660Hz;
+			dataToWrite |= ODR_XL_6660Hz;
 			break;
 		}
 	}
@@ -419,53 +419,53 @@ status_t LSM6DS0::begin()
 	if ( settings.gyroEnabled == 1) {
 		switch (settings.gyroRange) {
 		case 125:
-			dataToWrite |= LSM6DS0_ACC_GYRO_FS_125_ENABLED;
+			dataToWrite |=  FS_125_ENABLED;
 			break;
 		case 245:
-			dataToWrite |= LSM6DS0_ACC_GYRO_FS_G_245dps;
+			dataToWrite |=  FS_G_245dps;
 			break;
 		case 500:
-			dataToWrite |= LSM6DS0_ACC_GYRO_FS_G_500dps;
+			dataToWrite |=  FS_G_500dps;
 			break;
 		case 1000:
-			dataToWrite |= LSM6DS0_ACC_GYRO_FS_G_1000dps;
+			dataToWrite |=  FS_G_1000dps;
 			break;
 		default:  //Default to full 2000DPS range
 		case 2000:
-			dataToWrite |= LSM6DS0_ACC_GYRO_FS_G_2000dps;
+			dataToWrite |=  FS_G_2000dps;
 			break;
 		}
 		switch (settings.gyroSampleRate) { 
 		case 125:
-			dataToWrite |= LSM6DS0_GYRO_ODR_G_12_5Hz;
+			dataToWrite |= G_12_5Hz;
 			break;
 		case 26:
-			dataToWrite |= LSM6DS0_GYRO_ODR_G_26Hz;
+			dataToWrite |= G_26Hz;
 			break;
 		case 52:
-			dataToWrite |= LSM6DS0_GYRO_ODR_G_52Hz;
+			dataToWrite |= G_52Hz;
 			break;
 		default:  //Set default to 104
 		case 104:
-			dataToWrite |= LSM6DS0_GYRO_ODR_G_104Hz;
+			dataToWrite |= G_104Hz;
 			break;
 		case 208:
-			dataToWrite |= LSM6DS0_GYRO_ODR_G_208Hz;
+			dataToWrite |= G_208Hz;
 			break;
 		case 416:
-			dataToWrite |= LSM6DS0_GYRO_ODR_G_416Hz;
+			dataToWrite |= G_416Hz;
 			break;
 		case 833:
-			dataToWrite |= LSM6DS0_GYRO_ODR_G_833Hz;
+			dataToWrite |= G_833Hz;
 			break;
 		case 1660:
-			dataToWrite |= LSM6DS0_GYRO_ODR_G_1660Hz;
+			dataToWrite |= G_1660Hz;
 			break;
 		case 3330:
-			dataToWrite |= LSM6DS0_GYRO_ODR_G_3330Hz;
+			dataToWrite |= G_3330Hz;
 			break;
 		case 6660:
-			dataToWrite |= LSM6DS0_GYRO_ODR_G_6660Hz;
+			dataToWrite |= G_6660Hz;
 			break;
 		}
 	}
@@ -479,7 +479,7 @@ status_t LSM6DS0::begin()
 // Address:0x12 CTRL3_C , bit[6] default value is: 0x00
 // This function sets the BDU (Block Data Update) bit. Use when not employing
 // the FIFO buffer.
-bool LSM6DS0::setBlockDataUpdate(bool enable){
+bool LSM6DSO::setBlockDataUpdate(bool enable){
 
   status_t returnError = writeRegister(CTRL3_C, 0x40);  			
 
@@ -492,7 +492,7 @@ bool LSM6DS0::setBlockDataUpdate(bool enable){
 }
 
 
-bool LSM6DS0::setHighPerfAccel(bool enable){
+bool LSM6DSO::setHighPerfAccel(bool enable){
 
   uint8_t regVal;
   status_t returnError = readRegister(&regVal, CTRL6_C);
@@ -500,9 +500,9 @@ bool LSM6DS0::setHighPerfAccel(bool enable){
     return false; 
 
   if( enable )
-    regVal |= LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_ENABLE; 
+    regVal |=  HIGH_PERF_ACC_ENABLE; 
   else
-    regVal |= LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_DISABLE; 
+    regVal |=  HIGH_PERF_ACC_DISABLE; 
 
   returnError = writeRegister(CTRL6_C, regVal);
   if( returnError != IMU_SUCCESS )
@@ -511,7 +511,7 @@ bool LSM6DS0::setHighPerfAccel(bool enable){
     return true;
 }
 
-bool LSM6DS0::setHighPerfGyro(bool enable){
+bool LSM6DSO::setHighPerfGyro(bool enable){
 
   uint8_t regVal;
   status_t returnError = readRegister(&regVal, CTRL7_G);
@@ -519,9 +519,9 @@ bool LSM6DS0::setHighPerfGyro(bool enable){
     return false; 
 
   if( enable )
-    regVal |= LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_ENABLE; 
+    regVal |=  HIGH_PERF_GYRO_ENABLE; 
   else
-    regVal |= LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_DISABLE; 
+    regVal |=  HIGH_PERF_GYRO_DISABLE; 
 
   returnError = writeRegister(CTRL7_G, regVal);
   if( returnError != IMU_SUCCESS )
@@ -535,7 +535,7 @@ bool LSM6DS0::setHighPerfGyro(bool enable){
 //  Accelerometer section
 //
 //****************************************************************************//
-int16_t LSM6DS0::readRawAccelX( void ) {
+int16_t LSM6DSO::readRawAccelX( void ) {
 
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTX_L_A );
@@ -549,12 +549,12 @@ int16_t LSM6DS0::readRawAccelX( void ) {
 	return output;
 }
 
-float LSM6DS0::readFloatAccelX( void ) {
+float LSM6DSO::readFloatAccelX( void ) {
 	float output = calcAccel(readRawAccelX());
 	return output;
 }
 
-int16_t LSM6DS0::readRawAccelY( void )
+int16_t LSM6DSO::readRawAccelY( void )
 {
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTY_L_A );
@@ -568,13 +568,13 @@ int16_t LSM6DS0::readRawAccelY( void )
 	return output;
 }
 
-float LSM6DS0::readFloatAccelY( void )
+float LSM6DSO::readFloatAccelY( void )
 {
 	float output = calcAccel(readRawAccelY());
 	return output;
 }
 
-int16_t LSM6DS0::readRawAccelZ( void )
+int16_t LSM6DSO::readRawAccelZ( void )
 {
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTZ_L_A );
@@ -588,13 +588,13 @@ int16_t LSM6DS0::readRawAccelZ( void )
 	return output;
 }
 
-float LSM6DS0::readFloatAccelZ( void )
+float LSM6DSO::readFloatAccelZ( void )
 {
 	float output = calcAccel(readRawAccelZ());
 	return output;
 }
 
-float LSM6DS0::calcAccel( int16_t input )
+float LSM6DSO::calcAccel( int16_t input )
 {
   uint8_t accelRange; 
   uint8_t scale;
@@ -646,7 +646,7 @@ float LSM6DS0::calcAccel( int16_t input )
 //  Gyroscope section
 //
 //****************************************************************************//
-int16_t LSM6DS0::readRawGyroX( void ) {
+int16_t LSM6DSO::readRawGyroX( void ) {
 
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTX_L_G );
@@ -661,13 +661,13 @@ int16_t LSM6DS0::readRawGyroX( void ) {
 	return output;
 }
 
-float LSM6DS0::readFloatGyroX( void ) {
+float LSM6DSO::readFloatGyroX( void ) {
 
 	float output = calcGyro(readRawGyroX());
 	return output;
 }
 
-int16_t LSM6DS0::readRawGyroY( void ) {
+int16_t LSM6DSO::readRawGyroY( void ) {
 
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTY_L_G );
@@ -682,13 +682,13 @@ int16_t LSM6DS0::readRawGyroY( void ) {
 	return output;
 }
 
-float LSM6DS0::readFloatGyroY( void ) {
+float LSM6DSO::readFloatGyroY( void ) {
   
 	float output = calcGyro(readRawGyroY());
 	return output;
 }
 
-int16_t LSM6DS0::readRawGyroZ( void ) {
+int16_t LSM6DSO::readRawGyroZ( void ) {
 
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTZ_L_G );
@@ -703,14 +703,14 @@ int16_t LSM6DS0::readRawGyroZ( void ) {
 	return output;
 }
 
-float LSM6DS0::readFloatGyroZ( void ) {
+float LSM6DSO::readFloatGyroZ( void ) {
 
 	float output = calcGyro(readRawGyroZ());
 	return output;
 
 }
 
-float LSM6DS0::calcGyro( int16_t input ) {
+float LSM6DSO::calcGyro( int16_t input ) {
 
 	uint8_t gyroRange;  
   uint8_t fullScale;
@@ -747,14 +747,14 @@ float LSM6DS0::calcGyro( int16_t input ) {
 //  Temperature section
 //
 //****************************************************************************//
-int16_t LSM6DS0::readRawTemp( void )
+int16_t LSM6DSO::readRawTemp( void )
 {
 	int16_t output;
 	readRegisterInt16( &output, OUT_TEMP_L );
 	return output;
 }  
 
-float LSM6DS0::readTempC( void )
+float LSM6DSO::readTempC( void )
 {
 	int16_t temp = (readRawTemp()); 
   int8_t msbTemp = (temp & 0xFF00) >> 8;  
@@ -770,7 +770,7 @@ float LSM6DS0::readTempC( void )
 
 }
 
-float LSM6DS0::readTempF( void )
+float LSM6DSO::readTempF( void )
 {
 	float output = readTempC(); 
 	output = (output * 9) / 5 + 32;
@@ -784,7 +784,7 @@ float LSM6DS0::readTempF( void )
 //  FIFO section
 //
 //****************************************************************************//
-void LSM6DS0::fifoBegin( void ) {
+void LSM6DSO::fifoBegin( void ) {
 	//CONFIGURE THE VARIOUS FIFO SETTINGS
 	//
 	//
@@ -827,7 +827,7 @@ void LSM6DS0::fifoBegin( void ) {
 
 }
 
-void LSM6DS0::fifoClear( void ) {
+void LSM6DSO::fifoClear( void ) {
 	//Drain the fifo data and dump it
 	while( (fifoGetStatus() & 0x1000 ) == 0 ) {
 		fifoRead();
@@ -835,7 +835,7 @@ void LSM6DS0::fifoClear( void ) {
 
 }
 
-fifoData LSM6DS0::fifoRead( void ) {
+fifoData LSM6DSO::fifoRead( void ) {
 	//Pull the last data from the fifo
   uint8_t tempTagByte; 
   uint8_t tempAccumulator;  
@@ -863,7 +863,7 @@ fifoData LSM6DS0::fifoRead( void ) {
   
 }
 
-uint16_t LSM6DS0::fifoGetStatus( void ) {
+uint16_t LSM6DSO::fifoGetStatus( void ) {
 	//Return some data on the state of the fifo
 	uint8_t tempReadByte = 0;
 	uint16_t tempAccumulator = 0;
@@ -875,7 +875,7 @@ uint16_t LSM6DS0::fifoGetStatus( void ) {
 	return tempAccumulator;  
 
 }
-void LSM6DS0::fifoEnd( void ) {
+void LSM6DSO::fifoEnd( void ) {
 	// turn off the fifo
 	writeRegister(FIFO_STATUS1, 0x00);  //Disable
 }

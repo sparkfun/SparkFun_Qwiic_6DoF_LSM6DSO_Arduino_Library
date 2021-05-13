@@ -1,11 +1,11 @@
 /******************************************************************************
-SparkFunLSM6DS0.h
-LSM6DS0 Arduino and Teensy Driver
+SparkFunLSM6DSO.h
+LSM6DSO Arduino and Teensy Driver
 
 Marshall Taylor @ SparkFun Electronics
 May 20, 2015
-https://github.com/sparkfun/LSM6DS0_Breakout
-https://github.com/sparkfun/SparkFun_LSM6DS0_Arduino_Library
+https://github.com/sparkfun/LSM6DSO_Breakout
+https://github.com/sparkfun/SparkFun_LSM6DSO_Arduino_Library
 
 Resources:
 Uses Wire.h for i2c operation
@@ -13,7 +13,7 @@ Uses SPI.h for SPI operation
 Either can be omitted if not used
 
 Development environment specifics:
-Arduino IDE 1.6.4
+Arduino IDE 1.8.1
 Teensy loader 1.23
 
 This code is released under the [MIT License](http://opensource.org/licenses/MIT).
@@ -24,8 +24,8 @@ or concerns with licensing, please contact techsupport@sparkfun.com.
 Distributed as-is; no warranty is given.
 ******************************************************************************/
 
-#ifndef __LSM6DS0IMU_H__
-#define __LSM6DS0IMU_H__
+#ifndef __LSM6DSOIMU_H__
+#define __LSM6DSOIMU_H__
 
 #include <stdint.h>
 #include <Wire.h>
@@ -48,16 +48,16 @@ typedef enum
 } status_t;
 
 //This is the core operational class of the driver.
-//  LSM6DS0Core contains only read and write operations towards the IMU.
-//  To use the higher level functions, use the class LSM6DS0 which inherits
+//  LSM6DSOCore contains only read and write operations towards the IMU.
+//  To use the higher level functions, use the class LSM6DSO which inherits
 //  this class.
 
-class LSM6DS0Core
+class LSM6DSOCore
 {
 public:
-	LSM6DS0Core( uint8_t );
-	LSM6DS0Core( uint8_t, uint8_t );
-	~LSM6DS0Core() = default;
+	LSM6DSOCore( uint8_t );
+	LSM6DSOCore( uint8_t, uint8_t );
+	~LSM6DSOCore() = default;
 	
 	status_t beginCore( void );
 	
@@ -141,11 +141,11 @@ public:
 
 //This is the highest level class of the driver.
 //
-//class LSM6DS0 inherits the core and makes use of the beginCore()
+//class LSM6DSO inherits the core and makes use of the beginCore()
 //method through it's own begin() method.  It also contains the
 //settings struct to hold user settings.
 
-class LSM6DS0 : public LSM6DS0Core
+class LSM6DSO : public LSM6DSOCore
 {
 public:
 	//IMU settings
@@ -157,8 +157,8 @@ public:
 
 	//Constructor generates default SensorSettings.
 	//(over-ride after construction if desired)
-	LSM6DS0( uint8_t busType = I2C_MODE, uint8_t inputArg = 0x6B );
-	~LSM6DS0() = default;
+	LSM6DSO( uint8_t busType = I2C_MODE, uint8_t inputArg = 0x6B );
+	~LSM6DSO() = default;
 	
 	//Call to apply SensorSettings
 	status_t begin(void);
@@ -365,7 +365,7 @@ typedef enum {
   GYRO_DATA_2xC,
   GYRO_DATA_3xC,
 
-} LSM6DS0_FIFO_TAGS_t; 
+} LSM6DSO_FIFO_TAGS_t; 
 
 /*******************************************************************************
 * Register      : RAM_ACCESS
@@ -374,9 +374,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_PROG_RAM1_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_PROG_RAM1_ENABLED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_PROG_RAM1_t;
+	PROG_RAM1_DISABLED 		 = 0x00,
+	PROG_RAM1_ENABLED 		 = 0x01,
+} LSM6DSO_PROG_RAM1_t;
 
 /*******************************************************************************
 * Register      : RAM_ACCESS
@@ -385,9 +385,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_CUSTOMROM1_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_CUSTOMROM1_ENABLED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_CUSTOMROM1_t;
+	CUSTOMROM1_DISABLED 		 = 0x00,
+	CUSTOMROM1_ENABLED 		 = 0x04,
+} LSM6DSO_CUSTOMROM1_t;
 
 /*******************************************************************************
 * Register      : RAM_ACCESS
@@ -396,9 +396,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_RAM_PAGE_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_RAM_PAGE_ENABLED 		 = 0x80
-} LSM6DS0_ACC_GYRO_RAM_PAGE_t;
+	RAM_PAGE_DISABLED 		 = 0x00,
+	RAM_PAGE_ENABLED 		 = 0x80
+} LSM6DSO_RAM_PAGE_t;
 
 
 /*******************************************************************************
@@ -408,19 +408,19 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_GYRO_FIFO_BDR_NOT_BATCHED = 0x00,
-	LSM6DS0_GYRO_FIFO_BDR_12_5        = 0x01,
-	LSM6DS0_GYRO_FIFO_BDR_26          = 0x02,
-	LSM6DS0_GYRO_FIFO_BDR_52          = 0x03,
-	LSM6DS0_GYRO_FIFO_BDR_104         = 0x04,
-	LSM6DS0_GYRO_FIFO_BDR_208         = 0x05,
-	LSM6DS0_GYRO_FIFO_BDR_417         = 0x06,
-	LSM6DS0_GYRO_FIFO_BDR_833         = 0x07,
-	LSM6DS0_GYRO_FIFO_BDR_1667        = 0x08,
-	LSM6DS0_GYRO_FIFO_BDR_3333        = 0x09,
-	LSM6DS0_GYRO_FIFO_BDR_6667        = 0x0A,
-	LSM6DS0_GYRO_FIFO_BDR_6_5         = 0x0B
-} LSM6DS0_ACC_GYRO_BDR_GY_FIFO_t;
+	FIFO_BDR_NOT_BATCHED = 0x00,
+	FIFO_BDR_12_5        = 0x01,
+	FIFO_BDR_26          = 0x02,
+	FIFO_BDR_52          = 0x03,
+	FIFO_BDR_104         = 0x04,
+	FIFO_BDR_208         = 0x05,
+	FIFO_BDR_417         = 0x06,
+	FIFO_BDR_833         = 0x07,
+	FIFO_BDR_1667        = 0x08,
+	FIFO_BDR_3333        = 0x09,
+	FIFO_BDR_6667        = 0x0A,
+	FIFO_BDR_6_5         = 0x0B
+} LSM6DSO_BDR_GY_FIFO_t;
 
 /*******************************************************************************
 * Register      : FIFO_CTRL3
@@ -429,19 +429,19 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_FIFO_BDR_NOT_BATCHED = 0x00,
-	LSM6DS0_ACC_FIFO_BDR_12_5        = 0x01,
-	LSM6DS0_ACC_FIFO_BDR_26          = 0x02,
-	LSM6DS0_ACC_FIFO_BDR_52          = 0x03,
-	LSM6DS0_ACC_FIFO_BDR_104         = 0x04,
-	LSM6DS0_ACC_FIFO_BDR_208         = 0x05,
-	LSM6DS0_ACC_FIFO_BDR_417         = 0x06,
-	LSM6DS0_ACC_FIFO_BDR_833         = 0x07,
-	LSM6DS0_ACC_FIFO_BDR_1667        = 0x08,
-	LSM6DS0_ACC_FIFO_BDR_3333        = 0x09,
-	LSM6DS0_ACC_FIFO_BDR_6667        = 0x0A,
-	LSM6DS0_ACC_FIFO_BDR_6_5         = 0x0B
-} LSM6DS0_ACC_GYRO_BDR_XL_FIFO_t;
+	FIFO_BDR_NOT_BATCHED = 0x00,
+	FIFO_BDR_12_5        = 0x01,
+	FIFO_BDR_26          = 0x02,
+	FIFO_BDR_52          = 0x03,
+	FIFO_BDR_104         = 0x04,
+	FIFO_BDR_208         = 0x05,
+	FIFO_BDR_417         = 0x06,
+	FIFO_BDR_833         = 0x07,
+	FIFO_BDR_1667        = 0x08,
+	FIFO_BDR_3333        = 0x09,
+	FIFO_BDR_6667        = 0x0A,
+	FIFO_BDR_6_5         = 0x0B
+} LSM6DSO_BDR_XL_FIFO_t;
 
 
 /*******************************************************************************
@@ -451,11 +451,11 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_G_DATA_NOT_IN_FIFO 	= 0x00,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_G_DECIMATION_BY_1 		= 0x01, //Default
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_G_DECIMATION_BY_8 		= 0x02,
-	LSM6DS0_ACC_GYRO_DEC_FIFO_XL_G_DECIMATION_BY_32 	= 0x03
-} LSM6DS0_ACC_GYRO_DEC_FIFO_XL_G_t;
+	DEC_FIFO_XL_G_DATA_NOT_IN_FIFO 	= 0x00,
+	DEC_FIFO_XL_G_DECIMATION_BY_1 		= 0x01, //Default
+	DEC_FIFO_XL_G_DECIMATION_BY_8 		= 0x02,
+	DEC_FIFO_XL_G_DECIMATION_BY_32 	= 0x03
+} LSM6DSO_DEC_FIFO_XL_G_t;
 
 /*******************************************************************************
 * Register      : FIFO_CTRL4
@@ -464,11 +464,11 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_TEMPERATURE_ODR_BATCH_NOT_IN_FIFO = 0x00,
-	LSM6DS0_TEMPERATURE_ODR_BATCH_RATE_1_6    = 0x01,
-	LSM6DS0_TEMPERATURE_ODR_BATCH_RATE_12_5   = 0x02,
-	LSM6DS0_TEMPERATURE_ODR_BATCH_RATE_52     = 0x03
-} LSM6DS0_TEMPERATURE_ODR_BATCH_t;
+	LSM6DSO_TEMPERATURE_ODR_BATCH_NOT_IN_FIFO = 0x00,
+	LSM6DSO_TEMPERATURE_ODR_BATCH_RATE_1_6    = 0x01,
+	LSM6DSO_TEMPERATURE_ODR_BATCH_RATE_12_5   = 0x02,
+	LSM6DSO_TEMPERATURE_ODR_BATCH_RATE_52     = 0x03
+} LSM6DSO_TEMPERATURE_ODR_BATCH_t;
 
 /*******************************************************************************
 * Register      : FIFO_CTRL4
@@ -477,13 +477,13 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FIFO_MODE_DISABLED       = 0x00,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_STOP_WHEN_FULL = 0x01,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_CONT_TO_FIFO   = 0x03,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_BYPASS_TO_CONT = 0x04,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_CONTINUOUS     = 0x06,
-	LSM6DS0_ACC_GYRO_FIFO_MODE_BYPASS_TO_FIFO = 0x07
-} LSM6DS0_ACC_GYRO_ODR_FIFO_t;
+	FIFO_MODE_DISABLED       = 0x00,
+	FIFO_MODE_STOP_WHEN_FULL = 0x01,
+	FIFO_MODE_CONT_TO_FIFO   = 0x03,
+	FIFO_MODE_BYPASS_TO_CONT = 0x04,
+	FIFO_MODE_CONTINUOUS     = 0x06,
+	FIFO_MODE_BYPASS_TO_FIFO = 0x07
+} LSM6DSO_ODR_FIFO_t;
 
 /*******************************************************************************
 * Register      : ORIENT_CFG_G
@@ -492,13 +492,13 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_ORIENT_XYZ 		 = 0x00,
-	LSM6DS0_ACC_GYRO_ORIENT_XZY 		 = 0x01,
-	LSM6DS0_ACC_GYRO_ORIENT_YXZ 		 = 0x02,
-	LSM6DS0_ACC_GYRO_ORIENT_YZX 		 = 0x03,
-	LSM6DS0_ACC_GYRO_ORIENT_ZXY 		 = 0x04,
-	LSM6DS0_ACC_GYRO_ORIENT_ZYX 		 = 0x05,
-} LSM6DS0_ACC_GYRO_ORIENT_t;
+	ORIENT_XYZ 		 = 0x00,
+	ORIENT_XZY 		 = 0x01,
+	ORIENT_YXZ 		 = 0x02,
+	ORIENT_YZX 		 = 0x03,
+	ORIENT_ZXY 		 = 0x04,
+	ORIENT_ZYX 		 = 0x05,
+} LSM6DSO_ORIENT_t;
 
 /*******************************************************************************
 * Register      : ORIENT_CFG_G
@@ -507,9 +507,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SIGN_Z_G_POSITIVE 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SIGN_Z_G_NEGATIVE 		 = 0x08,
-} LSM6DS0_ACC_GYRO_SIGN_Z_G_t;
+	SIGN_Z_G_POSITIVE 		 = 0x00,
+	SIGN_Z_G_NEGATIVE 		 = 0x08,
+} LSM6DSO_SIGN_Z_G_t;
 
 /*******************************************************************************
 * Register      : ORIENT_CFG_G
@@ -518,9 +518,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SIGN_Y_G_POSITIVE 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SIGN_Y_G_NEGATIVE 		 = 0x10,
-} LSM6DS0_ACC_GYRO_SIGN_Y_G_t;
+	SIGN_Y_G_POSITIVE 		 = 0x00,
+	SIGN_Y_G_NEGATIVE 		 = 0x10,
+} LSM6DSO_SIGN_Y_G_t;
 
 /*******************************************************************************
 * Register      : ORIENT_CFG_G
@@ -529,9 +529,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SIGN_X_G_POSITIVE 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SIGN_X_G_NEGATIVE 		 = 0x20,
-} LSM6DS0_ACC_GYRO_SIGN_X_G_t;
+	SIGN_X_G_POSITIVE 		 = 0x00,
+	SIGN_X_G_NEGATIVE 		 = 0x20,
+} LSM6DSO_SIGN_X_G_t;
 
 /*******************************************************************************
 * Register      : REFERENCE_G
@@ -539,8 +539,8 @@ typedef enum {
 * Bit Group Name: REF_G
 * Permission    : RW
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_REF_G_MASK  	0xFF
-#define  	LSM6DS0_ACC_GYRO_REF_G_POSITION  	0
+#define  	REF_G_MASK  	0xFF
+#define  	REF_G_POSITION  	0
 
 /*******************************************************************************
 * Register      : INT1_CTRL
@@ -549,9 +549,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_DRDY_XL_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_DRDY_XL_ENABLED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_INT1_DRDY_XL_t;
+	INT1_DRDY_XL_DISABLED 		 = 0x00,
+	INT1_DRDY_XL_ENABLED 		 = 0x01,
+} LSM6DSO_INT1_DRDY_XL_t;
 
 /*******************************************************************************
 * Register      : INT1_CTRL
@@ -560,9 +560,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_DRDY_G_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_DRDY_G_ENABLED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_INT1_DRDY_G_t;
+	INT1_DRDY_G_DISABLED 		 = 0x00,
+	INT1_DRDY_G_ENABLED 		 = 0x02,
+} LSM6DSO_INT1_DRDY_G_t;
 
 /*******************************************************************************
 * Register      : INT1_CTRL
@@ -571,9 +571,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_BOOT_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_BOOT_ENABLED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_INT1_BOOT_t;
+	INT1_BOOT_DISABLED 		 = 0x00,
+	INT1_BOOT_ENABLED 		 = 0x04,
+} LSM6DSO_INT1_BOOT_t;
 
 /*******************************************************************************
 * Register      : INT1_CTRL
@@ -582,9 +582,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_FTH_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_FTH_ENABLED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_INT1_FTH_t;
+	INT1_FTH_DISABLED 		 = 0x00,
+	INT1_FTH_ENABLED 		 = 0x08,
+} LSM6DSO_INT1_FTH_t;
 
 /*******************************************************************************
 * Register      : INT1_CTRL
@@ -593,9 +593,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_OVR_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_OVR_ENABLED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_INT1_OVR_t;
+	INT1_OVR_DISABLED 		 = 0x00,
+	INT1_OVR_ENABLED 		 = 0x10,
+} LSM6DSO_INT1_OVR_t;
 
 /*******************************************************************************
 * Register      : INT1_CTRL
@@ -604,9 +604,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_FSS5_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_FSS5_ENABLED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_INT1_FSS5_t;
+	INT1_FSS5_DISABLED 		 = 0x00,
+	INT1_FSS5_ENABLED 		 = 0x20,
+} LSM6DSO_INT1_FSS5_t;
 
 /*******************************************************************************
 * Register      : INT1_CTRL
@@ -615,9 +615,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_SIGN_MOT_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_SIGN_MOT_ENABLED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_INT1_SIGN_MOT_t;
+	INT1_SIGN_MOT_DISABLED 		 = 0x00,
+	INT1_SIGN_MOT_ENABLED 		 = 0x40,
+} LSM6DSO_INT1_SIGN_MOT_t;
 
 /*******************************************************************************
 * Register      : INT1_CTRL
@@ -626,9 +626,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_PEDO_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_PEDO_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_INT1_PEDO_t;
+	INT1_PEDO_DISABLED 		 = 0x00,
+	INT1_PEDO_ENABLED 		 = 0x80,
+} LSM6DSO_INT1_PEDO_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
@@ -637,9 +637,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_DRDY_XL_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_DRDY_XL_ENABLED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_INT2_DRDY_XL_t;
+	INT2_DRDY_XL_DISABLED 		 = 0x00,
+	INT2_DRDY_XL_ENABLED 		 = 0x01,
+} LSM6DSO_INT2_DRDY_XL_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
@@ -648,9 +648,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_DRDY_G_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_DRDY_G_ENABLED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_INT2_DRDY_G_t;
+	INT2_DRDY_G_DISABLED 		 = 0x00,
+	INT2_DRDY_G_ENABLED 		 = 0x02,
+} LSM6DSO_INT2_DRDY_G_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
@@ -659,9 +659,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_FTH_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_FTH_ENABLED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_INT2_FTH_t;
+	INT2_FTH_DISABLED 		 = 0x00,
+	INT2_FTH_ENABLED 		 = 0x08,
+} LSM6DSO_INT2_FTH_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
@@ -670,9 +670,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_OVR_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_OVR_ENABLED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_INT2_OVR_t;
+	INT2_OVR_DISABLED 		 = 0x00,
+	INT2_OVR_ENABLED 		 = 0x10,
+} LSM6DSO_INT2_OVR_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
@@ -681,9 +681,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_FSS5_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_FSS5_ENABLED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_INT2_FSS5_t;
+	INT2_FSS5_DISABLED 		 = 0x00,
+	INT2_FSS5_ENABLED 		 = 0x20,
+} LSM6DSO_INT2_FSS5_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
@@ -692,9 +692,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_SIGN_MOT_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_SIGN_MOT_ENABLED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_INT2_SIGN_MOT_t;
+	INT2_SIGN_MOT_DISABLED 		 = 0x00,
+	INT2_SIGN_MOT_ENABLED 		 = 0x40,
+} LSM6DSO_INT2_SIGN_MOT_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
@@ -703,9 +703,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_PEDO_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_PEDO_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_INT2_PEDO_t;
+	INT2_PEDO_DISABLED 		 = 0x00,
+	INT2_PEDO_ENABLED 		 = 0x80,
+} LSM6DSO_INT2_PEDO_t;
 
 /*******************************************************************************
 * Register      : WHO_AM_I
@@ -713,8 +713,8 @@ typedef enum {
 * Bit Group Name: WHO_AM_I_BIT
 * Permission    : RO
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_WHO_AM_I_BIT_MASK  	0xFF
-#define  	LSM6DS0_ACC_GYRO_WHO_AM_I_BIT_POSITION  	0
+#define  	WHO_AM_I_BIT_MASK  	0xFF
+#define  	WHO_AM_I_BIT_POSITION  	0
 
 
 /*******************************************************************************
@@ -725,9 +725,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_LPF2_XL_DISABLE = 0x00,
-	LSM6DS0_ACC_LPF2_XL_EN      = 0x02
-} LSM6DS0_ACC_LPF2_XL_t;
+	LPF2_XL_DISABLE = 0x00,
+	LPF2_XL_EN      = 0x02
+} LSM6DSO_LPF2_XL_t;
 
 /*******************************************************************************
 * Register      : CTRL1_XL
@@ -737,11 +737,11 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_FS_XL_2g 		 = 0x00,
-  LSM6DS0_ACC_FS_XL_16g  	 = 0x04,
-	LSM6DS0_ACC_FS_XL_4g 		 = 0x08,
-	LSM6DS0_ACC_FS_XL_8g 		 = 0x0C,
-} LSM6DS0_ACC_FS_XL_t;
+	FS_XL_2g 		 = 0x00,
+  FS_XL_16g  	 = 0x04,
+	FS_XL_4g 		 = 0x08,
+	FS_XL_8g 		 = 0x0C,
+} LSM6DSO_FS_XL_t;
 
 /*******************************************************************************
 * Register      : CTRL1_XL
@@ -751,19 +751,19 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_ODR_XL_POWER_DOWN = 0x00, // Low Power only
-	LSM6DS0_ACC_ODR_XL_1_6Hz      = 0xB0, // Low Power only
-	LSM6DS0_ACC_ODR_XL_12_5Hz     = 0x10, // Low Power only
-	LSM6DS0_ACC_ODR_XL_26Hz       = 0x20, // Low Power only
-	LSM6DS0_ACC_ODR_XL_52Hz       = 0x30, // Low Power only 
-	LSM6DS0_ACC_ODR_XL_104Hz      = 0x40, // Normal Mode
-	LSM6DS0_ACC_ODR_XL_208Hz      = 0x50, // Normal Mode
-	LSM6DS0_ACC_ODR_XL_416Hz      = 0x60, // High performance
-	LSM6DS0_ACC_ODR_XL_833Hz      = 0x70, // High Performance 
-	LSM6DS0_ACC_ODR_XL_1660Hz    = 0x80, // High Performance
-	LSM6DS0_ACC_ODR_XL_3330Hz    = 0x90, // High Performance
-	LSM6DS0_ACC_ODR_XL_6660Hz    = 0xA0 // High Performance
-} LSM6DS0_ACC_ODR_XL_t;
+	ODR_XL_POWER_DOWN = 0x00, // Low Power only
+	ODR_XL_1_6Hz      = 0xB0, // Low Power only
+	ODR_XL_12_5Hz     = 0x10, // Low Power only
+	ODR_XL_26Hz       = 0x20, // Low Power only
+	ODR_XL_52Hz       = 0x30, // Low Power only 
+	ODR_XL_104Hz      = 0x40, // Normal Mode
+	ODR_XL_208Hz      = 0x50, // Normal Mode
+	ODR_XL_416Hz      = 0x60, // High performance
+	ODR_XL_833Hz      = 0x70, // High Performance 
+	ODR_XL_1660Hz    = 0x80, // High Performance
+	ODR_XL_3330Hz    = 0x90, // High Performance
+	ODR_XL_6660Hz    = 0xA0 // High Performance
+} LSM6DSO_ODR_XL_t;
 
 /*******************************************************************************
 * Register      : CTRL2_G
@@ -773,9 +773,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FS_125_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FS_125_ENABLED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_FS_125_t;
+	FS_125_DISABLED 	 = 0x00,
+	FS_125_ENABLED 		 = 0x02,
+} LSM6DSO_FS_125_t;
 
 /*******************************************************************************
 * Register      : CTRL2_G
@@ -785,11 +785,11 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FS_G_245dps 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FS_G_500dps 		 = 0x04,
-	LSM6DS0_ACC_GYRO_FS_G_1000dps 		= 0x08,
-	LSM6DS0_ACC_GYRO_FS_G_2000dps 		= 0x0C,
-} LSM6DS0_ACC_GYRO_FS_G_t;
+	FS_G_245dps 		= 0x00,
+	FS_G_500dps 		= 0x04,
+	FS_G_1000dps 		= 0x08,
+	FS_G_2000dps 		= 0x0C,
+} LSM6DSO_FS_G_t;
 
 /*******************************************************************************
 * Register      : CTRL2_G
@@ -799,18 +799,18 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_GYRO_ODR_G_DISABLE = 0x00, // Low Power only
-	LSM6DS0_GYRO_ODR_G_12_5Hz  = 0x10, // Low Power only
-	LSM6DS0_GYRO_ODR_G_26Hz    = 0x20, // Low Power only
-	LSM6DS0_GYRO_ODR_G_52Hz    = 0x30, // Low Power only
-	LSM6DS0_GYRO_ODR_G_104Hz   = 0x40, // Normal Mode
-	LSM6DS0_GYRO_ODR_G_208Hz   = 0x50, // Normal Mode
-	LSM6DS0_GYRO_ODR_G_416Hz   = 0x60, // High performance
-	LSM6DS0_GYRO_ODR_G_833Hz   = 0x70, // High Performance
-	LSM6DS0_GYRO_ODR_G_1660Hz  = 0x80, // High Performance
-	LSM6DS0_GYRO_ODR_G_3330Hz  = 0x90, // High Performance
-	LSM6DS0_GYRO_ODR_G_6660Hz  = 0xA0 // High Performance
-} LSM6DS0_GYRO_ODR_G_t;
+	GYRO_ODR_G_DISABLE = 0x00, // Low Power only
+	GYRO_ODR_G_12_5Hz  = 0x10, // Low Power only
+	GYRO_ODR_G_26Hz    = 0x20, // Low Power only
+	GYRO_ODR_G_52Hz    = 0x30, // Low Power only
+	GYRO_ODR_G_104Hz   = 0x40, // Normal Mode
+	GYRO_ODR_G_208Hz   = 0x50, // Normal Mode
+	GYRO_ODR_G_416Hz   = 0x60, // High performance
+	GYRO_ODR_G_833Hz   = 0x70, // High Performance
+	GYRO_ODR_G_1660Hz  = 0x80, // High Performance
+	GYRO_ODR_G_3330Hz  = 0x90, // High Performance
+	GYRO_ODR_G_6660Hz  = 0xA0 // High Performance
+} LSM6DSO_GYRO_ODR_G_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C
@@ -819,9 +819,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SW_RESET_NORMAL_MODE 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SW_RESET_RESET_DEVICE 		 = 0x01,
-} LSM6DS0_ACC_GYRO_SW_RESET_t;
+	SW_RESET_NORMAL_MODE 		 = 0x00,
+	SW_RESET_RESET_DEVICE 		 = 0x01,
+} LSM6DSO_SW_RESET_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C
@@ -830,9 +830,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_BLE_LSB 		 = 0x00,
-	LSM6DS0_ACC_GYRO_BLE_MSB 		 = 0x02,
-} LSM6DS0_ACC_GYRO_BLE_t;
+	BLE_LSB 		 = 0x00,
+	BLE_MSB 		 = 0x02,
+} LSM6DSO_BLE_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C
@@ -841,9 +841,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_IF_INC_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_IF_INC_ENABLED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_IF_INC_t;
+	IF_INC_DISABLED 		 = 0x00,
+	IF_INC_ENABLED 		 = 0x04,
+} LSM6DSO_IF_INC_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C
@@ -852,9 +852,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SIM_4_WIRE 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SIM_3_WIRE 		 = 0x08,
-} LSM6DS0_ACC_GYRO_SIM_t;
+	SIM_4_WIRE 		 = 0x00,
+	SIM_3_WIRE 		 = 0x08,
+} LSM6DSO_SIM_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C
@@ -863,9 +863,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_PP_OD_PUSH_PULL 		 = 0x00,
-	LSM6DS0_ACC_GYRO_PP_OD_OPEN_DRAIN 		 = 0x10,
-} LSM6DS0_ACC_GYRO_PP_OD_t;
+	PP_OD_PUSH_PULL 		 = 0x00,
+	PP_OD_OPEN_DRAIN 		 = 0x10,
+} LSM6DSO_PP_OD_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C
@@ -874,9 +874,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT_ACT_LEVEL_ACTIVE_HI 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT_ACT_LEVEL_ACTIVE_LO 		 = 0x20,
-} LSM6DS0_ACC_GYRO_INT_ACT_LEVEL_t;
+	INT_ACT_LEVEL_ACTIVE_HI 		 = 0x00,
+	INT_ACT_LEVEL_ACTIVE_LO 		 = 0x20,
+} LSM6DSO_INT_ACT_LEVEL_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C
@@ -885,9 +885,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_BDU_CONTINUOS 		 = 0x00,
-	LSM6DS0_ACC_GYRO_BDU_BLOCK_UPDATE 		 = 0x40,
-} LSM6DS0_ACC_GYRO_BDU_t;
+	BDU_CONTINUOS 		 = 0x00,
+	BDU_BLOCK_UPDATE 		 = 0x40,
+} LSM6DSO_BDU_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C
@@ -896,9 +896,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_BOOT_NORMAL_MODE 		 = 0x00,
-	LSM6DS0_ACC_GYRO_BOOT_REBOOT_MODE 		 = 0x80,
-} LSM6DS0_ACC_GYRO_BOOT_t;
+	BOOT_NORMAL_MODE 		 = 0x00,
+	BOOT_REBOOT_MODE 		 = 0x80,
+} LSM6DSO_BOOT_t;
 
 /*******************************************************************************
 * Register      : CTRL4_C
@@ -907,9 +907,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_STOP_ON_FTH_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_STOP_ON_FTH_ENABLED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_STOP_ON_FTH_t;
+	STOP_ON_FTH_DISABLED 		 = 0x00,
+	STOP_ON_FTH_ENABLED 		 = 0x01,
+} LSM6DSO_STOP_ON_FTH_t;
 
 /*******************************************************************************
 * Register      : CTRL4_C
@@ -918,9 +918,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_MODE3_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_MODE3_EN_ENABLED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_MODE3_EN_t;
+	MODE3_EN_DISABLED 		 = 0x00,
+	MODE3_EN_ENABLED 		 = 0x02,
+} LSM6DSO_MODE3_EN_t;
 
 /*******************************************************************************
 * Register      : CTRL4_C
@@ -929,9 +929,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_I2C_DISABLE_I2C_AND_SPI 		 = 0x00,
-	LSM6DS0_ACC_GYRO_I2C_DISABLE_SPI_ONLY 		 = 0x04,
-} LSM6DS0_ACC_GYRO_I2C_DISABLE_t;
+	I2C_DISABLE_I2C_AND_SPI 		 = 0x00,
+	I2C_DISABLE_SPI_ONLY 		 = 0x04,
+} LSM6DSO_I2C_DISABLE_t;
 
 /*******************************************************************************
 * Register      : CTRL4_C
@@ -940,9 +940,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DRDY_MSK_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DRDY_MSK_ENABLED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_DRDY_MSK_t;
+	DRDY_MSK_DISABLED 		 = 0x00,
+	DRDY_MSK_ENABLED 		 = 0x08,
+} LSM6DSO_DRDY_MSK_t;
 
 /*******************************************************************************
 * Register      : CTRL4_C
@@ -951,9 +951,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FIFO_TEMP_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FIFO_TEMP_EN_ENABLED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_FIFO_TEMP_EN_t;
+	FIFO_TEMP_EN_DISABLED 		 = 0x00,
+	FIFO_TEMP_EN_ENABLED 		 = 0x10,
+} LSM6DSO_FIFO_TEMP_EN_t;
 
 /*******************************************************************************
 * Register      : CTRL4_C
@@ -962,9 +962,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_ON_INT1_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_ON_INT1_ENABLED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_INT2_ON_INT1_t;
+	INT2_ON_INT1_DISABLED 		 = 0x00,
+	INT2_ON_INT1_ENABLED 		 = 0x20,
+} LSM6DSO_INT2_ON_INT1_t;
 
 /*******************************************************************************
 * Register      : CTRL4_C
@@ -973,9 +973,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SLEEP_G_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SLEEP_G_ENABLED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_SLEEP_G_t;
+	SLEEP_G_DISABLED 		 = 0x00,
+	SLEEP_G_ENABLED 		 = 0x40,
+} LSM6DSO_SLEEP_G_t;
 
 /*******************************************************************************
 * Register      : CTRL4_C
@@ -984,9 +984,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_BW_SCAL_ODR_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_BW_SCAL_ODR_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_BW_SCAL_ODR_t;
+	BW_SCAL_ODR_DISABLED 		 = 0x00,
+	BW_SCAL_ODR_ENABLED 		 = 0x80,
+} LSM6DSO_BW_SCAL_ODR_t;
 
 /*******************************************************************************
 * Register      : CTRL5_C
@@ -995,11 +995,11 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_ST_XL_NORMAL_MODE 		 = 0x00,
-	LSM6DS0_ACC_GYRO_ST_XL_POS_SIGN_TEST 		 = 0x01,
-	LSM6DS0_ACC_GYRO_ST_XL_NEG_SIGN_TEST 		 = 0x02,
-	LSM6DS0_ACC_GYRO_ST_XL_NA 		 = 0x03,
-} LSM6DS0_ACC_GYRO_ST_XL_t;
+	ST_XL_NORMAL_MODE 		 = 0x00,
+	ST_XL_POS_SIGN_TEST 		 = 0x01,
+	ST_XL_NEG_SIGN_TEST 		 = 0x02,
+	ST_XL_NA 		 = 0x03,
+} LSM6DSO_ST_XL_t;
 
 /*******************************************************************************
 * Register      : CTRL5_C
@@ -1008,11 +1008,11 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_ST_G_NORMAL_MODE 		 = 0x00,
-	LSM6DS0_ACC_GYRO_ST_G_POS_SIGN_TEST 		 = 0x04,
-	LSM6DS0_ACC_GYRO_ST_G_NA 		 = 0x08,
-	LSM6DS0_ACC_GYRO_ST_G_NEG_SIGN_TEST 		 = 0x0C,
-} LSM6DS0_ACC_GYRO_ST_G_t;
+	ST_G_NORMAL_MODE 		 = 0x00,
+	ST_G_POS_SIGN_TEST 		 = 0x04,
+	ST_G_NA 		 = 0x08,
+	ST_G_NEG_SIGN_TEST 		 = 0x0C,
+} LSM6DSO_ST_G_t;
 
 /*******************************************************************************
 * Register      : CTRL6_C
@@ -1022,17 +1022,17 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FTYPE_ONE   = 0x00,
-	LSM6DS0_ACC_GYRO_FTYPE_TWO   = 0x01,
-	LSM6DS0_ACC_GYRO_FTYPE_THREE = 0x02,
-	LSM6DS0_ACC_GYRO_FTYPE_FOUR  = 0x03,
-	LSM6DS0_ACC_GYRO_FTYPE_FIVE  = 0x04,
-	LSM6DS0_ACC_GYRO_FTYPE_SIX   = 0x05,
-	LSM6DS0_ACC_GYRO_FTYPE_SEVEN = 0x06,
-	LSM6DS0_ACC_GYRO_FTYPE_EIGHT = 0x07,
-	LSM6DS0_ACC_GYRO_FTYPE_NINE  = 0x08,
-	LSM6DS0_ACC_GYRO_FTYPE_TEN   = 0x09
-} LSM6DS0_ACC_GYRO_FTYPE_t;
+	FTYPE_ONE   = 0x00,
+	FTYPE_TWO   = 0x01,
+	FTYPE_THREE = 0x02,
+	FTYPE_FOUR  = 0x03,
+	FTYPE_FIVE  = 0x04,
+	FTYPE_SIX   = 0x05,
+	FTYPE_SEVEN = 0x06,
+	FTYPE_EIGHT = 0x07,
+	FTYPE_NINE  = 0x08,
+	FTYPE_TEN   = 0x09
+} LSM6DSO_FTYPE_t;
 
 /*******************************************************************************
 * Register      : CTRL6_C
@@ -1041,9 +1041,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_USER_OFFSET_2_10 = 0x00,
-	LSM6DS0_ACC_GYRO_USER_OFFSET_2_6  = 0x08,
-} LSM6DS0_ACC_GYRO_USER_OFFSET_t;
+	USER_OFFSET_2_10 = 0x00,
+	USER_OFFSET_2_6  = 0x08,
+} LSM6DSO_USER_OFFSET_t;
 
 /*******************************************************************************
 * Register      : CTRL6_C
@@ -1052,9 +1052,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_ENABLE 		 = 0x00, //Default
-	LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_DISABLE 		 = 0x10,
-} LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_t;
+	HIGH_PERF_ACC_ENABLE 		 = 0x00, //Default
+	HIGH_PERF_ACC_DISABLE 		 = 0x10,
+} LSM6DSO_HIGH_PERF_ACC_t;
 
 /*******************************************************************************
 * Register      : CTRL6_C
@@ -1064,11 +1064,11 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TRIG_MODE_EDGE    = 0x80,
-	LSM6DS0_ACC_GYRO_TRIG_MODE_TRIGGER = 0x40,
-	LSM6DS0_ACC_GYRO_TRIG_MODE_LATCH   = 0x30,
-	LSM6DS0_ACC_GYRO_TRIG_MODE_FIFO    = 0x60,
-} LSM6DS0_ACC_GYRO_TRIG_MODE_t;
+	TRIG_MODE_EDGE    = 0x80,
+	TRIG_MODE_TRIGGER = 0x40,
+	TRIG_MODE_LATCH   = 0x30,
+	TRIG_MODE_FIFO    = 0x60,
+} LSM6DSO_TRIG_MODE_t;
 
 /*******************************************************************************
 * Register      : CTRL7_G
@@ -1077,9 +1077,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_ENABLE 		 = 0x00,
-	LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_DISABLE 		 = 0x80
-} LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_t;
+	HIGH_PERF_GYRO_ENABLE 		 = 0x00,
+	HIGH_PERF_GYRO_DISABLE 		 = 0x80
+} LSM6DSO_HIGH_PERF_GYRO_t;
 
 /*******************************************************************************
 * Register      : CTRL7_G
@@ -1088,9 +1088,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_HP_EN_DISABLED 	 = 0x00,
-	LSM6DS0_ACC_GYRO_HP_EN_ENABLED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_HP_EN_t;
+	HP_EN_DISABLED 	 = 0x00,
+	HP_EN_ENABLED 		 = 0x40,
+} LSM6DSO_HP_EN_t;
 
 /*******************************************************************************
 * Register      : CTRL7_G
@@ -1099,11 +1099,11 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_HPM_G_16mHz  = 0x00,
-	LSM6DS0_ACC_GYRO_HPM_G_65mHz  = 0x20,
-	LSM6DS0_ACC_GYRO_HPM_G_260mHz = 0x30,
-	LSM6DS0_ACC_GYRO_HPM_G_1_04Hz = 0x40,
-} LSM6DS0_ACC_GYRO_HPM_G_t;
+	HPM_G_16mHz  = 0x00,
+	HPM_G_65mHz  = 0x20,
+	HPM_G_260mHz = 0x30,
+	HPM_G_1_04Hz = 0x40,
+} LSM6DSO_HPM_G_t;
 
 /*******************************************************************************
 * Register      : CTRL8_XL
@@ -1112,9 +1112,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FDS_FILTER_OFF 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FDS_FILTER_ON 		 = 0x04,
-} LSM6DS0_ACC_GYRO_FDS_t;
+	FDS_FILTER_OFF 		 = 0x00,
+	FDS_FILTER_ON 		 = 0x04,
+} LSM6DSO_FDS_t;
 
 /*******************************************************************************
 * Register      : CTRL9_XL
@@ -1123,9 +1123,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_XEN_XL_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_XEN_XL_ENABLED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_XEN_XL_t;
+	XEN_XL_DISABLED 		 = 0x00,
+	XEN_XL_ENABLED 		 = 0x08,
+} LSM6DSO_XEN_XL_t;
 
 /*******************************************************************************
 * Register      : CTRL9_XL
@@ -1134,9 +1134,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_YEN_XL_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_YEN_XL_ENABLED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_YEN_XL_t;
+	YEN_XL_DISABLED 		 = 0x00,
+	YEN_XL_ENABLED 		 = 0x10,
+} LSM6DSO_YEN_XL_t;
 
 /*******************************************************************************
 * Register      : CTRL9_XL
@@ -1145,9 +1145,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_ZEN_XL_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_ZEN_XL_ENABLED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_ZEN_XL_t;
+	ZEN_XL_DISABLED 		 = 0x00,
+	ZEN_XL_ENABLED 		 = 0x20,
+} LSM6DSO_ZEN_XL_t;
 
 /*******************************************************************************
 * Register      : CTRL10_C
@@ -1156,9 +1156,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SIGN_MOTION_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SIGN_MOTION_EN_ENABLED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_SIGN_MOTION_EN_t;
+	SIGN_MOTION_EN_DISABLED 		 = 0x00,
+	SIGN_MOTION_EN_ENABLED 		 = 0x01,
+} LSM6DSO_SIGN_MOTION_EN_t;
 
 /*******************************************************************************
 * Register      : CTRL10_C
@@ -1167,9 +1167,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_PEDO_RST_STEP_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_PEDO_RST_STEP_ENABLED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_PEDO_RST_STEP_t;
+	PEDO_RST_STEP_DISABLED 		 = 0x00,
+	PEDO_RST_STEP_ENABLED 		 = 0x02,
+} LSM6DSO_PEDO_RST_STEP_t;
 
 /*******************************************************************************
 * Register      : CTRL10_C
@@ -1178,9 +1178,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_XEN_G_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_XEN_G_ENABLED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_XEN_G_t;
+	XEN_G_DISABLED 		 = 0x00,
+	XEN_G_ENABLED 		 = 0x08,
+} LSM6DSO_XEN_G_t;
 
 /*******************************************************************************
 * Register      : CTRL10_C
@@ -1189,9 +1189,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_YEN_G_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_YEN_G_ENABLED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_YEN_G_t;
+	YEN_G_DISABLED 		 = 0x00,
+	YEN_G_ENABLED 		 = 0x10,
+} LSM6DSO_YEN_G_t;
 
 /*******************************************************************************
 * Register      : CTRL10_C
@@ -1200,9 +1200,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_ZEN_G_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_ZEN_G_ENABLED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_ZEN_G_t;
+	ZEN_G_DISABLED 		 = 0x00,
+	ZEN_G_ENABLED 		 = 0x20,
+} LSM6DSO_ZEN_G_t;
 
 /*******************************************************************************
 * Register      : CTRL10_C
@@ -1211,9 +1211,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FUNC_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FUNC_EN_ENABLED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_FUNC_EN_t;
+	FUNC_EN_DISABLED 		 = 0x00,
+	FUNC_EN_ENABLED 		 = 0x04,
+} LSM6DSO_FUNC_EN_t;
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
@@ -1222,9 +1222,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_MASTER_ON_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_MASTER_ON_ENABLED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_MASTER_ON_t;
+	MASTER_ON_DISABLED 		 = 0x00,
+	MASTER_ON_ENABLED 		 = 0x01,
+} LSM6DSO_MASTER_ON_t;
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
@@ -1233,9 +1233,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_IRON_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_IRON_EN_ENABLED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_IRON_EN_t;
+	IRON_EN_DISABLED 		 = 0x00,
+	IRON_EN_ENABLED 		 = 0x02,
+} LSM6DSO_IRON_EN_t;
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
@@ -1244,9 +1244,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_PASS_THRU_MODE_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_PASS_THRU_MODE_ENABLED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_PASS_THRU_MODE_t;
+	PASS_THRU_MODE_DISABLED 		 = 0x00,
+	PASS_THRU_MODE_ENABLED 		 = 0x04,
+} LSM6DSO_PASS_THRU_MODE_t;
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
@@ -1255,9 +1255,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_PULL_UP_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_PULL_UP_EN_ENABLED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_PULL_UP_EN_t;
+	PULL_UP_EN_DISABLED 		 = 0x00,
+	PULL_UP_EN_ENABLED 		 = 0x08,
+} LSM6DSO_PULL_UP_EN_t;
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
@@ -1266,9 +1266,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_START_CONFIG_XL_G_DRDY 		 = 0x00,
-	LSM6DS0_ACC_GYRO_START_CONFIG_EXT_INT2 		 = 0x10,
-} LSM6DS0_ACC_GYRO_START_CONFIG_t;
+	START_CONFIG_XL_G_DRDY 		 = 0x00,
+	START_CONFIG_EXT_INT2 		 = 0x10,
+} LSM6DSO_START_CONFIG_t;
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
@@ -1277,9 +1277,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DATA_VAL_SEL_FIFO_XL_G_DRDY 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DATA_VAL_SEL_FIFO_SHUB_DRDY 		 = 0x40,
-} LSM6DS0_ACC_GYRO_DATA_VAL_SEL_FIFO_t;
+	DATA_VAL_SEL_FIFO_XL_G_DRDY 		 = 0x00,
+	DATA_VAL_SEL_FIFO_SHUB_DRDY 		 = 0x40,
+} LSM6DSO_DATA_VAL_SEL_FIFO_t;
 
 /*******************************************************************************
 * Register      : MASTER_CONFIG
@@ -1288,9 +1288,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DRDY_ON_INT1_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DRDY_ON_INT1_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_DRDY_ON_INT1_t;
+	DRDY_ON_INT1_DISABLED 		 = 0x00,
+	DRDY_ON_INT1_ENABLED 		 = 0x80,
+} LSM6DSO_DRDY_ON_INT1_t;
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
@@ -1299,9 +1299,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_Z_WU_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_Z_WU_DETECTED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_Z_WU_t;
+	Z_WU_NOT_DETECTED 		 = 0x00,
+	Z_WU_DETECTED 		 = 0x01,
+} LSM6DSO_Z_WU_t;
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
@@ -1310,9 +1310,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_Y_WU_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_Y_WU_DETECTED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_Y_WU_t;
+	Y_WU_NOT_DETECTED 		 = 0x00,
+	Y_WU_DETECTED 		 = 0x02,
+} LSM6DSO_Y_WU_t;
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
@@ -1321,9 +1321,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_X_WU_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_X_WU_DETECTED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_X_WU_t;
+	X_WU_NOT_DETECTED 		 = 0x00,
+	X_WU_DETECTED 		 = 0x04,
+} LSM6DSO_X_WU_t;
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
@@ -1332,9 +1332,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_WU_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_WU_EV_STATUS_DETECTED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_WU_EV_STATUS_t;
+	WU_EV_STATUS_NOT_DETECTED 		 = 0x00,
+	WU_EV_STATUS_DETECTED 		 = 0x08,
+} LSM6DSO_WU_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
@@ -1343,9 +1343,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SLEEP_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SLEEP_EV_STATUS_DETECTED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_SLEEP_EV_STATUS_t;
+	SLEEP_EV_STATUS_NOT_DETECTED 		 = 0x00,
+	SLEEP_EV_STATUS_DETECTED 		 = 0x10,
+} LSM6DSO_SLEEP_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : WAKE_UP_SRC
@@ -1354,9 +1354,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FF_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FF_EV_STATUS_DETECTED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_FF_EV_STATUS_t;
+	FF_EV_STATUS_NOT_DETECTED 		 = 0x00,
+	FF_EV_STATUS_DETECTED 		 = 0x20,
+} LSM6DSO_FF_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : TAP_SRC
@@ -1365,9 +1365,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_Z_TAP_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_Z_TAP_DETECTED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_Z_TAP_t;
+	Z_TAP_NOT_DETECTED 		 = 0x00,
+	Z_TAP_DETECTED 		 = 0x01,
+} LSM6DSO_Z_TAP_t;
 
 /*******************************************************************************
 * Register      : TAP_SRC
@@ -1376,9 +1376,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_Y_TAP_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_Y_TAP_DETECTED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_Y_TAP_t;
+	Y_TAP_NOT_DETECTED 		 = 0x00,
+	Y_TAP_DETECTED 		 = 0x02,
+} LSM6DSO_Y_TAP_t;
 
 /*******************************************************************************
 * Register      : TAP_SRC
@@ -1387,9 +1387,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_X_TAP_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_X_TAP_DETECTED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_X_TAP_t;
+	X_TAP_NOT_DETECTED 		 = 0x00,
+	X_TAP_DETECTED 		 = 0x04,
+} LSM6DSO_X_TAP_t;
 
 /*******************************************************************************
 * Register      : TAP_SRC
@@ -1398,9 +1398,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TAP_SIGN_POS_SIGN 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TAP_SIGN_NEG_SIGN 		 = 0x08,
-} LSM6DS0_ACC_GYRO_TAP_SIGN_t;
+	TAP_SIGN_POS_SIGN 		 = 0x00,
+	TAP_SIGN_NEG_SIGN 		 = 0x08,
+} LSM6DSO_TAP_SIGN_t;
 
 /*******************************************************************************
 * Register      : TAP_SRC
@@ -1409,9 +1409,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DOUBLE_TAP_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DOUBLE_TAP_EV_STATUS_DETECTED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_DOUBLE_TAP_EV_STATUS_t;
+	DOUBLE_TAP_EV_STATUS_NOT_DETECTED 		 = 0x00,
+	DOUBLE_TAP_EV_STATUS_DETECTED 		 = 0x10,
+} LSM6DSO_DOUBLE_TAP_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : TAP_SRC
@@ -1420,9 +1420,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SINGLE_TAP_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SINGLE_TAP_EV_STATUS_DETECTED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_SINGLE_TAP_EV_STATUS_t;
+	SINGLE_TAP_EV_STATUS_NOT_DETECTED 		 = 0x00,
+	SINGLE_TAP_EV_STATUS_DETECTED 		 = 0x20,
+} LSM6DSO_SINGLE_TAP_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : TAP_SRC
@@ -1431,9 +1431,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TAP_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TAP_EV_STATUS_DETECTED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_TAP_EV_STATUS_t;
+	TAP_EV_STATUS_NOT_DETECTED 		 = 0x00,
+	TAP_EV_STATUS_DETECTED 		 = 0x40,
+} LSM6DSO_TAP_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : D6D_SRC
@@ -1442,9 +1442,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DSD_XL_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DSD_XL_DETECTED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_DSD_XL_t;
+	DSD_XL_NOT_DETECTED 		 = 0x00,
+	DSD_XL_DETECTED 		 = 0x01,
+} LSM6DSO_DSD_XL_t;
 
 /*******************************************************************************
 * Register      : D6D_SRC
@@ -1453,9 +1453,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DSD_XH_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DSD_XH_DETECTED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_DSD_XH_t;
+	DSD_XH_NOT_DETECTED 		 = 0x00,
+	DSD_XH_DETECTED 		 = 0x02,
+} LSM6DSO_DSD_XH_t;
 
 /*******************************************************************************
 * Register      : D6D_SRC
@@ -1464,9 +1464,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DSD_YL_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DSD_YL_DETECTED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_DSD_YL_t;
+	DSD_YL_NOT_DETECTED 		 = 0x00,
+	DSD_YL_DETECTED 		 = 0x04,
+} LSM6DSO_DSD_YL_t;
 
 /*******************************************************************************
 * Register      : D6D_SRC
@@ -1475,9 +1475,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DSD_YH_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DSD_YH_DETECTED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_DSD_YH_t;
+	DSD_YH_NOT_DETECTED 		 = 0x00,
+	DSD_YH_DETECTED 		 = 0x08,
+} LSM6DSO_DSD_YH_t;
 
 /*******************************************************************************
 * Register      : D6D_SRC
@@ -1486,9 +1486,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DSD_ZL_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DSD_ZL_DETECTED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_DSD_ZL_t;
+	DSD_ZL_NOT_DETECTED 		 = 0x00,
+	DSD_ZL_DETECTED 		 = 0x10,
+} LSM6DSO_DSD_ZL_t;
 
 /*******************************************************************************
 * Register      : D6D_SRC
@@ -1497,9 +1497,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DSD_ZH_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DSD_ZH_DETECTED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_DSD_ZH_t;
+	DSD_ZH_NOT_DETECTED 		 = 0x00,
+	DSD_ZH_DETECTED 		 = 0x20,
+} LSM6DSO_DSD_ZH_t;
 
 /*******************************************************************************
 * Register      : D6D_SRC
@@ -1508,9 +1508,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_D6D_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_D6D_EV_STATUS_DETECTED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_D6D_EV_STATUS_t;
+	D6D_EV_STATUS_NOT_DETECTED 		 = 0x00,
+	D6D_EV_STATUS_DETECTED 		 = 0x40,
+} LSM6DSO_D6D_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : STATUS_REG
@@ -1519,9 +1519,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_XLDA_NO_DATA_AVAIL 		 = 0x00,
-	LSM6DS0_ACC_GYRO_XLDA_DATA_AVAIL 		 = 0x01,
-} LSM6DS0_ACC_GYRO_XLDA_t;
+	XLDA_NO_DATA_AVAIL 		 = 0x00,
+	XLDA_DATA_AVAIL 		 = 0x01,
+} LSM6DSO_XLDA_t;
 
 /*******************************************************************************
 * Register      : STATUS_REG
@@ -1530,9 +1530,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_GDA_NO_DATA_AVAIL 		 = 0x00,
-	LSM6DS0_ACC_GYRO_GDA_DATA_AVAIL 		 = 0x02,
-} LSM6DS0_ACC_GYRO_GDA_t;
+	GDA_NO_DATA_AVAIL 		 = 0x00,
+	GDA_DATA_AVAIL 		 = 0x02,
+} LSM6DSO_GDA_t;
 
 /*******************************************************************************
 * Register      : STATUS_REG
@@ -1541,9 +1541,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_EV_BOOT_NO_BOOT_RUNNING 		 = 0x00,
-	LSM6DS0_ACC_GYRO_EV_BOOT_BOOT_IS_RUNNING 		 = 0x08,
-} LSM6DS0_ACC_GYRO_EV_BOOT_t;
+	EV_BOOT_NO_BOOT_RUNNING 		 = 0x00,
+	EV_BOOT_BOOT_IS_RUNNING 		 = 0x08,
+} LSM6DSO_EV_BOOT_t;
 
 /*******************************************************************************
 * Register      : FIFO_STATUS1
@@ -1551,10 +1551,10 @@ typedef enum {
 * Bit Group Name: DIFF_FIFO
 * Permission    : RO
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_DIFF_FIFO_STATUS1_MASK  	0xFF
-#define  	LSM6DS0_ACC_GYRO_DIFF_FIFO_STATUS1_POSITION  	0
-#define  	LSM6DS0_ACC_GYRO_DIFF_FIFO_STATUS2_MASK  0xF
-#define  	LSM6DS0_ACC_GYRO_DIFF_FIFO_STATUS2_POSITION  	0
+#define  	DIFF_FIFO_STATUS1_MASK  	0xFF
+#define  	DIFF_FIFO_STATUS1_POSITION  	0
+#define  	DIFF_FIFO_STATUS2_MASK  0xF
+#define  	DIFF_FIFO_STATUS2_POSITION  	0
 
 /*******************************************************************************
 * Register      : FIFO_STATUS2
@@ -1563,9 +1563,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FIFO_EMPTY_FIFO_NOT_EMPTY 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FIFO_EMPTY_FIFO_EMPTY 		 = 0x10,
-} LSM6DS0_ACC_GYRO_FIFO_EMPTY_t;
+	FIFO_EMPTY_FIFO_NOT_EMPTY 		 = 0x00,
+	FIFO_EMPTY_FIFO_EMPTY 		 = 0x10,
+} LSM6DSO_FIFO_EMPTY_t;
 
 /*******************************************************************************
 * Register      : FIFO_STATUS2
@@ -1574,9 +1574,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FIFO_FULL_FIFO_NOT_FULL 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FIFO_FULL_FIFO_FULL 		 = 0x20,
-} LSM6DS0_ACC_GYRO_FIFO_FULL_t;
+	FIFO_FULL_FIFO_NOT_FULL 		 = 0x00,
+	FIFO_FULL_FIFO_FULL 		 = 0x20,
+} LSM6DSO_FIFO_FULL_t;
 
 /*******************************************************************************
 * Register      : FIFO_STATUS2
@@ -1585,9 +1585,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_OVERRUN_NO_OVERRUN 		 = 0x00,
-	LSM6DS0_ACC_GYRO_OVERRUN_OVERRUN 		 = 0x40,
-} LSM6DS0_ACC_GYRO_OVERRUN_t;
+	OVERRUN_NO_OVERRUN 		 = 0x00,
+	OVERRUN_OVERRUN 		 = 0x40,
+} LSM6DSO_OVERRUN_t;
 
 /*******************************************************************************
 * Register      : FIFO_STATUS2
@@ -1596,9 +1596,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_WTM_BELOW_WTM 		 = 0x00,
-	LSM6DS0_ACC_GYRO_WTM_ABOVE_OR_EQUAL_WTM 		 = 0x80,
-} LSM6DS0_ACC_GYRO_WTM_t;
+	WTM_BELOW_WTM 		 = 0x00,
+	WTM_ABOVE_OR_EQUAL_WTM 		 = 0x80,
+} LSM6DSO_WTM_t;
 
 /*******************************************************************************
 * Register      : FIFO_STATUS3
@@ -1606,10 +1606,10 @@ typedef enum {
 * Bit Group Name: FIFO_PATTERN
 * Permission    : RO
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_FIFO_STATUS3_PATTERN_MASK  	0xFF
-#define  	LSM6DS0_ACC_GYRO_FIFO_STATUS3_PATTERN_POSITION  	0
-#define  	LSM6DS0_ACC_GYRO_FIFO_STATUS4_PATTERN_MASK  	0x03
-#define  	LSM6DS0_ACC_GYRO_FIFO_STATUS4_PATTERN_POSITION  	0
+#define  	FIFO_STATUS3_PATTERN_MASK  	0xFF
+#define  	FIFO_STATUS3_PATTERN_POSITION  	0
+#define  	FIFO_STATUS4_PATTERN_MASK  	0x03
+#define  	FIFO_STATUS4_PATTERN_POSITION  	0
 
 /*******************************************************************************
 * Register      : FUNC_SRC
@@ -1618,9 +1618,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SENS_HUB_END_STILL_ONGOING 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SENS_HUB_END_OP_COMPLETED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_SENS_HUB_END_t;
+	SENS_HUB_END_STILL_ONGOING 		 = 0x00,
+	SENS_HUB_END_OP_COMPLETED 		 = 0x01,
+} LSM6DSO_SENS_HUB_END_t;
 
 /*******************************************************************************
 * Register      : FUNC_SRC
@@ -1629,9 +1629,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SOFT_IRON_END_NOT_COMPLETED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SOFT_IRON_END_COMPLETED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_SOFT_IRON_END_t;
+	SOFT_IRON_END_NOT_COMPLETED 		 = 0x00,
+	SOFT_IRON_END_COMPLETED 		 = 0x02,
+} LSM6DSO_SOFT_IRON_END_t;
 
 /*******************************************************************************
 * Register      : FUNC_SRC
@@ -1640,9 +1640,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_PEDO_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_PEDO_EV_STATUS_DETECTED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_PEDO_EV_STATUS_t;
+	PEDO_EV_STATUS_NOT_DETECTED 		 = 0x00,
+	PEDO_EV_STATUS_DETECTED 		 = 0x10,
+} LSM6DSO_PEDO_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : FUNC_SRC
@@ -1651,9 +1651,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TILT_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TILT_EV_STATUS_DETECTED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_TILT_EV_STATUS_t;
+	TILT_EV_STATUS_NOT_DETECTED 		 = 0x00,
+	TILT_EV_STATUS_DETECTED 		 = 0x20,
+} LSM6DSO_TILT_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : FUNC_SRC
@@ -1662,9 +1662,9 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SIGN_MOT_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SIGN_MOT_EV_STATUS_DETECTED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_SIGN_MOT_EV_STATUS_t;
+	SIGN_MOT_EV_STATUS_NOT_DETECTED 		 = 0x00,
+	SIGN_MOT_EV_STATUS_DETECTED 		 = 0x40,
+} LSM6DSO_SIGN_MOT_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : TAP_CFG1
@@ -1673,9 +1673,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_LIR_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_LIR_ENABLED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_LIR_t;
+	LIR_DISABLED 		 = 0x00,
+	LIR_ENABLED 		 = 0x01,
+} LSM6DSO_LIR_t;
 
 /*******************************************************************************
 * Register      : TAP_CFG1
@@ -1684,9 +1684,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TAP_Z_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TAP_Z_EN_ENABLED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_TAP_Z_EN_t;
+	TAP_Z_EN_DISABLED 		 = 0x00,
+	TAP_Z_EN_ENABLED 		 = 0x02,
+} LSM6DSO_TAP_Z_EN_t;
 
 /*******************************************************************************
 * Register      : TAP_CFG1
@@ -1695,9 +1695,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TAP_Y_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TAP_Y_EN_ENABLED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_TAP_Y_EN_t;
+	TAP_Y_EN_DISABLED 		 = 0x00,
+	TAP_Y_EN_ENABLED 		 = 0x04,
+} LSM6DSO_TAP_Y_EN_t;
 
 /*******************************************************************************
 * Register      : TAP_CFG1
@@ -1706,9 +1706,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TAP_X_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TAP_X_EN_ENABLED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_TAP_X_EN_t;
+	TAP_X_EN_DISABLED 		 = 0x00,
+	TAP_X_EN_ENABLED 		 = 0x08,
+} LSM6DSO_TAP_X_EN_t;
 
 /*******************************************************************************
 * Register      : TAP_CFG1
@@ -1717,9 +1717,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TILT_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TILT_EN_ENABLED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_TILT_EN_t;
+	TILT_EN_DISABLED 		 = 0x00,
+	TILT_EN_ENABLED 		 = 0x20,
+} LSM6DSO_TILT_EN_t;
 
 /*******************************************************************************
 * Register      : EMB_FUNC_EN_A
@@ -1728,9 +1728,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_PEDO_EN_DISABLED 	 = 0x00,
-	LSM6DS0_ACC_GYRO_PEDO_EN_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_PEDO_EN_t;
+	PEDO_EN_DISABLED 	 = 0x00,
+	PEDO_EN_ENABLED 		 = 0x80,
+} LSM6DSO_PEDO_EN_t;
 
 /*******************************************************************************
 * Register      : TAP_CFG1
@@ -1739,9 +1739,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TIMER_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TIMER_EN_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_TIMER_EN_t;
+	TIMER_EN_DISABLED 		 = 0x00,
+	TIMER_EN_ENABLED 		 = 0x80,
+} LSM6DSO_TIMER_EN_t;
 
 /*******************************************************************************
 * Register      : TAP_THS_6D
@@ -1749,8 +1749,8 @@ typedef enum {
 * Bit Group Name: TAP_THS
 * Permission    : RW
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_TAP_THS_MASK  	0x1F
-#define  	LSM6DS0_ACC_GYRO_TAP_THS_POSITION  	0
+#define  	TAP_THS_MASK  	0x1F
+#define  	TAP_THS_POSITION  	0
 
 /*******************************************************************************
 * Register      : TAP_THS_6D
@@ -1759,11 +1759,11 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SIXD_THS_80_degree 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SIXD_THS_70_degree 		 = 0x20,
-	LSM6DS0_ACC_GYRO_SIXD_THS_60_degree 		 = 0x40,
-	LSM6DS0_ACC_GYRO_SIXD_THS_50_degree 		 = 0x60,
-} LSM6DS0_ACC_GYRO_SIXD_THS_t;
+	SIXD_THS_80_degree 		 = 0x00,
+	SIXD_THS_70_degree 		 = 0x20,
+	SIXD_THS_60_degree 		 = 0x40,
+	SIXD_THS_50_degree 		 = 0x60,
+} LSM6DSO_SIXD_THS_t;
 
 /*******************************************************************************
 * Register      : INT_DUR2
@@ -1771,8 +1771,8 @@ typedef enum {
 * Bit Group Name: SHOCK
 * Permission    : RW
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_SHOCK_MASK  	0x03
-#define  	LSM6DS0_ACC_GYRO_SHOCK_POSITION  	0
+#define  	SHOCK_MASK  	0x03
+#define  	SHOCK_POSITION  	0
 
 /*******************************************************************************
 * Register      : INT_DUR2
@@ -1780,8 +1780,8 @@ typedef enum {
 * Bit Group Name: QUIET
 * Permission    : RW
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_QUIET_MASK  	0x0C
-#define  	LSM6DS0_ACC_GYRO_QUIET_POSITION  	2
+#define  	QUIET_MASK  	0x0C
+#define  	QUIET_POSITION  	2
 
 /*******************************************************************************
 * Register      : INT_DUR2
@@ -1789,8 +1789,8 @@ typedef enum {
 * Bit Group Name: DUR
 * Permission    : RW
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_DUR_MASK  	0xF0
-#define  	LSM6DS0_ACC_GYRO_DUR_POSITION  	4
+#define  	DUR_MASK  	0xF0
+#define  	DUR_POSITION  	4
 
 /*******************************************************************************
 * Register      : WAKE_UP_THS
@@ -1798,8 +1798,8 @@ typedef enum {
 * Bit Group Name: WK_THS
 * Permission    : RW
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_WK_THS_MASK  	0x3F
-#define  	LSM6DS0_ACC_GYRO_WK_THS_POSITION  	0
+#define  	WK_THS_MASK  	0x3F
+#define  	WK_THS_POSITION  	0
 
 /*******************************************************************************
 * Register      : WAKE_UP_THS
@@ -1808,9 +1808,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INACTIVITY_ON_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INACTIVITY_ON_ENABLED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_INACTIVITY_ON_t;
+	INACTIVITY_ON_DISABLED 		 = 0x00,
+	INACTIVITY_ON_ENABLED 		 = 0x40,
+} LSM6DSO_INACTIVITY_ON_t;
 
 /*******************************************************************************
 * Register      : WAKE_UP_THS
@@ -1819,9 +1819,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_SINGLE_DOUBLE_TAP_DOUBLE_TAP 		 = 0x00,
-	LSM6DS0_ACC_GYRO_SINGLE_DOUBLE_TAP_SINGLE_TAP 		 = 0x80,
-} LSM6DS0_ACC_GYRO_SINGLE_DOUBLE_TAP_t;
+	SINGLE_DOUBLE_TAP_DOUBLE_TAP 		 = 0x00,
+	SINGLE_DOUBLE_TAP_SINGLE_TAP 		 = 0x80,
+} LSM6DSO_SINGLE_DOUBLE_TAP_t;
 
 /*******************************************************************************
 * Register      : WAKE_UP_DUR
@@ -1829,8 +1829,8 @@ typedef enum {
 * Bit Group Name: SLEEP_DUR
 * Permission    : RW
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_SLEEP_DUR_MASK  	0x0F
-#define  	LSM6DS0_ACC_GYRO_SLEEP_DUR_POSITION  	0
+#define  	SLEEP_DUR_MASK  	0x0F
+#define  	SLEEP_DUR_POSITION  	0
 
 /*******************************************************************************
 * Register      : WAKE_UP_DUR
@@ -1839,9 +1839,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_TIMER_HR_6_4ms 		 = 0x00,
-	LSM6DS0_ACC_GYRO_TIMER_HR_25us 		 = 0x10,
-} LSM6DS0_ACC_GYRO_TIMER_HR_t;
+	TIMER_HR_6_4ms 		 = 0x00,
+	TIMER_HR_25us 		 = 0x10,
+} LSM6DSO_TIMER_HR_t;
 
 /*******************************************************************************
 * Register      : WAKE_UP_DUR
@@ -1849,8 +1849,8 @@ typedef enum {
 * Bit Group Name: WAKE_DUR
 * Permission    : RW
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_WAKE_DUR_MASK  	0x60
-#define  	LSM6DS0_ACC_GYRO_WAKE_DUR_POSITION  	5
+#define  	WAKE_DUR_MASK  	0x60
+#define  	WAKE_DUR_POSITION  	5
 
 /*******************************************************************************
 * Register      : FREE_FALL
@@ -1858,10 +1858,10 @@ typedef enum {
 * Bit Group Name: FF_DUR
 * Permission    : RW
 *******************************************************************************/
-#define  	LSM6DS0_ACC_GYRO_FF_FREE_FALL_DUR_MASK  	0xF8
-#define  	LSM6DS0_ACC_GYRO_FF_FREE_FALL_DUR_POSITION  	3
-#define  	LSM6DS0_ACC_GYRO_FF_WAKE_UP_DUR_MASK  	0x80
-#define  	LSM6DS0_ACC_GYRO_FF_WAKE_UP_DUR_POSITION  	7
+#define  	FF_FREE_FALL_DUR_MASK  	0xF8
+#define  	FF_FREE_FALL_DUR_POSITION  	3
+#define  	FF_WAKE_UP_DUR_MASK  	0x80
+#define  	FF_WAKE_UP_DUR_POSITION  	7
 
 
 /*******************************************************************************
@@ -1871,15 +1871,15 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_FF_THS_5 		 = 0x00,
-	LSM6DS0_ACC_GYRO_FF_THS_7 		 = 0x01,
-	LSM6DS0_ACC_GYRO_FF_THS_8 		 = 0x02,
-	LSM6DS0_ACC_GYRO_FF_THS_10 		 = 0x03,
-	LSM6DS0_ACC_GYRO_FF_THS_11 		 = 0x04,
-	LSM6DS0_ACC_GYRO_FF_THS_13 		 = 0x05,
-	LSM6DS0_ACC_GYRO_FF_THS_15 		 = 0x06,
-	LSM6DS0_ACC_GYRO_FF_THS_16 		 = 0x07,
-} LSM6DS0_ACC_GYRO_FF_THS_t;
+	FF_THS_5 		 = 0x00,
+	FF_THS_7 		 = 0x01,
+	FF_THS_8 		 = 0x02,
+	FF_THS_10 		 = 0x03,
+	FF_THS_11 		 = 0x04,
+	FF_THS_13 		 = 0x05,
+	FF_THS_15 		 = 0x06,
+	FF_THS_16 		 = 0x07,
+} LSM6DSO_FF_THS_t;
 
 /*******************************************************************************
 * Register      : MD1_CFG
@@ -1888,9 +1888,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_TIMER_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_TIMER_ENABLED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_INT1_TIMER_t;
+	INT1_TIMER_DISABLED 		 = 0x00,
+	INT1_TIMER_ENABLED 		 = 0x01,
+} LSM6DSO_INT1_TIMER_t;
 
 /*******************************************************************************
 * Register      : MD1_CFG
@@ -1899,9 +1899,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_TILT_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_TILT_ENABLED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_INT1_TILT_t;
+	INT1_TILT_DISABLED 		 = 0x00,
+	INT1_TILT_ENABLED 		 = 0x02,
+} LSM6DSO_INT1_TILT_t;
 
 /*******************************************************************************
 * Register      : MD1_CFG
@@ -1910,9 +1910,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_6D_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_6D_ENABLED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_INT1_6D_t;
+	INT1_6D_DISABLED 		 = 0x00,
+	INT1_6D_ENABLED 		 = 0x04,
+} LSM6DSO_INT1_6D_t;
 
 /*******************************************************************************
 * Register      : MD1_CFG
@@ -1921,9 +1921,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_TAP_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_TAP_ENABLED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_INT1_TAP_t;
+	INT1_TAP_DISABLED 		 = 0x00,
+	INT1_TAP_ENABLED 		 = 0x08,
+} LSM6DSO_INT1_TAP_t;
 
 /*******************************************************************************
 * Register      : MD1_CFG
@@ -1932,9 +1932,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_FF_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_FF_ENABLED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_INT1_FF_t;
+	INT1_FF_DISABLED 		 = 0x00,
+	INT1_FF_ENABLED 		 = 0x10,
+} LSM6DSO_INT1_FF_t;
 
 /*******************************************************************************
 * Register      : MD1_CFG
@@ -1943,9 +1943,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_WU_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_WU_ENABLED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_INT1_WU_t;
+	INT1_WU_DISABLED 		 = 0x00,
+	INT1_WU_ENABLED 		 = 0x20,
+} LSM6DSO_INT1_WU_t;
 
 /*******************************************************************************
 * Register      : MD1_CFG
@@ -1954,9 +1954,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_SINGLE_TAP_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_SINGLE_TAP_ENABLED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_INT1_SINGLE_TAP_t;
+	INT1_SINGLE_TAP_DISABLED 		 = 0x00,
+	INT1_SINGLE_TAP_ENABLED 		 = 0x40,
+} LSM6DSO_INT1_SINGLE_TAP_t;
 
 /*******************************************************************************
 * Register      : MD1_CFG
@@ -1965,9 +1965,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT1_SLEEP_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT1_SLEEP_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_INT1_SLEEP_t;
+	INT1_SLEEP_DISABLED 		 = 0x00,
+	INT1_SLEEP_ENABLED 		 = 0x80,
+} LSM6DSO_INT1_SLEEP_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG
@@ -1976,9 +1976,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_TIMER_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_TIMER_ENABLED 		 = 0x01,
-} LSM6DS0_ACC_GYRO_INT2_TIMER_t;
+	INT2_TIMER_DISABLED 		 = 0x00,
+	INT2_TIMER_ENABLED 		 = 0x01,
+} LSM6DSO_INT2_TIMER_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG
@@ -1987,9 +1987,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_TILT_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_TILT_ENABLED 		 = 0x02,
-} LSM6DS0_ACC_GYRO_INT2_TILT_t;
+	INT2_TILT_DISABLED 		 = 0x00,
+	INT2_TILT_ENABLED 		 = 0x02,
+} LSM6DSO_INT2_TILT_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG
@@ -1998,9 +1998,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_6D_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_6D_ENABLED 		 = 0x04,
-} LSM6DS0_ACC_GYRO_INT2_6D_t;
+	INT2_6D_DISABLED 		 = 0x00,
+	INT2_6D_ENABLED 		 = 0x04,
+} LSM6DSO_INT2_6D_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG
@@ -2009,9 +2009,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_TAP_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_TAP_ENABLED 		 = 0x08,
-} LSM6DS0_ACC_GYRO_INT2_TAP_t;
+	INT2_TAP_DISABLED 		 = 0x00,
+	INT2_TAP_ENABLED 		 = 0x08,
+} LSM6DSO_INT2_TAP_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG
@@ -2020,9 +2020,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_FF_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_FF_ENABLED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_INT2_FF_t;
+	INT2_FF_DISABLED 		 = 0x00,
+	INT2_FF_ENABLED 		 = 0x10,
+} LSM6DSO_INT2_FF_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG
@@ -2031,9 +2031,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_WU_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_WU_ENABLED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_INT2_WU_t;
+	INT2_WU_DISABLED 		 = 0x00,
+	INT2_WU_ENABLED 		 = 0x20,
+} LSM6DSO_INT2_WU_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG
@@ -2042,9 +2042,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_SINGLE_TAP_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_SINGLE_TAP_ENABLED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_INT2_SINGLE_TAP_t;
+	INT2_SINGLE_TAP_DISABLED 		 = 0x00,
+	INT2_SINGLE_TAP_ENABLED 		 = 0x40,
+} LSM6DSO_INT2_SINGLE_TAP_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG
@@ -2053,8 +2053,8 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_INT2_SLEEP_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_INT2_SLEEP_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_INT2_SLEEP_t;
+	INT2_SLEEP_DISABLED 		 = 0x00,
+	INT2_SLEEP_ENABLED 		 = 0x80,
+} LSM6DSO_INT2_SLEEP_t;
 
-#endif  // End of __LSM6DS0IMU_H__ definition check
+#endif  // End of __LSM6DSOIMU_H__ definition check
