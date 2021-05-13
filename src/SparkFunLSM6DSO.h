@@ -408,18 +408,18 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	FIFO_BDR_NOT_BATCHED = 0x00,
-	FIFO_BDR_12_5        = 0x01,
-	FIFO_BDR_26          = 0x02,
-	FIFO_BDR_52          = 0x03,
-	FIFO_BDR_104         = 0x04,
-	FIFO_BDR_208         = 0x05,
-	FIFO_BDR_417         = 0x06,
-	FIFO_BDR_833         = 0x07,
-	FIFO_BDR_1667        = 0x08,
-	FIFO_BDR_3333        = 0x09,
-	FIFO_BDR_6667        = 0x0A,
-	FIFO_BDR_6_5         = 0x0B
+	FIFO_BDR_GYRO_NOT_BATCHED = 0x00,
+	FIFO_BDR_GYRO_12_5        = 0x01,
+	FIFO_BDR_GYRO_26          = 0x02,
+	FIFO_BDR_GYRO_52          = 0x03,
+	FIFO_BDR_GYRO_104         = 0x04,
+	FIFO_BDR_GYRO_208         = 0x05,
+	FIFO_BDR_GYRO_417         = 0x06,
+	FIFO_BDR_GYRO_833         = 0x07,
+	FIFO_BDR_GYRO_1667        = 0x08,
+	FIFO_BDR_GYRO_3333        = 0x09,
+	FIFO_BDR_GYRO_6667        = 0x0A,
+	FIFO_BDR_GYRO_6_5         = 0x0B
 } LSM6DSO_BDR_GY_FIFO_t;
 
 /*******************************************************************************
@@ -429,18 +429,18 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	FIFO_BDR_NOT_BATCHED = 0x00,
-	FIFO_BDR_12_5        = 0x01,
-	FIFO_BDR_26          = 0x02,
-	FIFO_BDR_52          = 0x03,
-	FIFO_BDR_104         = 0x04,
-	FIFO_BDR_208         = 0x05,
-	FIFO_BDR_417         = 0x06,
-	FIFO_BDR_833         = 0x07,
-	FIFO_BDR_1667        = 0x08,
-	FIFO_BDR_3333        = 0x09,
-	FIFO_BDR_6667        = 0x0A,
-	FIFO_BDR_6_5         = 0x0B
+	FIFO_BDR_ACC_NOT_BATCHED = 0x00,
+	FIFO_BDR_ACC_12_5        = 0x01,
+	FIFO_BDR_ACC_26          = 0x02,
+	FIFO_BDR_ACC_52          = 0x03,
+	FIFO_BDR_ACC_104         = 0x04,
+	FIFO_BDR_ACC_208         = 0x05,
+	FIFO_BDR_ACC_417         = 0x06,
+	FIFO_BDR_ACC_833         = 0x07,
+	FIFO_BDR_ACC_1667        = 0x08,
+	FIFO_BDR_ACC_3333        = 0x09,
+	FIFO_BDR_ACC_6667        = 0x0A,
+	FIFO_BDR_ACC_6_5         = 0x0B
 } LSM6DSO_BDR_XL_FIFO_t;
 
 
@@ -799,17 +799,17 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	GYRO_ODR_G_DISABLE = 0x00, // Low Power only
-	GYRO_ODR_G_12_5Hz  = 0x10, // Low Power only
-	GYRO_ODR_G_26Hz    = 0x20, // Low Power only
-	GYRO_ODR_G_52Hz    = 0x30, // Low Power only
-	GYRO_ODR_G_104Hz   = 0x40, // Normal Mode
-	GYRO_ODR_G_208Hz   = 0x50, // Normal Mode
-	GYRO_ODR_G_416Hz   = 0x60, // High performance
-	GYRO_ODR_G_833Hz   = 0x70, // High Performance
-	GYRO_ODR_G_1660Hz  = 0x80, // High Performance
-	GYRO_ODR_G_3330Hz  = 0x90, // High Performance
-	GYRO_ODR_G_6660Hz  = 0xA0 // High Performance
+	GYRO_ODR_DISABLE = 0x00, // Low Power only
+	GYRO_ODR_12_5Hz  = 0x10, // Low Power only
+	GYRO_ODR_26Hz    = 0x20, // Low Power only
+	GYRO_ODR_52Hz    = 0x30, // Low Power only
+	GYRO_ODR_104Hz   = 0x40, // Normal Mode
+	GYRO_ODR_208Hz   = 0x50, // Normal Mode
+	GYRO_ODR_416Hz   = 0x60, // High performance
+	GYRO_ODR_833Hz   = 0x70, // High Performance
+	GYRO_ODR_1660Hz  = 0x80, // High Performance
+	GYRO_ODR_3330Hz  = 0x90, // High Performance
+	GYRO_ODR_6660Hz  = 0xA0 // High Performance
 } LSM6DSO_GYRO_ODR_G_t;
 
 /*******************************************************************************

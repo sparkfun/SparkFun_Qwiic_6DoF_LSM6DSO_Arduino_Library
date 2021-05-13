@@ -437,35 +437,35 @@ status_t LSM6DSO::begin()
 		}
 		switch (settings.gyroSampleRate) { 
 		case 125:
-			dataToWrite |= G_12_5Hz;
+			dataToWrite |= GYRO_ODR_12_5Hz;
 			break;
 		case 26:
-			dataToWrite |= G_26Hz;
+			dataToWrite |= GYRO_ODR_26Hz;
 			break;
 		case 52:
-			dataToWrite |= G_52Hz;
+			dataToWrite |= GYRO_ODR_52Hz;
 			break;
 		default:  //Set default to 104
 		case 104:
-			dataToWrite |= G_104Hz;
+			dataToWrite |= GYRO_ODR_104Hz;
 			break;
 		case 208:
-			dataToWrite |= G_208Hz;
+			dataToWrite |= GYRO_ODR_208Hz;
 			break;
 		case 416:
-			dataToWrite |= G_416Hz;
+			dataToWrite |= GYRO_ODR_416Hz;
 			break;
 		case 833:
-			dataToWrite |= G_833Hz;
+			dataToWrite |= GYRO_ODR_833Hz;
 			break;
 		case 1660:
-			dataToWrite |= G_1660Hz;
+			dataToWrite |= GYRO_ODR_1660Hz;
 			break;
 		case 3330:
-			dataToWrite |= G_3330Hz;
+			dataToWrite |= GYRO_ODR_3330Hz;
 			break;
 		case 6660:
-			dataToWrite |= G_6660Hz;
+			dataToWrite |= GYRO_ODR_6660Hz;
 			break;
 		}
 	}

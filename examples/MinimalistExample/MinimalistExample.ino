@@ -25,11 +25,11 @@ or concerns with licensing, please contact techsupport@sparkfun.com.
 Distributed as-is; no warranty is given.
 ******************************************************************************/
 
-#include "SparkFunLSM6DS0.h"
+#include "SparkFunLSM6DSO.h"
 #include "Wire.h"
 // #include "SPI.h"
 
-LSM6DS0 myIMU; //Default constructor is I2C, addr 0x6B
+LSM6DSO myIMU; //Default constructor is I2C, addr 0x6B
 
 void setup() {
 
