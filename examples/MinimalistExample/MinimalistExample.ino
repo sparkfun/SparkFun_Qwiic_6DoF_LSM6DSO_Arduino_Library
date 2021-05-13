@@ -70,7 +70,7 @@ void loop()
 
   Serial.print("\nThermometer:\n");
   Serial.print(" Degrees C = ");
-  Serial.println(myIMU.readTempC(), 4);
+  Serial.println(myIMU.readTempF(), 4);
   
   delay(500); //Delay should be at least 1/ODR -> default ODR = 416 
 }

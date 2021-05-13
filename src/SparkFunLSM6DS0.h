@@ -168,6 +168,7 @@ public:
 	status_t begin(void);
 
   bool setBlockDataUpdate(bool);
+  bool setHighPerformance(bool);
 	//Returns the raw bits from the sensor cast as 16-bit signed integers
 	int16_t readRawAccelX( void );
 	int16_t readRawAccelY( void );
@@ -232,7 +233,7 @@ private:
 #define LSM6DS0_ACC_GYRO_CTRL3_C  			0x12
 #define LSM6DS0_ACC_GYRO_CTRL4_C  			0x13
 #define LSM6DS0_ACC_GYRO_CTRL5_C  			0x14
-#define LSM6DS0_ACC_GYRO_CTRL6_G  			0x15
+#define LSM6DS0_ACC_GYRO_CTRL6_C  			0x15
 #define LSM6DS0_ACC_GYRO_CTRL7_G  			0x16
 #define LSM6DS0_ACC_GYRO_CTRL8_XL  			0x17
 #define LSM6DS0_ACC_GYRO_CTRL9_XL  			0x18
@@ -1043,48 +1044,60 @@ typedef enum {
 } LSM6DS0_ACC_GYRO_ST_G_t;
 
 /*******************************************************************************
-* Register      : CTRL6_G
+* Register      : CTRL6_C
 * Address       : 0x15
-* Bit Group Name: LP_XL
+* Bits          : [2:0]
+* Bit Group Name: FTYPE
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_LP_XL_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_LP_XL_ENABLED 		 = 0x10,
-} LSM6DS0_ACC_GYRO_LP_XL_t;
+	LSM6DS0_ACC_GYRO_FTYPE_ONE   = 0x00,
+	LSM6DS0_ACC_GYRO_FTYPE_TWO   = 0x01,
+	LSM6DS0_ACC_GYRO_FTYPE_THREE = 0x02,
+	LSM6DS0_ACC_GYRO_FTYPE_FOUR  = 0x03,
+	LSM6DS0_ACC_GYRO_FTYPE_FIVE  = 0x04,
+	LSM6DS0_ACC_GYRO_FTYPE_SIX   = 0x05,
+	LSM6DS0_ACC_GYRO_FTYPE_SEVEN = 0x06,
+	LSM6DS0_ACC_GYRO_FTYPE_EIGHT = 0x07,
+	LSM6DS0_ACC_GYRO_FTYPE_NINE  = 0x08,
+	LSM6DS0_ACC_GYRO_FTYPE_TEN   = 0x09
+} LSM6DS0_ACC_GYRO_FTYPE_t;
 
 /*******************************************************************************
-* Register      : CTRL6_G
+* Register      : CTRL6_C
 * Address       : 0x15
-* Bit Group Name: DEN_LVL2_EN
+* Bit Group Name: USR_OFF_W
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DEN_LVL2_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DEN_LVL2_EN_ENABLED 		 = 0x20,
-} LSM6DS0_ACC_GYRO_DEN_LVL2_EN_t;
+	LSM6DS0_ACC_GYRO_USER_OFFSET_2_10 = 0x00,
+	LSM6DS0_ACC_GYRO_USER_OFFSET_2_6  = 0x08,
+} LSM6DS0_ACC_GYRO_USER_OFFSET_t;
 
 /*******************************************************************************
-* Register      : CTRL6_G
+* Register      : CTRL6_C
 * Address       : 0x15
-* Bit Group Name: DEN_LVL_EN
+* Bit Group Name: XL_HM_MODE
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DEN_LVL_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DEN_LVL_EN_ENABLED 		 = 0x40,
-} LSM6DS0_ACC_GYRO_DEN_LVL_EN_t;
+	LSM6DS0_ACC_GYRO_HIGH_PERF_ENABLED 		 = 0x00, //Default
+	LSM6DS0_ACC_GYRO_HIGH_PERF_DISABLE 		 = 0x10,
+} LSM6DS0_ACC_GYRO_HIGH_PERF_t;
 
 /*******************************************************************************
-* Register      : CTRL6_G
+* Register      : CTRL6_C
 * Address       : 0x15
-* Bit Group Name: DEN_EDGE_EN
+* Bits          : [7:5]
+* Bit Group Names: TRIG_EN, LVL1_EN, LVL2_EN
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DS0_ACC_GYRO_DEN_EDGE_EN_DISABLED 		 = 0x00,
-	LSM6DS0_ACC_GYRO_DEN_EDGE_EN_ENABLED 		 = 0x80,
-} LSM6DS0_ACC_GYRO_DEN_EDGE_EN_t;
+	LSM6DS0_ACC_GYRO_TRIG_MODE_EDGE    = 0x80,
+	LSM6DS0_ACC_GYRO_TRIG_MODE_TRIGGER = 0x40,
+	LSM6DS0_ACC_GYRO_TRIG_MODE_LATCH   = 0x30,
+	LSM6DS0_ACC_GYRO_TRIG_MODE_FIFO    = 0x60,
+} LSM6DS0_ACC_GYRO_TRIG_MODE_t;
 
 /*******************************************************************************
 * Register      : CTRL7_G
