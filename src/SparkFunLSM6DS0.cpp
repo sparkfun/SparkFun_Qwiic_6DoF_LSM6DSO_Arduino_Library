@@ -103,7 +103,7 @@ status_t LSM6DS0Core::beginCore(void)
 
 	//Check the ID register to determine if the operation was a success.
 	uint8_t readCheck;
-	readRegister(&readCheck, LSM6DS0_ACC_GYRO_WHO_AM_I_REG);
+	readRegister(&readCheck, WHO_AM_I_REG);
 	if( readCheck != 0x6C )
 	{
 		returnError = IMU_HW_ERROR;
@@ -285,23 +285,20 @@ status_t LSM6DS0Core::writeRegister(uint8_t offset, uint8_t dataToWrite) {
 	return returnError;
 }
 
-status_t LSM6DS0Core::embeddedPage( void )
+status_t LSM6DS0Core::enableEmbeddedFunctions(bool enable)
 {
   uint8_t tempVal; 
-  readRegister(&tempVal,  LSM6DS0_ACC_GYRO_RAM_ACCESS);
-  tempVal = tempVal | 0x80;
-	status_t returnError = writeRegister( LSM6DS0_ACC_GYRO_RAM_ACCESS, tempVal );
+  readRegister(&tempVal, FUNC_CFG_ACCESS);
+  
+  if( enable )
+    tempVal |= 0x80;  
+  else
+    tempVal |= 0x7F; 
+
+	status_t returnError = writeRegister( FUNC_CFG_ACCESS, tempVal );
 	
 	return returnError;
 }
-
-status_t LSM6DS0Core::basePage( void )
-{
-	status_t returnError = writeRegister( LSM6DS0_ACC_GYRO_RAM_ACCESS, 0x00 );
-	
-	return returnError;
-}
-
 
 //****************************************************************************//
 //
@@ -414,7 +411,7 @@ status_t LSM6DS0::begin()
 	}
 
   // Write Accelerometer Settings....
-	writeRegister(LSM6DS0_ACC_GYRO_CTRL1_XL, dataToWrite);
+	writeRegister(CTRL1_XL, dataToWrite);
 
 	//Setup the gyroscope**********************************************
 	dataToWrite = 0; // Clear variable
@@ -474,7 +471,7 @@ status_t LSM6DS0::begin()
 	}
 	
   // Write the gyroscope settings. 
-	writeRegister(LSM6DS0_ACC_GYRO_CTRL2_G, dataToWrite);
+	writeRegister(CTRL2_G, dataToWrite);
   setBlockDataUpdate(true);
 
 	return returnError;
@@ -484,7 +481,7 @@ status_t LSM6DS0::begin()
 // the FIFO buffer.
 bool LSM6DS0::setBlockDataUpdate(bool enable){
 
-  status_t returnError = writeRegister(LSM6DS0_ACC_GYRO_CTRL3_C, 0x40);  			
+  status_t returnError = writeRegister(CTRL3_C, 0x40);  			
 
   if( returnError != IMU_SUCCESS )
     return false;
@@ -498,7 +495,7 @@ bool LSM6DS0::setBlockDataUpdate(bool enable){
 bool LSM6DS0::setHighPerfAccel(bool enable){
 
   uint8_t regVal;
-  status_t returnError = readRegister(&regVal, LSM6DS0_ACC_GYRO_CTRL6_C);
+  status_t returnError = readRegister(&regVal, CTRL6_C);
   if( returnError != IMU_SUCCESS )
     return false; 
 
@@ -507,7 +504,7 @@ bool LSM6DS0::setHighPerfAccel(bool enable){
   else
     regVal |= LSM6DS0_ACC_GYRO_HIGH_PERF_ACC_DISABLE; 
 
-  returnError = writeRegister(LSM6DS0_ACC_GYRO_CTRL6_C, regVal);
+  returnError = writeRegister(CTRL6_C, regVal);
   if( returnError != IMU_SUCCESS )
     return false; 
   else
@@ -517,7 +514,7 @@ bool LSM6DS0::setHighPerfAccel(bool enable){
 bool LSM6DS0::setHighPerfGyro(bool enable){
 
   uint8_t regVal;
-  status_t returnError = readRegister(&regVal, LSM6DS0_ACC_GYRO_CTRL7_G);
+  status_t returnError = readRegister(&regVal, CTRL7_G);
   if( returnError != IMU_SUCCESS )
     return false; 
 
@@ -526,7 +523,7 @@ bool LSM6DS0::setHighPerfGyro(bool enable){
   else
     regVal |= LSM6DS0_ACC_GYRO_HIGH_PERF_GYRO_DISABLE; 
 
-  returnError = writeRegister(LSM6DS0_ACC_GYRO_CTRL7_G, regVal);
+  returnError = writeRegister(CTRL7_G, regVal);
   if( returnError != IMU_SUCCESS )
     return false; 
   else
@@ -541,7 +538,7 @@ bool LSM6DS0::setHighPerfGyro(bool enable){
 int16_t LSM6DS0::readRawAccelX( void ) {
 
 	int16_t output;
-	status_t errorLevel = readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUTX_L_A );
+	status_t errorLevel = readRegisterInt16( &output, OUTX_L_A );
 	if( errorLevel != IMU_SUCCESS )
 	{
 		if( errorLevel == IMU_ALL_ONES_WARNING )
@@ -560,7 +557,7 @@ float LSM6DS0::readFloatAccelX( void ) {
 int16_t LSM6DS0::readRawAccelY( void )
 {
 	int16_t output;
-	status_t errorLevel = readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUTY_L_A );
+	status_t errorLevel = readRegisterInt16( &output, OUTY_L_A );
 	if( errorLevel != IMU_SUCCESS )
 	{
 		if( errorLevel == IMU_ALL_ONES_WARNING )
@@ -580,7 +577,7 @@ float LSM6DS0::readFloatAccelY( void )
 int16_t LSM6DS0::readRawAccelZ( void )
 {
 	int16_t output;
-	status_t errorLevel = readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUTZ_L_A );
+	status_t errorLevel = readRegisterInt16( &output, OUTZ_L_A );
 	if( errorLevel != IMU_SUCCESS )
 	{
 		if( errorLevel == IMU_ALL_ONES_WARNING )
@@ -603,7 +600,7 @@ float LSM6DS0::calcAccel( int16_t input )
   uint8_t scale;
   float output;
 
-  readRegister(&accelRange, LSM6DS0_ACC_GYRO_CTRL1_XL);
+  readRegister(&accelRange, CTRL1_XL);
   scale = (accelRange >> 1) & 0x01;
   accelRange = (accelRange >> 2) & (0x03);  
   
@@ -652,7 +649,7 @@ float LSM6DS0::calcAccel( int16_t input )
 int16_t LSM6DS0::readRawGyroX( void ) {
 
 	int16_t output;
-	status_t errorLevel = readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUTX_L_G );
+	status_t errorLevel = readRegisterInt16( &output, OUTX_L_G );
 
 	if( errorLevel != IMU_SUCCESS ) {
 		if( errorLevel == IMU_ALL_ONES_WARNING )
@@ -673,7 +670,7 @@ float LSM6DS0::readFloatGyroX( void ) {
 int16_t LSM6DS0::readRawGyroY( void ) {
 
 	int16_t output;
-	status_t errorLevel = readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUTY_L_G );
+	status_t errorLevel = readRegisterInt16( &output, OUTY_L_G );
 
 	if( errorLevel != IMU_SUCCESS ) {
 		if( errorLevel == IMU_ALL_ONES_WARNING )
@@ -694,7 +691,7 @@ float LSM6DS0::readFloatGyroY( void ) {
 int16_t LSM6DS0::readRawGyroZ( void ) {
 
 	int16_t output;
-	status_t errorLevel = readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUTZ_L_G );
+	status_t errorLevel = readRegisterInt16( &output, OUTZ_L_G );
 
 	if( errorLevel != IMU_SUCCESS ) {
 		if( errorLevel == IMU_ALL_ONES_WARNING )
@@ -719,7 +716,7 @@ float LSM6DS0::calcGyro( int16_t input ) {
   uint8_t fullScale;
   float output; 
 
-  readRegister(&gyroRange, LSM6DS0_ACC_GYRO_CTRL2_G) ;
+  readRegister(&gyroRange, CTRL2_G) ;
   fullScale = (gyroRange >> 1) & 0x01; 
   gyroRange = (gyroRange >> 2) & 0x03; 
 
@@ -753,7 +750,7 @@ float LSM6DS0::calcGyro( int16_t input ) {
 int16_t LSM6DS0::readRawTemp( void )
 {
 	int16_t output;
-	readRegisterInt16( &output, LSM6DS0_ACC_GYRO_OUT_TEMP_L );
+	readRegisterInt16( &output, OUT_TEMP_L );
 	return output;
 }  
 
@@ -800,7 +797,7 @@ void LSM6DS0::fifoBegin( void ) {
 
 	//CONFIGURE FIFO_CTRL4
 	uint8_t tempFIFO_CTRL4;
-  readRegister(&tempFIFO_CTRL4, LSM6DS0_ACC_GYRO_FIFO_CTRL4);
+  readRegister(&tempFIFO_CTRL4, FIFO_CTRL4);
   // Clear fifoMode bits
   tempFIFO_CTRL4 &= 0xF8;
   // Merge bits
@@ -816,17 +813,17 @@ void LSM6DS0::fifoBegin( void ) {
 
 	//Write the data
 	//Serial.println(thresholdLByte, HEX);
-	writeRegister(LSM6DS0_ACC_GYRO_FIFO_CTRL1, thresholdLByte);
+	writeRegister(FIFO_CTRL1, thresholdLByte);
   uint8_t tempVal;
-  tempVal = readRegister(&tempVal, LSM6DS0_ACC_GYRO_FIFO_CTRL2);
+  tempVal = readRegister(&tempVal, FIFO_CTRL2);
   // Mask threshold bytes
   tempVal &= 0xFE;
   // Merge bytes
   tempVal |= thresholdHByte; 
-	writeRegister(LSM6DS0_ACC_GYRO_FIFO_CTRL2, tempVal);
+	writeRegister(FIFO_CTRL2, tempVal);
 
 	//Serial.println(thresholdHByte, HEX);
-	writeRegister(LSM6DS0_ACC_GYRO_FIFO_CTRL4, tempFIFO_CTRL4);
+	writeRegister(FIFO_CTRL4, tempFIFO_CTRL4);
 
 }
 
@@ -845,21 +842,21 @@ fifoData LSM6DS0::fifoRead( void ) {
   fifoData tempFifoData; 
   
 
-  readRegister(&tempTagByte, LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_TAG);
+  readRegister(&tempTagByte, FIFO_DATA_OUT_TAG);
 
   tempFifoData.fifoTag = tempTagByte;
 
-  readRegister(&tempAccumulator, LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_X_H);
+  readRegister(&tempAccumulator, FIFO_DATA_OUT_X_H);
   tempFifoData.xData = (static_cast<uint16_t>(tempAccumulator) << 8);
-  readRegister(&tempAccumulator, LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_X_L);
+  readRegister(&tempAccumulator, FIFO_DATA_OUT_X_L);
   tempFifoData.xData |= tempAccumulator;
-  readRegister(&tempAccumulator, LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_Y_H);
+  readRegister(&tempAccumulator, FIFO_DATA_OUT_Y_H);
   tempFifoData.yData = (static_cast<uint16_t>(tempAccumulator) << 8);
-  readRegister(&tempAccumulator, LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_Y_L);
+  readRegister(&tempAccumulator, FIFO_DATA_OUT_Y_L);
   tempFifoData.yData |= tempAccumulator;
-  readRegister(&tempAccumulator, LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_Z_H);
+  readRegister(&tempAccumulator, FIFO_DATA_OUT_Z_H);
   tempFifoData.zData = (static_cast<uint16_t>(tempAccumulator) << 8);
-  readRegister(&tempAccumulator, LSM6DS0_ACC_GYRO_FIFO_DATA_OUT_Z_L);
+  readRegister(&tempAccumulator, FIFO_DATA_OUT_Z_L);
   tempFifoData.zData |= tempAccumulator;
 
   return tempFifoData;
@@ -870,9 +867,9 @@ uint16_t LSM6DS0::fifoGetStatus( void ) {
 	//Return some data on the state of the fifo
 	uint8_t tempReadByte = 0;
 	uint16_t tempAccumulator = 0;
-	readRegister(&tempReadByte, LSM6DS0_ACC_GYRO_FIFO_STATUS1);
+	readRegister(&tempReadByte, FIFO_STATUS1);
 	tempAccumulator = tempReadByte;
-	readRegister(&tempReadByte, LSM6DS0_ACC_GYRO_FIFO_STATUS2);
+	readRegister(&tempReadByte, FIFO_STATUS2);
 	tempAccumulator |= (tempReadByte << 8);
 
 	return tempAccumulator;  
@@ -880,6 +877,6 @@ uint16_t LSM6DS0::fifoGetStatus( void ) {
 }
 void LSM6DS0::fifoEnd( void ) {
 	// turn off the fifo
-	writeRegister(LSM6DS0_ACC_GYRO_FIFO_STATUS1, 0x00);  //Disable
+	writeRegister(FIFO_STATUS1, 0x00);  //Disable
 }
 
