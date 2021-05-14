@@ -119,7 +119,7 @@ status_t LSM6DSOCore::beginCore()
 //
 //  Parameters:
 //    *outputPointer -- Pass &variable (base address of) to save read data to
-//    offset -- register to read
+//    address -- register to read
 //    numBytes -- number of bytes to read
 //
 //  Note:  Does not know if the target memory space is an array or not, or
@@ -128,60 +128,57 @@ status_t LSM6DSOCore::beginCore()
 //    other memory!
 //
 //****************************************************************************//
-status_t LSM6DSOCore::readRegisterRegion(uint8_t outputPointer[] , uint8_t offset, uint8_t numBytes)
+status_t LSM6DSOCore::readMultipleRegisters(uint8_t outputPointer[], uint8_t address, uint8_t numBytes)
 {
-	status_t returnError = IMU_SUCCESS;
 
-	//define pointer that will point to the external space
+	status_t returnError;
 
 	switch( commInterface ){
 
-	case I2C_MODE:
+    case I2C_MODE:
 
-		_i2cPort->beginTransmission(I2CAddress);
-		_i2cPort->write(offset);
-		if( _i2cPort->endTransmission(false) != 0 )
-			return IMU_HW_ERROR;
+      _i2cPort->beginTransmission(I2CAddress);
+      _i2cPort->write(address);
+      if( _i2cPort->endTransmission(false) != 0 )
+        return IMU_HW_ERROR;
 
-    _i2cPort->requestFrom(I2CAddress, numBytes);
-    for(size_t i = 0; i < numBytes; i++){
-       outputPointer[i] =  _i2cPort->read(); 
-    }
+      _i2cPort->requestFrom(I2CAddress, numBytes);
+      for(size_t i = 0; i < numBytes; i++){
+         outputPointer[i] =  _i2cPort->read(); 
+      }
 
-    if( _i2cPort->endTransmission() != 0 )
-      return IMU_HW_ERROR;
-    else
+      if( _i2cPort->endTransmission() != 0 )
+        return IMU_HW_ERROR;
+      else
+        return IMU_SUCCESS;
+
+    case SPI_MODE:
+
+      _spiPort->beginTransaction(mySpiSettings);
+      digitalWrite(chipSelectPin, LOW);
+
+      _spiPort->transfer(address | SPI_READ_COMMAND);
+
+      for(size_t i = 0; i < numBytes; i++ ) {
+        outputPointer[i] = _spiPort->transfer(0x00); // receive a byte as character
+      }
+
+      digitalWrite(chipSelectPin, HIGH);
+      _spiPort->endTransaction();
+
       return IMU_SUCCESS;
-
-	case SPI_MODE:
-
-    _spiPort->beginTransaction(mySpiSettings);
-		digitalWrite(chipSelectPin, LOW);
-		// send the device the register you want to read:
-		_spiPort->transfer(offset | 0x80);  //Ored with "read request" bit
-
-		for(size_t i = 0; i < numBytes; i++ ) {
-			outputPointer[i] = _spiPort->transfer(0x00); // receive a byte as character
-		}
-
-		digitalWrite(chipSelectPin, HIGH);
-    _spiPort->endTransaction();
-
-    return IMU_SUCCESS;
 
   }
 }
 
 //****************************************************************************//
-//
-//  ReadRegister
+//  readRegister
 //
 //  Parameters:
 //    *outputPointer -- Pass &variable (address of) to save read data to
-//    offset -- register to read
-//
+//    address -- register to read
 //****************************************************************************//
-status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t offset) {
+status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t address) {
 	//Return value
 	uint8_t result;
 	status_t returnError; 
@@ -191,7 +188,7 @@ status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t offset) {
 	case I2C_MODE:
 
 		_i2cPort->beginTransmission(I2CAddress);
-		_i2cPort->write(offset);
+		_i2cPort->write(address);
 		if( _i2cPort->endTransmission() != 0 )
 			returnError = IMU_HW_ERROR;
 
@@ -206,11 +203,10 @@ status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t offset) {
 		// take the chip select low to select the device:
 		digitalWrite(chipSelectPin, LOW);
     _spiPort->beginTransaction(mySpiSettings); 
-		// send the device the register you want to read:
-		_spiPort->transfer(offset | 0x80);  //Ored with "read request" bit
-		// send a value of 0 to read the first byte returned:
+
+		_spiPort->transfer(address | SPI_READ_COMMAND);
 		*outputPointer = _spiPort->transfer(0x00);
-		// take the chip select high to de-select:
+
 		digitalWrite(chipSelectPin, HIGH);
     _spiPort->endTransaction(); 
 		
@@ -220,18 +216,16 @@ status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t offset) {
 }
 
 //****************************************************************************//
-//
 //  readRegisterInt16
 //
 //  Parameters:
 //    *outputPointer -- Pass &variable (base address of) to save read data to
 //    offset -- register to read
-//
 //****************************************************************************//
 status_t LSM6DSOCore::readRegisterInt16(int16_t* outputPointer, uint8_t offset) 
 {
 	uint8_t myBuffer[2];
-	status_t returnError = readRegisterRegion(myBuffer, offset, 2);  //Does memory transfer
+	status_t returnError = readMultipleRegisters(myBuffer, offset, 2);  //Does memory transfer
 	int16_t output = myBuffer[0] | static_cast<uint16_t>(myBuffer[1] << 8);
 	
 	*outputPointer = output;
@@ -239,51 +233,90 @@ status_t LSM6DSOCore::readRegisterInt16(int16_t* outputPointer, uint8_t offset)
 }
 
 //****************************************************************************//
-//
 //  writeRegister
 //
 //  Parameters:
-//    offset -- register to write
+//    address -- register to write
 //    dataToWrite -- 8 bit data to write to register
-//
 //****************************************************************************//
-status_t LSM6DSOCore::writeRegister(uint8_t offset, uint8_t dataToWrite) {
+status_t LSM6DSOCore::writeRegister(uint8_t address, uint8_t dataToWrite) {
 
-	status_t returnError = IMU_SUCCESS;
+	status_t returnError;
+
 	switch (commInterface) {
-	case I2C_MODE:
-		//Write the byte
-		_i2cPort->beginTransmission(I2CAddress);
-		_i2cPort->write(offset);
-		_i2cPort->write(dataToWrite);
-		if( _i2cPort->endTransmission() != 0 )
-		{
-			returnError = IMU_HW_ERROR;
-		}
-		break;
 
-	case SPI_MODE:
-		// take the chip select low to select the device:
-    _spiPort->beginTransaction(mySpiSettings); 
-		digitalWrite(chipSelectPin, LOW);
-		// send the device the register you want to read:
-		_spiPort->transfer(offset);
-		// send a value of 0 to read the first byte returned:
-		_spiPort->transfer(dataToWrite);
-		// decrement the number of bytes left to read:
-		// take the chip select high to de-select:
-		digitalWrite(chipSelectPin, HIGH);
-    _spiPort->endTransaction(); 
-		break;
-		
-		//No way to check error on this write (Except to read back but that's not reliable)
+    case I2C_MODE:
+      //Write the byte
+      _i2cPort->beginTransmission(I2CAddress);
+      _i2cPort->write(address);
+      _i2cPort->write(dataToWrite);
+      if( _i2cPort->endTransmission() != 0 )
+        return IMU_HW_ERROR;
+      break;
 
-	default:
-		break;
+    case SPI_MODE:
+      // take the chip select low to select the device:
+      _spiPort->beginTransaction(mySpiSettings); 
+      digitalWrite(chipSelectPin, LOW);
+
+      _spiPort->transfer(address);
+      _spiPort->transfer(dataToWrite);
+
+      digitalWrite(chipSelectPin, HIGH);
+      _spiPort->endTransaction(); 
+      break;
+
+    default:
+      break;
+
 	}
 
-	return returnError;
+	return IMU_SUCCESS;
 }
+
+//****************************************************************************//
+//  writeMultipleRegisters
+//
+//  Parameters:
+//    inputPointer -- array to be written to device
+//    address -- register to write
+//    numBytes -- number of bytes contained in the array
+//****************************************************************************//
+status_t LSM6DSOCore::writeMultipleRegisters(uint8_t inputPointer[], uint8_t address, uint8_t numBytes) {
+
+	status_t returnError;
+
+	switch( commInterface ){
+
+    case I2C_MODE:
+
+      _i2cPort->beginTransmission(I2CAddress);
+      _i2cPort->write(address);
+
+      for(size_t i = 0; i < numBytes; i++){
+         _i2cPort->write(inputPointer[i]); 
+      }
+
+      if( _i2cPort->endTransmission(false) != 0 )
+        return IMU_HW_ERROR;
+      else
+        return IMU_SUCCESS;
+
+    case SPI_MODE:
+
+      _spiPort->beginTransaction(mySpiSettings);
+      digitalWrite(chipSelectPin, LOW);
+
+      _spiPort->transfer(inputPointer, 2);
+
+      digitalWrite(chipSelectPin, HIGH);
+      _spiPort->endTransaction();
+
+      return IMU_SUCCESS;
+
+  }
+}
+
 
 status_t LSM6DSOCore::enableEmbeddedFunctions(bool enable)
 {
@@ -357,14 +390,14 @@ status_t LSM6DSO::begin(uint8_t settings){
     setBlockDataUpdate(true);
   }
   
-  if( settings = SOFT_INTERRUPT_SETTINGS ){
+  if( settings = SOFT_INT_SETTINGS ){
     setAccelRange(8);
     setAccelDataRate(416);
     setGyroRange(500);
     setGyroDataRate(416);
   }
   
-  if( settings = HARD_INTERRUPT_SETTINGS ){
+  if( settings = HARD_INT_SETTINGS ){
     setAccelRange(8);
     setAccelDataRate(416);
     setGyroRange(500);
@@ -375,8 +408,11 @@ status_t LSM6DSO::begin(uint8_t settings){
 
   if( settings == FIFO_SETTINGS ){
     // one word is 6 bytes of data: x,y,z and its tag 
-    //setFifoMode(FIFO_MODE);
-    //setFifoThreshold();
+    setFifoDepth(500); // bytes
+    //setTSDecimation(); // FIFO_CTRL4
+    //getSamplesStored(); // FIFO_STATUS1 and STATUS2
+    setAccelBatchDataRate(416); //FIFO_CTRL3 
+    setFifoMode(FIFO_MODE_CONTINUOUS);  
   }
 }
 
@@ -1316,6 +1352,94 @@ void LSM6DSO::fifoBeginSettings() {
 	//Serial.println(thresholdHByte, HEX);
 	writeRegister(FIFO_CTRL4, tempFIFO_CTRL4);
 
+}
+
+// Address:0x0A , bit[2:0]: default value is: 0x00 (disabled).
+// Sets the fifo mode. 
+bool LSM6DSO::setFifoMode(uint8_t mode) {
+
+  if( mode < 0 | mode > 7)
+    return false;
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, FIFO_CTRL4);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= FIFO_MODE_MASK;
+  regVal |= mode; 
+
+  returnError = writeRegister(FIFO_CTRL4, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address:0x0A , bit[2:0]: default value is: 0x00 (disabled).
+// Gets the fifo mode. 
+uint8_t LSM6DSO::getFifoMode(){
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, FIFO_CTRL4);
+  if( returnError != IMU_SUCCESS )
+    return returnError;
+  else
+    return (regVal & ~FIFO_MODE_MASK); 
+}
+
+// Address:0x07 and 0x08 , bit[7:0] bit[0]: default value is: 0x000
+// This sets the number of bytes that the FIFO can hold.  
+bool LSM6DSO::setFifoDepth(uint16_t depth) {
+
+  if( depth < 0 | depth > 511 )
+    return false;
+
+  uint8_t dataToWrite[2];
+  uint8_t regVal;
+  uint16_t waterMark;
+  status_t returnError = readRegister(&regVal, FIFO_CTRL2);
+
+  regVal &= 0x01; 
+  dataToWrite[0] = depth & 0x00FF;
+  dataToWrite[1] = (depth & 0x0100) >> 8; 
+  dataToWrite[1] |= regVal; 
+    
+  returnError = writeMultipleRegisters(dataToWrite, FIFO_CTRL1, 2);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address:0x07 and 0x08 , bit[7:0] bit[0]: default value is: 0x000
+// This function gets the number of bytes that the FIFO can hold.  
+uint16_t LSM6DSO::getFifoDepth(){
+
+  uint8_t regVal[2];
+  uint16_t waterMark;
+  status_t returnError = readMultipleRegisters(regVal, FIFO_CTRL1, 2);
+  if( returnError != IMU_SUCCESS )
+    return IMU_GENERIC_ERROR;
+  
+  waterMark = static_cast<uint16_t>(regVal[1]) << 8 | regVal[0];
+  return waterMark; 
+}
+
+// Address: , bit[]: default value is: 
+//
+bool LSM6DSO::setAccelBatchDataRate(uint8_t) {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, someRegister);
+  regVal &= someMask;
+
+  someVal |= someDefine;
+  returnError = writeRegister(someRegister, someVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
 }
 
 void LSM6DSO::fifoClear() {

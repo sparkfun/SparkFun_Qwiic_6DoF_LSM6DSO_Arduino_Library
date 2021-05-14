@@ -34,7 +34,7 @@ Distributed as-is; no warranty is given.
 
 #define I2C_MODE 0
 #define SPI_MODE 1
-
+#define SPI_READ_COMMAND 0x80
 
 // Return values 
 typedef enum
@@ -62,10 +62,11 @@ public:
 	
 	status_t beginCore( void );
 	
-	status_t readRegisterRegion(uint8_t*, uint8_t, uint8_t );
+	status_t readMultipleRegisters(uint8_t*, uint8_t, uint8_t );
 	status_t readRegister(uint8_t*, uint8_t);
 	status_t readRegisterInt16(int16_t*, uint8_t);
 	status_t writeRegister(uint8_t, uint8_t);
+	status_t writeMultipleRegisters(uint8_t*, uint8_t, uint8_t);
   status_t enableEmbeddedFunctions(bool);
 
   SPISettings mySpiSettings; 
@@ -136,8 +137,8 @@ public:
 #define TEMP_DATA_READY 0x04
 
 #define BASIC_SETTINGS 0x00
-#define SOFT_INTERRUPT_SETTINGS 0x01
-#define HARD_INTERRUPT_SETTINGS 0x02
+#define SOFT_INT_SETTINGS 0x01
+#define HARD_INT_SETTINGS 0x02
 #define FIFO_SETTINGS 0x03
 #define PEDOMETER_SETTINGS 0x04
 
@@ -196,6 +197,10 @@ class LSM6DSO : public LSM6DSOCore
     float readTempF();
 
     void fifoBeginSettings();
+    bool setFifoMode(uint8_t);
+    uint8_t getFifoMode();
+    bool setFifoDepth(uint16_t);
+    uint16_t getFifoDepth();
     void fifoClear();
     fifoData fifoRead();
     uint16_t fifoGetStatus();
@@ -373,6 +378,58 @@ typedef enum {
 } LSM6DSO_FIFO_TAGS_t; 
 
 /*******************************************************************************
+* Register      : FIFO_CTRL2
+* Address       : 0x08
+* Bit Group Name: STOP_ON_WTM
+* Permission    : RW
+*******************************************************************************/
+typedef enum {
+	FIFO_STOP_ON_WTM_DISABLED = 0x00,
+	FIFO_STOP_ON_WTM_ENABLED = 0x01,
+	FIFO_STOP_ON_WTM_MASK     = 0x7F
+} LSM6DSO_STOP_ON_WTM_t;
+
+/*******************************************************************************
+* Register      : FIFO_CTRL2
+* Address       : 0x08
+* Bit Group Name: FIFO_COMPR_RT_EN
+* Permission    : RW
+*******************************************************************************/
+typedef enum {
+	FIFO_COMPR_RT_DISABLED = 0x00,
+	FIFO_COMPR_RT_ENABLE   = 0x01,
+	FIFO_COMPR_RT_MASK     = 0xBF
+} LSM6DSO_FIFO_COMPR_RT_t;
+
+
+/*******************************************************************************
+* Register      : FIFO_CTRL2
+* Address       : 0x08
+* Bit Group Name: ODRCHG_EN
+* Permission    : RW
+*******************************************************************************/
+typedef enum {
+	FIFO_ODRCHG_DISABLED = 0x00,
+	FIFO_ODRCHG_ENABLE   = 0x01,
+	FIFO_ODRCHG_MASK     = 0xEF
+} LSM6DSO_FIFO_ODRCHG_t;
+
+
+/*******************************************************************************
+* Register      : FIFO_CTRL2
+* Address       : 0x08
+* Bit Group Name: UNCOPTR_RATE
+* Permission    : RW
+*******************************************************************************/
+typedef enum {
+	FIFO_UNCOPTR_RATE_DISABLED = 0x00,
+	FIFO_UNCOPTR_RATE_8    = 0x02,
+	FIFO_UNCOPTR_RATE_16   = 0x04,
+	FIFO_UNCOPTR_RATE_32   = 0x06,
+	FIFO_UNCOPTR_RATE_MASK   = 0xF9
+} LSM6DSO_FIFO_UNCOPTR_RATE_t;
+
+/*******************************************************************************
 * Register      : FIFO_CTRL3
 * Address       : 0x09
 * Bit Group Name: BDR_GY
@@ -422,11 +479,11 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	DEC_FIFO_XL_G_DATA_NOT_IN_FIFO 	= 0x00,
-	DEC_FIFO_XL_G_DECIMATION_BY_1 		= 0x01, //Default
-	DEC_FIFO_XL_G_DECIMATION_BY_8 		= 0x02,
-	DEC_FIFO_XL_G_DECIMATION_BY_32 	= 0x03
-} LSM6DSO_DEC_FIFO_XL_G_t;
+	FIFO_TS_DEC_DISABLED = 0x00,
+	FIFO_TS_DEC_BY_1 		 = 0x04,
+	FIFO_TS_DEC_BY_8 		 = 0x08,
+	FIFO_TS_DEC_BY_32 	 = 0x0C
+} LSM6DSO_FIFO_TS_DEC_t;
 
 /*******************************************************************************
 * Register      : FIFO_CTRL4
@@ -435,10 +492,10 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LSM6DSO_TEMPERATURE_ODR_BATCH_NOT_IN_FIFO = 0x00,
-	LSM6DSO_TEMPERATURE_ODR_BATCH_RATE_1_6    = 0x01,
-	LSM6DSO_TEMPERATURE_ODR_BATCH_RATE_12_5   = 0x02,
-	LSM6DSO_TEMPERATURE_ODR_BATCH_RATE_52     = 0x03
+	FIFO_TEMP_ODR_DISABLE = 0x00,
+	FIFO_TEMP_ODR_1_6    = 0x10,
+	FIFO_TEMP_ODR_12_5   = 0x20,
+	FIFO_TEMP_ORD_52     = 0x30
 } LSM6DSO_TEMPERATURE_ODR_BATCH_t;
 
 /*******************************************************************************
@@ -453,8 +510,9 @@ typedef enum {
 	FIFO_MODE_CONT_TO_FIFO   = 0x03,
 	FIFO_MODE_BYPASS_TO_CONT = 0x04,
 	FIFO_MODE_CONTINUOUS     = 0x06,
-	FIFO_MODE_BYPASS_TO_FIFO = 0x07
-} LSM6DSO_ODR_FIFO_t;
+	FIFO_MODE_BYPASS_TO_FIFO = 0x07,
+  FIFO_MODE_MASK           = 0xF0 
+} LSM6DSO_FIFO_MODE_t;
 
 /*******************************************************************************
 * Register      : ORIENT_CFG_G
@@ -468,7 +526,7 @@ typedef enum {
 	ORIENT_YXZ 		 = 0x02,
 	ORIENT_YZX 		 = 0x03,
 	ORIENT_ZXY 		 = 0x04,
-	ORIENT_ZYX 		 = 0x05,
+	ORIENT_ZYX 		 = 0x05
 } LSM6DSO_ORIENT_t;
 
 /*******************************************************************************
