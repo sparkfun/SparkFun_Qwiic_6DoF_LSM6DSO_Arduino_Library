@@ -157,43 +157,45 @@ class LSM6DSO : public LSM6DSOCore
 
 
     bool setAccelRange(uint8_t) ;
-    uint8_t getAccelRange();
     bool setAccelDataRate(uint16_t) ;
     bool setGyroDataRate(uint16_t);
-    float getGyroDataRate();
-    float getAccelDataRate();
+    bool setGyroRange(uint16_t) ;
     bool setBlockDataUpdate(bool);
     bool setHighPerfAccel(bool);
     bool setHighPerfGyro(bool);
 
-    uint8_t getDataReady();
-    uint8_t getAccelFullScale();
-    uint8_t getAccelHighPerf();
+    uint8_t  getAccelRange();
+    float    getAccelDataRate();
+    float    getGyroDataRate();
+    uint16_t getGyroRange();
+    uint8_t  getDataReady();
+    uint8_t  getAccelFullScale();
+    uint8_t  getAccelHighPerf();
 
-    int16_t readRawAccelX( void );
-    int16_t readRawAccelY( void );
-    int16_t readRawAccelZ( void );
-    int16_t readRawGyroX( void );
-    int16_t readRawGyroY( void );
-    int16_t readRawGyroZ( void );
+    int16_t readRawAccelX();
+    int16_t readRawAccelY();
+    int16_t readRawAccelZ();
+    int16_t readRawGyroX();
+    int16_t readRawGyroY();
+    int16_t readRawGyroZ();
 
-    float readFloatAccelX( void );
-    float readFloatAccelY( void );
-    float readFloatAccelZ( void );
-    float readFloatGyroX( void );
-    float readFloatGyroY( void );
-    float readFloatGyroZ( void );
+    float readFloatAccelX();
+    float readFloatAccelY();
+    float readFloatAccelZ();
+    float readFloatGyroX();
+    float readFloatGyroY();
+    float readFloatGyroZ();
 
-    int16_t readRawTemp( void );
-    float readTempC( void );
-    float readTempF( void );
+    int16_t readRawTemp();
+    float readTempC();
+    float readTempF();
 
     //FIFO stuff
-    void fifoBegin( void );
-    void fifoClear( void );
-    fifoData fifoRead( void );
-    uint16_t fifoGetStatus( void );
-    void fifoEnd( void );
+    void fifoBegin();
+    void fifoClear();
+    fifoData fifoRead();
+    uint16_t fifoGetStatus();
+    void fifoEnd();
     
     float calcGyro( int16_t );
     float calcAccel( int16_t );
@@ -735,27 +737,17 @@ typedef enum {
 /*******************************************************************************
 * Register      : CTRL2_G
 * Address       : 0x11
-* Bit           : [1]
-* Bit Group Name: FS_125
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	FS_125_DISABLED 	 = 0x00,
-	FS_125_ENABLED 		 = 0x02,
-} LSM6DSO_FS_125_t;
-
-/*******************************************************************************
-* Register      : CTRL2_G
-* Address       : 0x11
 * Bit           : [3:2]
 * Bit Group Name: FS_G
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	FS_G_245dps 		= 0x00,
+	FS_G_125dps   	= 0x02,
+	FS_G_250dps 		= 0x00,
 	FS_G_500dps 		= 0x04,
 	FS_G_1000dps 		= 0x08,
 	FS_G_2000dps 		= 0x0C,
+  FS_G_MASK       = 0xF0
 } LSM6DSO_FS_G_t;
 
 /*******************************************************************************

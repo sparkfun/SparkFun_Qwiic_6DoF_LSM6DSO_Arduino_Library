@@ -60,7 +60,7 @@ LSM6DSOCore::LSM6DSOCore( uint8_t busType, uint8_t inputArg) : commInterface(I2C
 
 }
 
-status_t LSM6DSOCore::beginCore(void)
+status_t LSM6DSOCore::beginCore()
 {
 	status_t returnError = IMU_SUCCESS;
   uint32_t spiPortSpeed = 10000000;
@@ -352,7 +352,7 @@ status_t LSM6DSO::begin(uint8_t settings){
   if( settings == DEFAULT_SETTINGS ){
     setAccelRange(8);
     setAccelDataRate(416);
-    //setGyroRange(500);
+    setGyroRange(500);
     setGyroDataRate(416);
     //setGyroBandwith(400);
   }
@@ -433,10 +433,10 @@ status_t LSM6DSO::beginSettings()
 	if ( settings.gyroEnabled == 1) {
 		switch (settings.gyroRange) {
 		case 125:
-			dataToWrite |=  FS_125_ENABLED;
+			dataToWrite |=  FS_G_125dps;
 			break;
 		case 245:
-			dataToWrite |=  FS_G_245dps;
+			dataToWrite |=  FS_G_250dps;
 			break;
 		case 500:
 			dataToWrite |=  FS_G_500dps;
@@ -804,7 +804,7 @@ uint8_t LSM6DSO::getAccelFullScale(){
     return ((regVal & 0x02) >> 1); 
 }
 
-int16_t LSM6DSO::readRawAccelX( void ) {
+int16_t LSM6DSO::readRawAccelX() {
 
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTX_L_A );
@@ -818,12 +818,12 @@ int16_t LSM6DSO::readRawAccelX( void ) {
 	return output;
 }
 
-float LSM6DSO::readFloatAccelX( void ) {
+float LSM6DSO::readFloatAccelX() {
 	float output = calcAccel(readRawAccelX());
 	return output;
 }
 
-int16_t LSM6DSO::readRawAccelY( void )
+int16_t LSM6DSO::readRawAccelY()
 {
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTY_L_A );
@@ -837,13 +837,13 @@ int16_t LSM6DSO::readRawAccelY( void )
 	return output;
 }
 
-float LSM6DSO::readFloatAccelY( void )
+float LSM6DSO::readFloatAccelY()
 {
 	float output = calcAccel(readRawAccelY());
 	return output;
 }
 
-int16_t LSM6DSO::readRawAccelZ( void )
+int16_t LSM6DSO::readRawAccelZ()
 {
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTZ_L_A );
@@ -857,7 +857,7 @@ int16_t LSM6DSO::readRawAccelZ( void )
 	return output;
 }
 
-float LSM6DSO::readFloatAccelZ( void )
+float LSM6DSO::readFloatAccelZ()
 {
 	float output = calcAccel(readRawAccelZ());
 	return output;
@@ -1019,9 +1019,74 @@ float LSM6DSO::getGyroDataRate(){
 
 }
 
+// Address: 0x11, bit[3:0]: default value is: 0x00
+// Sets the gyroscope's range.
+bool LSM6DSO::setGyroRange(uint16_t range) {
 
+  if( range < 250 | range > 2000)
+    return false;
 
-int16_t LSM6DSO::readRawGyroX( void ) {
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, CTRL2_G);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= FS_G_MASK;
+
+  switch( range ){
+    case 125:
+      regVal |= FS_G_125dps;
+      break;
+    case 250:
+      regVal |= FS_G_250dps;
+      break;
+    case 500:
+      regVal |= FS_G_500dps;
+      break;
+    case 1000:
+      regVal |= FS_G_1000dps;
+      break;
+    case 2000:
+      regVal |= FS_G_2000dps;
+      break;
+  }
+
+  returnError = writeRegister(CTRL2_G, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x11, bit[3:0]: default value is: 0x00
+// Gets the gyroscope's range.
+uint16_t LSM6DSO::getGyroRange(){
+
+  uint8_t regVal;
+
+  status_t returnError = readRegister(&regVal, CTRL2_G);
+  if( returnError != IMU_SUCCESS )
+    return IMU_GENERIC_ERROR;
+
+  regVal &= ~FS_G_MASK;
+  
+  switch( regVal ){
+    case FS_G_125dps:
+      return 125;
+    case FS_G_250dps:
+      return 250;
+    case FS_G_500dps:
+      return 500;
+    case FS_G_1000dps:
+      return 1000;
+    case FS_G_2000dps:
+      return 2000;
+    default:
+      return IMU_GENERIC_ERROR;
+  }
+}
+
+int16_t LSM6DSO::readRawGyroX() {
 
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTX_L_G );
@@ -1036,13 +1101,13 @@ int16_t LSM6DSO::readRawGyroX( void ) {
 	return output;
 }
 
-float LSM6DSO::readFloatGyroX( void ) {
+float LSM6DSO::readFloatGyroX() {
 
 	float output = calcGyro(readRawGyroX());
 	return output;
 }
 
-int16_t LSM6DSO::readRawGyroY( void ) {
+int16_t LSM6DSO::readRawGyroY() {
 
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTY_L_G );
@@ -1057,13 +1122,13 @@ int16_t LSM6DSO::readRawGyroY( void ) {
 	return output;
 }
 
-float LSM6DSO::readFloatGyroY( void ) {
+float LSM6DSO::readFloatGyroY() {
   
 	float output = calcGyro(readRawGyroY());
 	return output;
 }
 
-int16_t LSM6DSO::readRawGyroZ( void ) {
+int16_t LSM6DSO::readRawGyroZ() {
 
 	int16_t output;
 	status_t errorLevel = readRegisterInt16( &output, OUTZ_L_G );
@@ -1078,7 +1143,7 @@ int16_t LSM6DSO::readRawGyroZ( void ) {
 	return output;
 }
 
-float LSM6DSO::readFloatGyroZ( void ) {
+float LSM6DSO::readFloatGyroZ() {
 
 	float output = calcGyro(readRawGyroZ());
 	return output;
@@ -1122,14 +1187,14 @@ float LSM6DSO::calcGyro( int16_t input ) {
 //  Temperature section
 //
 //****************************************************************************//
-int16_t LSM6DSO::readRawTemp( void )
+int16_t LSM6DSO::readRawTemp()
 {
 	int16_t output;
 	readRegisterInt16( &output, OUT_TEMP_L );
 	return output;
 }  
 
-float LSM6DSO::readTempC( void )
+float LSM6DSO::readTempC()
 {
 	int16_t temp = (readRawTemp()); 
   int8_t msbTemp = (temp & 0xFF00) >> 8;  
@@ -1145,7 +1210,7 @@ float LSM6DSO::readTempC( void )
 
 }
 
-float LSM6DSO::readTempF( void )
+float LSM6DSO::readTempF()
 {
 	float output = readTempC(); 
 	output = (output * 9) / 5 + 32;
@@ -1159,7 +1224,7 @@ float LSM6DSO::readTempF( void )
 //  FIFO section
 //
 //****************************************************************************//
-void LSM6DSO::fifoBegin( void ) {
+void LSM6DSO::fifoBegin() {
 	//CONFIGURE THE VARIOUS FIFO SETTINGS
 	//
 	//
@@ -1202,7 +1267,7 @@ void LSM6DSO::fifoBegin( void ) {
 
 }
 
-void LSM6DSO::fifoClear( void ) {
+void LSM6DSO::fifoClear() {
 	//Drain the fifo data and dump it
 	while( (fifoGetStatus() & 0x1000 ) == 0 ) {
 		fifoRead();
@@ -1210,7 +1275,7 @@ void LSM6DSO::fifoClear( void ) {
 
 }
 
-fifoData LSM6DSO::fifoRead( void ) {
+fifoData LSM6DSO::fifoRead() {
 	//Pull the last data from the fifo
   uint8_t tempTagByte; 
   uint8_t tempAccumulator;  
@@ -1238,7 +1303,7 @@ fifoData LSM6DSO::fifoRead( void ) {
   
 }
 
-uint16_t LSM6DSO::fifoGetStatus( void ) {
+uint16_t LSM6DSO::fifoGetStatus() {
 	//Return some data on the state of the fifo
 	uint8_t tempReadByte = 0;
 	uint16_t tempAccumulator = 0;
@@ -1250,7 +1315,7 @@ uint16_t LSM6DSO::fifoGetStatus( void ) {
 	return tempAccumulator;  
 
 }
-void LSM6DSO::fifoEnd( void ) {
+void LSM6DSO::fifoEnd() {
 	// turn off the fifo
 	writeRegister(FIFO_STATUS1, 0x00);  //Disable
 }
