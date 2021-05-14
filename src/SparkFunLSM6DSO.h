@@ -134,9 +134,12 @@ public:
 #define ACCEL_DATA_READY 0x01
 #define GYRO_DATA_READY 0x02
 #define TEMP_DATA_READY 0x04
-#define DEFAULT_SETTINGS 0x00
-#define FIFO_SETTINGS 0x01
-#define PEDOMETER_SETTINGS 0x02
+
+#define BASIC_SETTINGS 0x00
+#define SOFT_INTERRUPT_SETTINGS 0x01
+#define HARD_INTERRUPT_SETTINGS 0x02
+#define FIFO_SETTINGS 0x03
+#define PEDOMETER_SETTINGS 0x04
 
 class LSM6DSO : public LSM6DSOCore
 {
@@ -152,7 +155,7 @@ class LSM6DSO : public LSM6DSOCore
     ~LSM6DSO() = default;
     
     //Call to apply SensorSettings
-    status_t begin(uint8_t settings = DEFAULT_SETTINGS);
+    status_t begin(uint8_t settings = BASIC_SETTINGS);
     status_t beginSettings();
 
 
@@ -186,12 +189,13 @@ class LSM6DSO : public LSM6DSOCore
     float readFloatGyroY();
     float readFloatGyroZ();
 
+    bool setInterruptOne(uint8_t);
+    bool setInterruptTwo(uint8_t);
     int16_t readRawTemp();
     float readTempC();
     float readTempF();
 
-    //FIFO stuff
-    void fifoBegin();
+    void fifoBeginSettings();
     void fifoClear();
     fifoData fifoRead();
     uint16_t fifoGetStatus();
@@ -545,57 +549,47 @@ typedef enum {
 /*******************************************************************************
 * Register      : INT1_CTRL
 * Address       : 0x0D
-* Bit Group Name: INT1_FTH
+* Bit Group Name: INT1_FULL_TH
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT1_FTH_DISABLED 		 = 0x00,
-	INT1_FTH_ENABLED 		 = 0x08,
-} LSM6DSO_INT1_FTH_t;
+	INT1_FIFO_TH_DISABLED    = 0x00,
+	INT1_FIFO_TH_ENABLED 		 = 0x08,
+} LSM6DSO_INT1_TH_FULL_t;
 
 /*******************************************************************************
 * Register      : INT1_CTRL
 * Address       : 0x0D
-* Bit Group Name: INT1_OVR
+* Bit Group Name: INT1_FIFO_OVR
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT1_OVR_DISABLED 		 = 0x00,
-	INT1_OVR_ENABLED 		 = 0x10,
-} LSM6DSO_INT1_OVR_t;
+	INT1_FIFO_OVR_DISABLED 		 = 0x00,
+	INT1_FIFO_OVR_ENABLED 		 = 0x10,
+} LSM6DSO_INT1_FIFO_OVR_t;
 
 /*******************************************************************************
 * Register      : INT1_CTRL
 * Address       : 0x0D
-* Bit Group Name: INT1_FSS5
+* Bit Group Name: INT1_FIFO_FULL
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT1_FSS5_DISABLED 		 = 0x00,
-	INT1_FSS5_ENABLED 		 = 0x20,
-} LSM6DSO_INT1_FSS5_t;
+	INT1_FIFO_FULL_DISABLED 		 = 0x00,
+	INT1_FIFO_FULL_ENABLED 		   = 0x20,
+} LSM6DSO_INT1_FIFO_FULL_t;
 
 /*******************************************************************************
 * Register      : INT1_CTRL
 * Address       : 0x0D
-* Bit Group Name: INT1_SIGN_MOT
+* Bit Group Name: INT1_CNT_BDR
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT1_SIGN_MOT_DISABLED 		 = 0x00,
-	INT1_SIGN_MOT_ENABLED 		 = 0x40,
-} LSM6DSO_INT1_SIGN_MOT_t;
+	INT1_CNT_BDR_DISABLED 		 = 0x00,
+	INT1_CNT_BDR_ENABLED 		 = 0x40,
+} LSM6DSO_INT1_CNT_BDR_t;
 
-/*******************************************************************************
-* Register      : INT1_CTRL
-* Address       : 0x0D
-* Bit Group Name: INT1_PEDO
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	INT1_PEDO_DISABLED 		 = 0x00,
-	INT1_PEDO_ENABLED 		 = 0x80,
-} LSM6DSO_INT1_PEDO_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
@@ -622,57 +616,57 @@ typedef enum {
 /*******************************************************************************
 * Register      : INT2_CTRL
 * Address       : 0x0E
-* Bit Group Name: INT2_FTH
+* Bit Group Name: INT2_DRDY_TEMP
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT2_FTH_DISABLED 		 = 0x00,
-	INT2_FTH_ENABLED 		 = 0x08,
-} LSM6DSO_INT2_FTH_t;
+	INT2_DRDY_TEMP_DISABLED 		 = 0x00,
+	INT2_DRDY_TEMP_ENABLED 		   = 0x04,
+} LSM6DSO_INT2_DRDY_TEMP_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
 * Address       : 0x0E
-* Bit Group Name: INT2_OVR
+* Bit Group Name: INT2_FIFO_TH
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT2_OVR_DISABLED 		 = 0x00,
-	INT2_OVR_ENABLED 		 = 0x10,
-} LSM6DSO_INT2_OVR_t;
+	INT2_FIFO_TH_DISABLED 		 = 0x00,
+	INT2_FIFO_TH_ENABLED 		   = 0x08,
+} LSM6DSO_INT2_FIFO_TH_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
 * Address       : 0x0E
-* Bit Group Name: INT2_FSS5
+* Bit Group Name: INT2_FIFO_OVR
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT2_FSS5_DISABLED 		 = 0x00,
-	INT2_FSS5_ENABLED 		 = 0x20,
-} LSM6DSO_INT2_FSS5_t;
+	INT2_FIFO_OVR_DISABLED 		 = 0x00,
+	INT2_FIFO_OVR_ENABLED 		 = 0x10,
+} LSM6DSO_INT2_FIFO_OVR_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
 * Address       : 0x0E
-* Bit Group Name: INT2_SIGN_MOT
+* Bit Group Name: INT2_FIFO_FULL
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT2_SIGN_MOT_DISABLED 		 = 0x00,
-	INT2_SIGN_MOT_ENABLED 		 = 0x40,
-} LSM6DSO_INT2_SIGN_MOT_t;
+	INT2_FIFO_FULL_DISABLED 		 = 0x00,
+	INT2_FIFO_FULL_ENABLED 		 = 0x20,
+} LSM6DSO_INT2_FIFO_FULL_t;
 
 /*******************************************************************************
 * Register      : INT2_CTRL
 * Address       : 0x0E
-* Bit Group Name: INT2_PEDO
+* Bit Group Name: INT2_CNT_BDR
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT2_PEDO_DISABLED 		 = 0x00,
-	INT2_PEDO_ENABLED 		 = 0x80,
-} LSM6DSO_INT2_PEDO_t;
+	INT2_CNT_BDR_DISABLED 		 = 0x00,
+	INT2_CNT_BDR_ENABLE   		 = 0x40,
+} LSM6DSO_INT2_CNT_BDR_t;
 
 /*******************************************************************************
 * Register      : WHO_AM_I

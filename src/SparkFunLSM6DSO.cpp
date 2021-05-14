@@ -349,12 +349,34 @@ status_t LSM6DSO::begin(uint8_t settings){
   if( returnError != IMU_SUCCESS ) 
     return returnError;
 
-  if( settings == DEFAULT_SETTINGS ){
+  if( settings == BASIC_SETTINGS ){
     setAccelRange(8);
     setAccelDataRate(416);
     setGyroRange(500);
     setGyroDataRate(416);
-    //setGyroBandwith(400);
+    setBlockDataUpdate(true);
+  }
+  
+  if( settings = SOFT_INTERRUPT_SETTINGS ){
+    setAccelRange(8);
+    setAccelDataRate(416);
+    setGyroRange(500);
+    setGyroDataRate(416);
+  }
+  
+  if( settings = HARD_INTERRUPT_SETTINGS ){
+    setAccelRange(8);
+    setAccelDataRate(416);
+    setGyroRange(500);
+    setGyroDataRate(416);
+    setInterruptOne(INT1_DRDY_XL_ENABLED);
+    setInterruptTwo(INT2_DRDY_G_ENABLED); 
+  }
+
+  if( settings == FIFO_SETTINGS ){
+    // one word is 6 bytes of data: x,y,z and its tag 
+    //setFifoMode(FIFO_MODE);
+    //setFifoThreshold();
   }
 }
 
@@ -518,7 +540,38 @@ bool LSM6DSO::setBlockDataUpdate(bool enable){
 
 }
 
+// Address:0x0D , bit[7:0]: default value is: 0x00
+// Sets whether the accelerometer, gyroscope, or FIFO trigger on hardware
+// interrupt one. Error checking for the user's argument is tricky (could be a
+// long list of "if not this and not this and not this" instead the function relies on the
+// user to set the correct value. 
+bool LSM6DSO::setInterruptOne(uint8_t setting) {
 
+  status_t returnError = writeRegister(INT1_CTRL, setting);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+
+// Address:0x0E , bit[7:0]: default value is: 0x00
+// Sets whether the accelerometer, gyroscope, temperature sensor or FIFO trigger on hardware
+// interrupt two. Error checking for the user's argument is tricky (could be a
+// long list of "if not this and not this and not this" instead the function relies on the
+// user to set the correct value. 
+bool LSM6DSO::setInterruptTwo(uint8_t setting) {
+
+  status_t returnError = writeRegister(INT2_CTRL, setting);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+
+}
+
+// Address:0x15 , bit[4]: default value is: 0x00
+// Sets whether high performance mode is on for the acclerometer, by default it is ON.
 bool LSM6DSO::setHighPerfAccel(bool enable){
 
   uint8_t regVal;
@@ -538,6 +591,8 @@ bool LSM6DSO::setHighPerfAccel(bool enable){
     return true;
 }
 
+// Address:0x16 , bit[7]: default value is: 0x00
+// Sets whether high performance mode is on for the gyroscope, by default it is ON.
 bool LSM6DSO::setHighPerfGyro(bool enable){
 
   uint8_t regVal;
@@ -1224,12 +1279,8 @@ float LSM6DSO::readTempF()
 //  FIFO section
 //
 //****************************************************************************//
-void LSM6DSO::fifoBegin() {
-	//CONFIGURE THE VARIOUS FIFO SETTINGS
-	//
-	//
-	//This section first builds a bunch of config words, then goes through
-	//and writes them all.
+
+void LSM6DSO::fifoBeginSettings() {
 
 	//Split and mask the threshold
 	uint8_t thresholdLByte = (settings.fifoThreshold & 0x007F) >> 1;
