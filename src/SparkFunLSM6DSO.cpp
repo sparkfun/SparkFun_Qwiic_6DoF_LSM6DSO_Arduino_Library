@@ -351,6 +351,10 @@ status_t LSM6DSO::begin(uint8_t settings){
 
   if( settings == DEFAULT_SETTINGS ){
     setAccelRange(8);
+    setAccelDataRate(416);
+    //setGyroRange(500);
+    setGyroDataRate(416);
+    //setGyroBandwith(400);
   }
 }
 
@@ -447,35 +451,35 @@ status_t LSM6DSO::beginSettings()
 		}
 		switch (settings.gyroSampleRate) { 
 		case 125:
-			dataToWrite |= GYRO_ODR_12_5Hz;
+			dataToWrite |= ODR_GYRO_12_5Hz;
 			break;
 		case 26:
-			dataToWrite |= GYRO_ODR_26Hz;
+			dataToWrite |= ODR_GYRO_26Hz;
 			break;
 		case 52:
-			dataToWrite |= GYRO_ODR_52Hz;
+			dataToWrite |= ODR_GYRO_52Hz;
 			break;
 		default:  //Set default to 104
 		case 104:
-			dataToWrite |= GYRO_ODR_104Hz;
+			dataToWrite |= ODR_GYRO_104Hz;
 			break;
 		case 208:
-			dataToWrite |= GYRO_ODR_208Hz;
+			dataToWrite |= ODR_GYRO_208Hz;
 			break;
 		case 416:
-			dataToWrite |= GYRO_ODR_416Hz;
+			dataToWrite |= ODR_GYRO_416Hz;
 			break;
 		case 833:
-			dataToWrite |= GYRO_ODR_833Hz;
+			dataToWrite |= ODR_GYRO_833Hz;
 			break;
 		case 1660:
-			dataToWrite |= GYRO_ODR_1660Hz;
+			dataToWrite |= ODR_GYRO_1660Hz;
 			break;
 		case 3330:
-			dataToWrite |= GYRO_ODR_3330Hz;
+			dataToWrite |= ODR_GYRO_3330Hz;
 			break;
 		case 6660:
-			dataToWrite |= GYRO_ODR_6660Hz;
+			dataToWrite |= ODR_GYRO_6660Hz;
 			break;
 		}
 	}
@@ -656,7 +660,6 @@ uint8_t LSM6DSO::getAccelRange(){
 // Sets the output data rate of the accelerometer there-by enabling it. 
 bool LSM6DSO::setAccelDataRate(uint16_t rate) {
 
-
   if( rate < 16  | rate > 6660) 
     return false; 
 
@@ -677,6 +680,9 @@ bool LSM6DSO::setAccelDataRate(uint16_t rate) {
   regVal &= ODR_XL_MASK;
 
   switch (settings.accelSampleRate) {
+    case 0:
+      regVal |= ODR_XL_DISABLE;
+      break;
     case 16:
       regVal |= ODR_XL_1_6Hz;
       break;
@@ -733,13 +739,13 @@ float LSM6DSO::getAccelDataRate(){
   highPerf = getAccelHighPerf();
 
   if( returnError != IMU_SUCCESS )
-    return IMU_GENERIC_ERROR;
+    return static_cast<float>( IMU_GENERIC_ERROR );
 
-   regVal =  (regVal & 0xF0) >> 4; 
+   regVal &= ~ODR_XL_MASK; 
 
    switch( regVal ){ 
      case 0:
-       return 0;
+       return ODR_XL_DISABLE;
      case ODR_XL_1_6Hz: // Can't have 1.6 and high performance mode
        if( highPerf == 0 )
          return 12.5;
@@ -909,6 +915,112 @@ float LSM6DSO::calcAccel( int16_t input )
 //  Gyroscope section
 //
 //****************************************************************************//
+
+// Address:CTRL2_G , bit[7:4]: default value is: 0x00.
+// Sets the gyro's output data rate thereby enabling it.  
+bool LSM6DSO::setGyroDataRate(uint16_t rate) {
+
+  if( rate < 125 | rate > 6660 ) 
+    return false; 
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, CTRL2_G);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+
+  regVal &= ODR_GYRO_MASK;
+
+  switch( rate ) {
+    case 0:
+      regVal |= ODR_GYRO_DISABLE;
+      break;
+    case 125:
+      regVal |= ODR_GYRO_12_5Hz;
+      break;
+    case 26:
+      regVal |= ODR_GYRO_26Hz;
+      break;
+    case 52:
+      regVal |= ODR_GYRO_52Hz;
+      break;
+    case 104:
+      regVal |= ODR_GYRO_104Hz;
+      break;
+    case 208:
+      regVal |= ODR_GYRO_208Hz;
+      break;
+    case 416:
+      regVal |= ODR_GYRO_416Hz;
+      break;
+    case 833:
+      regVal |= ODR_GYRO_833Hz;
+      break;
+    case 1660:
+      regVal |= ODR_GYRO_1660Hz;
+      break;
+    case 3330:
+      regVal |= ODR_GYRO_3330Hz;
+      break;
+    case 6660:
+      regVal |= ODR_GYRO_6660Hz;
+      break;
+    default:
+      break;
+  }
+
+  returnError = writeRegister(CTRL2_G, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address:CTRL2_G , bit[7:4]: default value is:0x00 
+// Gets the gyro's data rate. A data rate of 0, implies that the gyro portion
+// of the IMU is disabled. 
+float LSM6DSO::getGyroDataRate(){
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, CTRL2_G);
+
+  if( returnError != IMU_SUCCESS )
+    return static_cast<float>(IMU_GENERIC_ERROR);
+
+  regVal &= ~ODR_GYRO_MASK;
+
+  switch( regVal ){
+    case ODR_GYRO_DISABLE:
+      return 0.0;
+    case ODR_GYRO_12_5Hz:
+      return 12.5;
+    case ODR_GYRO_26Hz:
+      return 26.5;
+    case ODR_GYRO_52Hz:
+      return 52.0;
+    case ODR_GYRO_104Hz:
+      return 104.0;
+    case ODR_GYRO_208Hz:
+      return 208.0;
+    case ODR_GYRO_416Hz:
+      return 416.0;
+    case ODR_GYRO_833Hz:
+      return 833.0;
+    case ODR_GYRO_1660Hz:
+      return 1660.0;
+    case ODR_GYRO_3330Hz:
+      return 3330.0;
+    case ODR_GYRO_6660Hz:
+      return 6660.0;
+    default:
+      return static_cast<float>(IMU_GENERIC_ERROR);
+  }
+
+}
+
+
+
 int16_t LSM6DSO::readRawGyroX( void ) {
 
 	int16_t output;

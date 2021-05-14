@@ -159,6 +159,8 @@ class LSM6DSO : public LSM6DSOCore
     bool setAccelRange(uint8_t) ;
     uint8_t getAccelRange();
     bool setAccelDataRate(uint16_t) ;
+    bool setGyroDataRate(uint16_t);
+    float getGyroDataRate();
     float getAccelDataRate();
     bool setBlockDataUpdate(bool);
     bool setHighPerfAccel(bool);
@@ -715,19 +717,19 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	ODR_XL_POWER_DOWN = 0x00, // Low Power only
-	ODR_XL_1_6Hz      = 0xB0, // Low Power only
-	ODR_XL_12_5Hz     = 0x10, // Low Power only
-	ODR_XL_26Hz       = 0x20, // Low Power only
-	ODR_XL_52Hz       = 0x30, // Low Power only 
-	ODR_XL_104Hz      = 0x40, // Normal Mode
-	ODR_XL_208Hz      = 0x50, // Normal Mode
-	ODR_XL_416Hz      = 0x60, // High performance
-	ODR_XL_833Hz      = 0x70, // High Performance 
+	ODR_XL_DISABLE   = 0x00, 
+	ODR_XL_1_6Hz     = 0xB0, // Low Power only
+	ODR_XL_12_5Hz    = 0x10, // Low Power only
+	ODR_XL_26Hz      = 0x20, // Low Power only
+	ODR_XL_52Hz      = 0x30, // Low Power only 
+	ODR_XL_104Hz     = 0x40, // Normal Mode
+	ODR_XL_208Hz     = 0x50, // Normal Mode
+	ODR_XL_416Hz     = 0x60, // High performance
+	ODR_XL_833Hz     = 0x70, // High Performance 
 	ODR_XL_1660Hz    = 0x80, // High Performance
 	ODR_XL_3330Hz    = 0x90, // High Performance
 	ODR_XL_6660Hz    = 0xA0, // High Performance
-  ODR_XL_MASK      = 0x1F
+  ODR_XL_MASK      = 0x0F
 } LSM6DSO_ODR_XL_t;
 
 /*******************************************************************************
@@ -764,18 +766,19 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	GYRO_ODR_DISABLE = 0x00, // Low Power only
-	GYRO_ODR_12_5Hz  = 0x10, // Low Power only
-	GYRO_ODR_26Hz    = 0x20, // Low Power only
-	GYRO_ODR_52Hz    = 0x30, // Low Power only
-	GYRO_ODR_104Hz   = 0x40, // Normal Mode
-	GYRO_ODR_208Hz   = 0x50, // Normal Mode
-	GYRO_ODR_416Hz   = 0x60, // High performance
-	GYRO_ODR_833Hz   = 0x70, // High Performance
-	GYRO_ODR_1660Hz  = 0x80, // High Performance
-	GYRO_ODR_3330Hz  = 0x90, // High Performance
-	GYRO_ODR_6660Hz  = 0xA0 // High Performance
-} LSM6DSO_GYRO_ODR_G_t;
+	ODR_GYRO_DISABLE = 0x00,
+	ODR_GYRO_12_5Hz  = 0x10, // Low Power only
+	ODR_GYRO_26Hz    = 0x20, // Low Power only
+	ODR_GYRO_52Hz    = 0x30, // Low Power only
+	ODR_GYRO_104Hz   = 0x40, // Normal Mode
+	ODR_GYRO_208Hz   = 0x50, // Normal Mode
+	ODR_GYRO_416Hz   = 0x60, // High performance
+	ODR_GYRO_833Hz   = 0x70, // High Performance
+	ODR_GYRO_1660Hz  = 0x80, // High Performance
+	ODR_GYRO_3330Hz  = 0x90, // High Performance
+	ODR_GYRO_6660Hz  = 0xA0, // High Performance
+  ODR_GYRO_MASK    = 0x0F
+} LSM6DSO_ODR_GYRO_G_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C
