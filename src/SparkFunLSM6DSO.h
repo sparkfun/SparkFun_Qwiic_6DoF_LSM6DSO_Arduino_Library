@@ -67,7 +67,7 @@ public:
 	status_t readRegisterInt16(int16_t*, uint8_t);
 	status_t writeRegister(uint8_t, uint8_t);
 	status_t writeMultipleRegisters(uint8_t*, uint8_t, uint8_t);
-  status_t enableEmbeddedFunctions(bool);
+  status_t enableEmbeddedFunctions(bool = true);
 
   SPISettings mySpiSettings; 
 	
@@ -120,9 +120,15 @@ public:
 struct fifoData{ 
 public:
   uint8_t fifoTag;
-  uint16_t xData; 
-  uint16_t yData; 
-  uint16_t zData; 
+  uint16_t xAccel; 
+  uint16_t yAccel; 
+  uint16_t zAccel; 
+
+  uint16_t xGyro; 
+  uint16_t yGyro; 
+  uint16_t zGyro; 
+
+  uint16_t temperature; 
 };
 
 
@@ -141,6 +147,8 @@ public:
 #define HARD_INT_SETTINGS 0x02
 #define FIFO_SETTINGS 0x03
 #define PEDOMETER_SETTINGS 0x04
+#define TAP_SETTINGS 0x05
+#define FREE_FALL_SETTINGS 0x06
 
 class LSM6DSO : public LSM6DSOCore
 {
@@ -212,6 +220,10 @@ class LSM6DSO : public LSM6DSOCore
     
     float calcGyro( int16_t );
     float calcAccel( int16_t );
+
+    bool setPedometer(bool enable = true);
+    uint8_t getPedometer();
+    uint8_t getSteps();
 
   private:
 
@@ -1170,17 +1182,6 @@ typedef enum {
 /*******************************************************************************
 * Register      : CTRL10_C
 * Address       : 0x19
-* Bit Group Name: SIGN_MOTION_EN
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	SIGN_MOTION_EN_DISABLED 		 = 0x00,
-	SIGN_MOTION_EN_ENABLED 		 = 0x01,
-} LSM6DSO_SIGN_MOTION_EN_t;
-
-/*******************************************************************************
-* Register      : CTRL10_C
-* Address       : 0x19
 * Bit Group Name: PEDO_RST_STEP
 * Permission    : RW
 *******************************************************************************/
@@ -1618,16 +1619,34 @@ typedef enum {
 	WTM_ABOVE_OR_EQUAL_WTM 		 = 0x80,
 } LSM6DSO_WTM_t;
 
+
 /*******************************************************************************
-* Register      : FIFO_STATUS3
-* Address       : 0x3C
-* Bit Group Name: FIFO_PATTERN
-* Permission    : RO
+* Register      : FIFO_DATA_OUT_TAG
+* Address       : 0x78
+* Bit Group Name: TAG_SENSOR
+* Permission    : R
 *******************************************************************************/
-#define  	FIFO_STATUS3_PATTERN_MASK  	0xFF
-#define  	FIFO_STATUS3_PATTERN_POSITION  	0
-#define  	FIFO_STATUS4_PATTERN_MASK  	0x03
-#define  	FIFO_STATUS4_PATTERN_POSITION  	0
+typedef enum {
+	TAG_GYRO_NC      = 0x01,
+	TAG_ACCEL_NC     = 0x02,
+	TAG_TEMPERATURE  = 0x03,
+	TAG_TIME_STAMP   = 0x04,
+	TAG_CFG_CHANGE   = 0x05,
+	TAG_ACCEL_NC_T_2 = 0x06,
+	TAG_ACCEL_NC_T_1 = 0x07,
+	TAG_ACCEL_2xC    = 0x08,
+	TAG_ACCEL_3xC    = 0x09,
+	TAG_GYRO_NC_T_2  = 0x0A,
+	TAG_GYRO_NC_T_1  = 0x0B,
+	TAG_GYRO_2xC     = 0x0C,
+	TAG_GYRO_3xC     = 0x0D,
+	TAG_SENSOR_HUB_0 = 0x0E,
+	TAG_SENSOR_HUB_1 = 0x0F,
+	TAG_SENSOR_HUB_2 = 0x10,
+	TAG_SENSOR_HUB_3 = 0x11,
+	STEP_COUNTER     = 0x12,
+	SENSOR_HUB_NACK  = 0x19,
+} LSM6DSO_FIFO_TAG_t;
 
 /*******************************************************************************
 * Register      : FUNC_SRC
@@ -1729,14 +1748,14 @@ typedef enum {
 } LSM6DSO_TAP_X_EN_t;
 
 /*******************************************************************************
-* Register      : TAP_CFG1
-* Address       : 0x58
+* Register      : EMB_FUNC_EN_A
+* Address       : 0x04
 * Bit Group Name: TILT_EN
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	TILT_EN_DISABLED 		 = 0x00,
-	TILT_EN_ENABLED 		 = 0x20,
+	TILT_DISABLED 	 = 0x00,
+	TILT_ENABLED 		 = 0x10,
 } LSM6DSO_TILT_EN_t;
 
 /*******************************************************************************
@@ -1746,9 +1765,21 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	PEDO_EN_DISABLED 	 = 0x00,
-	PEDO_EN_ENABLED 		 = 0x80,
+	PEDO_DISABLED 	 = 0x00,
+	PEDO_ENABLED 		 = 0x08,
+	PEDO_MASK 		 = 0xF7,
 } LSM6DSO_PEDO_EN_t;
+
+/*******************************************************************************
+* Register      : EMB_FUNC_EN_A
+* Address       : 0x04
+* Bit Group Name: SIGN_MOTION_EN
+* Permission    : RW
+*******************************************************************************/
+typedef enum {
+	SIGN_MOTION_DISABLED 	 = 0x00,
+	SIGN_MOTION_ENABLED 	 = 0x20,
+} LSM6DSO_SIGN_MOTION_EN_t;
 
 /*******************************************************************************
 * Register      : TAP_CFG1

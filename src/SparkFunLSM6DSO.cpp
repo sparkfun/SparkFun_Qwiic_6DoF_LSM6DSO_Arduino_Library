@@ -220,12 +220,12 @@ status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t address) {
 //
 //  Parameters:
 //    *outputPointer -- Pass &variable (base address of) to save read data to
-//    offset -- register to read
+//    address -- register to read
 //****************************************************************************//
-status_t LSM6DSOCore::readRegisterInt16(int16_t* outputPointer, uint8_t offset) 
+status_t LSM6DSOCore::readRegisterInt16(int16_t* outputPointer, uint8_t address) 
 {
 	uint8_t myBuffer[2];
-	status_t returnError = readMultipleRegisters(myBuffer, offset, 2);  //Does memory transfer
+	status_t returnError = readMultipleRegisters(myBuffer, address, 2);  //Does memory transfer
 	int16_t output = myBuffer[0] | static_cast<uint16_t>(myBuffer[1] << 8);
 	
 	*outputPointer = output;
@@ -414,6 +414,25 @@ status_t LSM6DSO::begin(uint8_t settings){
     setAccelBatchDataRate(416); //FIFO_CTRL3 
     setFifoMode(FIFO_MODE_CONTINUOUS);  
   }
+
+  if( settings == PEDOMETER_SETTINGS ){
+    enableEmbeddedFunctions(true);
+    setAccelDataRate(52);
+    setPedometer(true);
+  }
+
+  if( settings == TAP_SETTINGS ){
+    enableEmbeddedFunctions(true);
+    //setTap(true);
+   // getTap();
+  }
+
+  if( settings == FREE_FALL_SETTINGS ){
+    enableEmbeddedFunctions(true);
+    //setFreeFall(true);
+   // getFreeFall();
+  }
+
 }
 
 status_t LSM6DSO::beginSettings()
@@ -1636,24 +1655,37 @@ fifoData LSM6DSO::fifoRead() {
   fifoData tempFifoData; 
   
 
-  readRegister(&tempTagByte, FIFO_DATA_OUT_TAG);
+  status_t returnError = readRegister(&tempTagByte, FIFO_DATA_OUT_TAG);
+  if( returnError != IMU_SUCCESS ){
+    tempFifoData.fifoTag = IMU_GENERIC_ERROR;  
+    return tempFifoData;  
+  }
+
 
   tempFifoData.fifoTag = tempTagByte;
 
-  readRegister(&tempAccumulator, FIFO_DATA_OUT_X_H);
-  tempFifoData.xData = (static_cast<uint16_t>(tempAccumulator) << 8);
-  readRegister(&tempAccumulator, FIFO_DATA_OUT_X_L);
-  tempFifoData.xData |= tempAccumulator;
-  readRegister(&tempAccumulator, FIFO_DATA_OUT_Y_H);
-  tempFifoData.yData = (static_cast<uint16_t>(tempAccumulator) << 8);
-  readRegister(&tempAccumulator, FIFO_DATA_OUT_Y_L);
-  tempFifoData.yData |= tempAccumulator;
-  readRegister(&tempAccumulator, FIFO_DATA_OUT_Z_H);
-  tempFifoData.zData = (static_cast<uint16_t>(tempAccumulator) << 8);
-  readRegister(&tempAccumulator, FIFO_DATA_OUT_Z_L);
-  tempFifoData.zData |= tempAccumulator;
+  if( tempTagByte == ACCELEROMETER_DATA | 
+      tempTagByte == ACCELERTOMETER_DATA_T_1 | 
+      tempTagByte == ACCELERTOMETER_DATA_T_2 | 
+      tempTagByte == ACCELERTOMETER_DATA_2xC | 
+      tempTagByte == ACCELERTOMETER_DATA_3xC) {
+
+    readRegister(&tempAccumulator, FIFO_DATA_OUT_X_H);
+    tempFifoData.xAccel = (static_cast<uint16_t>(tempAccumulator) << 8);
+    readRegister(&tempAccumulator, FIFO_DATA_OUT_X_L);
+    tempFifoData.xAccel |= tempAccumulator;
+    readRegister(&tempAccumulator, FIFO_DATA_OUT_Y_H);
+    tempFifoData.yAccel = (static_cast<uint16_t>(tempAccumulator) << 8);
+    readRegister(&tempAccumulator, FIFO_DATA_OUT_Y_L);
+    tempFifoData.yAccel |= tempAccumulator;
+    readRegister(&tempAccumulator, FIFO_DATA_OUT_Z_H);
+    tempFifoData.zAccel = (static_cast<uint16_t>(tempAccumulator) << 8);
+    readRegister(&tempAccumulator, FIFO_DATA_OUT_Z_L);
+    tempFifoData.zAccel |= tempAccumulator;
+  }
 
   return tempFifoData;
+  
   
 }
 
@@ -1674,3 +1706,50 @@ void LSM6DSO::fifoEnd() {
 	writeRegister(FIFO_STATUS1, 0x00);  //Disable
 }
 
+// Address: 0x04 , bit[3]: default value is: 0x00 (disabled)
+// Enables the pedometer functionality of the IMU. 
+bool LSM6DSO::setPedometer(bool enable) {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, EMB_FUNC_EN_A);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= PEDO_MASK; 
+  regVal |= enable; 
+
+  returnError = writeRegister(EMB_FUNC_EN_A, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x04 , bit[3]: default value is: 0x00
+// Checks the state of the pedometer.
+uint8_t LSM6DSO::getPedometer() {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, EMB_FUNC_EN_A);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= ~PEDO_MASK; 
+  if( regVal == PEDO_ENABLED )
+    return true; 
+  else
+    return false;
+}
+
+// Address: 0x62 and 0x63 , bit[7:0]
+// Gets the amount of steps taken.
+uint8_t LSM6DSO::getSteps(){
+
+  int16_t steps;
+  status_t returnError = readRegisterInt16(&steps, STEP_COUNTER_L);
+  if( returnError != IMU_SUCCESS )
+    return returnError;
+  else
+    return steps;
+  
+}
