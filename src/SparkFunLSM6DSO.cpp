@@ -1426,20 +1426,199 @@ uint16_t LSM6DSO::getFifoDepth(){
   return waterMark; 
 }
 
-// Address: , bit[]: default value is: 
-//
-bool LSM6DSO::setAccelBatchDataRate(uint8_t) {
+// Address: 0x07 , bit[3:0]: default value is: 0x00
+// Sets the accelerometer's batch data rate for the FIFO. 
+bool LSM6DSO::setAccelBatchDataRate(uint16_t rate) {
+
+  if( rate < 125 | rate > 1660 )
+    return false;
 
   uint8_t regVal;
-  status_t returnError = readRegister(&regVal, someRegister);
-  regVal &= someMask;
+  status_t returnError = readRegister(&regVal, FIFO_CTRL3);
+  if( returnError != IMU_SUCCESS )
+      return false;
 
-  someVal |= someDefine;
-  returnError = writeRegister(someRegister, someVal);
+  regVal &= FIFO_BDR_ACC_MASK;
+
+  switch( rate ){
+    case FIFO_BDR_ACC_NOT_BATCHED:
+      regVal | FIFO_BDR_ACC_NOT_BATCHED;
+      break;
+    case FIFO_BDR_ACC_1_6Hz:
+      regVal | FIFO_BDR_ACC_1_6Hz;
+      break;
+    case FIFO_BDR_ACC_12_5Hz:
+      regVal | FIFO_BDR_ACC_12_5Hz;
+      break;
+    case FIFO_BDR_ACC_52Hz:
+      regVal | FIFO_BDR_ACC_52Hz;
+      break;
+    case FIFO_BDR_ACC_104Hz:
+      regVal | FIFO_BDR_ACC_104Hz;
+      break;
+    case FIFO_BDR_ACC_208Hz:
+      regVal | FIFO_BDR_ACC_208Hz;
+      break;
+    case FIFO_BDR_ACC_417Hz:
+      regVal | FIFO_BDR_ACC_417Hz;
+      break;
+    case FIFO_BDR_ACC_833Hz:
+      regVal | FIFO_BDR_ACC_833Hz;
+      break;
+    case FIFO_BDR_ACC_1667Hz:
+      regVal | FIFO_BDR_ACC_1667Hz;
+      break;
+    case FIFO_BDR_ACC_3333Hz:
+      regVal | FIFO_BDR_ACC_3333Hz;
+      break;
+    case FIFO_BDR_ACC_6667Hz:
+      regVal | FIFO_BDR_ACC_6667Hz;
+      break;
+    default:
+      FIFO_BDR_ACC_NOT_BATCHED;
+  }
+
+  returnError = writeRegister(FIFO_CTRL3, regVal);
   if( returnError != IMU_SUCCESS )
       return false;
   else
       return true;
+}
+
+// Address: 0x07 , bit[3:0]: default value is: 0x00
+// Gets the accelerometer's batch data rate for the FIFO. 
+float LSM6DSO::getAccelBatchDataRate() {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, FIFO_CTRL3);
+  if( returnError != IMU_SUCCESS )
+      return static_cast<float>(IMU_GENERIC_ERROR);
+
+  regVal &= ~FIFO_BDR_ACC_MASK;
+
+  switch( regVal ){
+    case FIFO_BDR_ACC_NOT_BATCHED:
+      return 0.0;
+    case FIFO_BDR_ACC_1_6Hz:
+      return 1.6;
+    case FIFO_BDR_ACC_12_5Hz:
+      return 12.5;
+    case FIFO_BDR_ACC_52Hz:
+      return 52.0;
+    case FIFO_BDR_ACC_104Hz:
+      return 104.0;
+    case FIFO_BDR_ACC_208Hz:
+      return 208.0;
+    case FIFO_BDR_ACC_417Hz:
+      return 417.0;
+    case FIFO_BDR_ACC_833Hz:
+      return 833.0;
+    case FIFO_BDR_ACC_1667Hz:
+      return 1667.0;
+    case FIFO_BDR_ACC_3333Hz:
+      return 3333.0;
+    case FIFO_BDR_ACC_6667Hz:
+      return 6667.0;
+    default:
+      return static_cast<float>(IMU_GENERIC_ERROR);
+  }
+
+}
+
+// Address: 0x07 , bit[7:4]: default value is: 0x00
+// Sets the gyroscope's batch data rate for the FIFO. 
+bool LSM6DSO::setGyroBatchDataRate(uint16_t rate) {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, FIFO_CTRL3);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= ~FIFO_BDR_GYRO_MASK;
+
+  switch( regVal ){
+    case FIFO_BDR_GYRO_NOT_BATCHED:
+      regVal | FIFO_BDR_GYRO_NOT_BATCHED;
+      break;
+    case FIFO_BDR_GYRO_6_5Hz:
+      regVal | FIFO_BDR_GYRO_6_5Hz;
+      break;
+    case FIFO_BDR_GYRO_12_5Hz:
+      regVal | FIFO_BDR_GYRO_12_5Hz;
+      break;
+    case FIFO_BDR_GYRO_52Hz:
+      regVal | FIFO_BDR_GYRO_52Hz;
+      break;
+    case FIFO_BDR_GYRO_104Hz:
+      regVal | FIFO_BDR_GYRO_104Hz;
+      break;
+    case FIFO_BDR_GYRO_208Hz:
+      regVal | FIFO_BDR_GYRO_208Hz;
+      break;
+    case FIFO_BDR_GYRO_417Hz:
+      regVal | FIFO_BDR_GYRO_417Hz;
+      break;
+    case FIFO_BDR_GYRO_833Hz:
+      regVal | FIFO_BDR_GYRO_833Hz;
+      break;
+    case FIFO_BDR_GYRO_1667Hz:
+      regVal | FIFO_BDR_GYRO_1667Hz;
+      break;
+    case FIFO_BDR_GYRO_3333Hz:
+      regVal | FIFO_BDR_GYRO_3333Hz;
+      break;
+    case FIFO_BDR_GYRO_6667Hz:
+      regVal | FIFO_BDR_GYRO_6667Hz;
+      break;
+    default:
+      FIFO_BDR_GYRO_NOT_BATCHED;
+  }
+
+  returnError = writeRegister(FIFO_CTRL3  , regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x07 , bit[7:4]: default value is: 0x00
+// Gets the gyroscope's batch data rate for the FIFO. 
+float LSM6DSO::getGyroBatchDataRate() {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, FIFO_CTRL3);
+  if( returnError != IMU_SUCCESS )
+      return static_cast<float>(IMU_GENERIC_ERROR);
+
+  regVal &= ~FIFO_BDR_GYRO_MASK;
+
+  switch( regVal ){
+    case FIFO_BDR_GYRO_NOT_BATCHED:
+      return 0.0;
+    case FIFO_BDR_GYRO_6_5Hz:
+      return 6.5;
+    case FIFO_BDR_GYRO_12_5Hz:
+      return 12.5;
+    case FIFO_BDR_GYRO_52Hz:
+      return 52.0;
+    case FIFO_BDR_GYRO_104Hz:
+      return 104.0;
+    case FIFO_BDR_GYRO_208Hz:
+      return 208.0;
+    case FIFO_BDR_GYRO_417Hz:
+      return 417.0;
+    case FIFO_BDR_GYRO_833Hz:
+      return 833.0;
+    case FIFO_BDR_GYRO_1667Hz:
+      return 1667.0;
+    case FIFO_BDR_GYRO_3333Hz:
+      return 3333.0;
+    case FIFO_BDR_GYRO_6667Hz:
+      return 6667.0;
+    default:
+      return static_cast<float>(IMU_GENERIC_ERROR);
+  }
+
 }
 
 void LSM6DSO::fifoClear() {

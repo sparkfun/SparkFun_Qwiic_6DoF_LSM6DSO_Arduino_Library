@@ -201,6 +201,10 @@ class LSM6DSO : public LSM6DSOCore
     uint8_t getFifoMode();
     bool setFifoDepth(uint16_t);
     uint16_t getFifoDepth();
+    bool setAccelBatchDataRate(uint16_t);
+    float getAccelBatchDataRate();
+    bool setGyroBatchDataRate(uint16_t);
+    float getGyroBatchDataRate();
     void fifoClear();
     fifoData fifoRead();
     uint16_t fifoGetStatus();
@@ -436,18 +440,19 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	FIFO_BDR_GYRO_NOT_BATCHED = 0x00,
-	FIFO_BDR_GYRO_12_5        = 0x01,
-	FIFO_BDR_GYRO_26          = 0x02,
-	FIFO_BDR_GYRO_52          = 0x03,
-	FIFO_BDR_GYRO_104         = 0x04,
-	FIFO_BDR_GYRO_208         = 0x05,
-	FIFO_BDR_GYRO_417         = 0x06,
-	FIFO_BDR_GYRO_833         = 0x07,
-	FIFO_BDR_GYRO_1667        = 0x08,
-	FIFO_BDR_GYRO_3333        = 0x09,
-	FIFO_BDR_GYRO_6667        = 0x0A,
-	FIFO_BDR_GYRO_6_5         = 0x0B
+	FIFO_BDR_GYRO_NOT_BATCHED   = 0x00,
+	FIFO_BDR_GYRO_12_5Hz        = 0x10,
+	FIFO_BDR_GYRO_26Hz          = 0x20,
+	FIFO_BDR_GYRO_52Hz          = 0x30,
+	FIFO_BDR_GYRO_104Hz         = 0x40,
+	FIFO_BDR_GYRO_208Hz         = 0x50,
+	FIFO_BDR_GYRO_417Hz         = 0x60,
+	FIFO_BDR_GYRO_833Hz         = 0x70,
+	FIFO_BDR_GYRO_1667Hz        = 0x80,
+	FIFO_BDR_GYRO_3333Hz        = 0x90,
+	FIFO_BDR_GYRO_6667Hz        = 0xA0,
+	FIFO_BDR_GYRO_6_5Hz         = 0xB0,
+	FIFO_BDR_GYRO_MASK          = 0xF0
 } LSM6DSO_BDR_GY_FIFO_t;
 
 /*******************************************************************************
@@ -457,18 +462,19 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	FIFO_BDR_ACC_NOT_BATCHED = 0x00,
-	FIFO_BDR_ACC_12_5        = 0x01,
-	FIFO_BDR_ACC_26          = 0x02,
-	FIFO_BDR_ACC_52          = 0x03,
-	FIFO_BDR_ACC_104         = 0x04,
-	FIFO_BDR_ACC_208         = 0x05,
-	FIFO_BDR_ACC_417         = 0x06,
-	FIFO_BDR_ACC_833         = 0x07,
-	FIFO_BDR_ACC_1667        = 0x08,
-	FIFO_BDR_ACC_3333        = 0x09,
-	FIFO_BDR_ACC_6667        = 0x0A,
-	FIFO_BDR_ACC_6_5         = 0x0B
+	FIFO_BDR_ACC_NOT_BATCHED   = 0x00,
+	FIFO_BDR_ACC_12_5Hz        = 0x01,
+	FIFO_BDR_ACC_26Hz          = 0x02,
+	FIFO_BDR_ACC_52Hz          = 0x03,
+	FIFO_BDR_ACC_104Hz         = 0x04,
+	FIFO_BDR_ACC_208Hz         = 0x05,
+	FIFO_BDR_ACC_417Hz         = 0x06,
+	FIFO_BDR_ACC_833Hz         = 0x07,
+	FIFO_BDR_ACC_1667Hz        = 0x08,
+	FIFO_BDR_ACC_3333Hz        = 0x09,
+	FIFO_BDR_ACC_6667Hz        = 0x0A,
+	FIFO_BDR_ACC_1_6Hz         = 0x0B,
+  FIFO_BDR_ACC_MASK          = 0xF0
 } LSM6DSO_BDR_XL_FIFO_t;
 
 
