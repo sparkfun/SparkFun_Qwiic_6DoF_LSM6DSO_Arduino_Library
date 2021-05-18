@@ -1,54 +1,47 @@
 /******************************************************************************
-FifoExample.ino
-Example using the FIFO over SPI.
+Tap_Interrupts.ino
 
-Original Library written for the LSM6DS3 by Marshall Taylor @ SparkFun Electronics
-Updated to modern SparkFun practices for the LSM6DS0 by Elias Santistevan @ SparkFun Electronics
-March, 2021
-https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0
-https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DS0_Arduino_Library
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DSO
+https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DSO_Arduino_Library
 
 Description:
-The FIFO is configured to take readings at 50Hz.  When 100 samples have
-accumulated (when the "watermark" is reached), the sketch dumps the float values to the serial terminal.
+This example enables the use of the FIFO for data collection. The FIFO is set
+to collect 500 bytes of temperature and gyroscopic data before it stops
+collecting data (FIFO_MODE). Upon reading the data (or if you continuously read the FIFO)
+the FIFO will being to refill. 
 
-The FIFO can sample much faster but the serial port isn't fast enough to get
-that data out before another 100 samples get queued up.  There is a 10ms delay
-placed after each line ("1.40,-4.41,-3.22,-0.01,0.01,0.99") so that the
-internal serial buffer is guaranteed to empty and not overflow.
+There are other available modes (see datasheet found in github repository for
+more information) but the entire list of fifo functionality predefines can be found below. 
 
-Cranking the sample rate up to 800Hz will result in the FIFO dumping routine
-never getting the FIFO back down to zero.
+myIMU.setFifoMode( -arguments below- )
 
-Removing the 10ms delay allows the FIFO to be emptied, but then too much data
-gets placed in the serial write buffer and stability suffers.
+FIFO_MODE_DISABLED       
+FIFO_MODE_STOP_WHEN_FULL 
+FIFO_MODE_CONT_TO_FIFO   
+FIFO_MODE_BYPASS_TO_CONT 
+FIFO_MODE_CONTINUOUS     
+FIFO_MODE_BYPASS_TO_FIFO 
+FIFO_MODE_MASK           
 
-
-Example using the LSM6DS0 with basic settings.  This sketch collects Gyro and
-Accelerometer data every second, then presents it on the serial monitor.
-
-Resources:
-Uses Wire.h for i2c operation
-Uses SPI.h for SPI operation
+Development environment tested:
+Arduino IDE 1.8.2
 
 This code is released under the [MIT License](http://opensource.org/licenses/MIT).
-
 Please review the LICENSE.md file included with this example. If you have any questions 
-or concerns with licensing, please contact techsupport@sparkfun.com.
-
+or concerns with licensing, please contact techsupport@sparkfugn.com.
 Distributed as-is; no warranty is given.
 ******************************************************************************/
-
-#include "SparkFunLSM6DS0.h"
+Please review the LICENSE.md file included with this example. If you have any questions #include "SparkFunLSM6DS3.h"
 #include "Wire.h"
-//#include "SPI.h"
+#include "SPI.h"
 
-LSM6DS0 myIMU( I2C_MODE );
+LSM6DS3 myIMU( SPI_MODE, 10 );
 
-void setup() {
+void setup( void ) {
+  SPI.begin();
   //Over-ride default settings if desired
   myIMU.settings.gyroEnabled = 1;  //Can be 0 or 1
-  myIMU.settings.gyroRange = 2000;   //Max deg/s.  Can be: 125, 250, 500, 1000, 2000
+  myIMU.settings.gyroRange = 2000;   //Max deg/s.  Can be: 125, 245, 500, 1000, 2000
   myIMU.settings.gyroSampleRate = 833;   //Hz.  Can be: 13, 26, 52, 104, 208, 416, 833, 1666
   myIMU.settings.gyroBandWidth = 200;  //Hz.  Can be: 50, 100, 200, 400;
   myIMU.settings.gyroFifoEnabled = 1;  //Set to include gyro in FIFO
@@ -84,7 +77,6 @@ void setup() {
   Serial.println("Processor came out of reset.\n");
   
   //Call .begin() to configure the IMUs
-  SPI.begin();
   if( myIMU.begin() != 0 )
   {
 	  Serial.println("Problem starting the sensor with CS @ Pin 10.");

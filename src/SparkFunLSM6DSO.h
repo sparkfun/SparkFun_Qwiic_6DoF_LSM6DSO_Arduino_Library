@@ -180,7 +180,7 @@ class LSM6DSO : public LSM6DSOCore
     float    getAccelDataRate();
     float    getGyroDataRate();
     uint16_t getGyroRange();
-    uint8_t  getDataReady();
+    uint8_t  listenDataReady();
     uint8_t  getAccelFullScale();
     uint8_t  getAccelHighPerf();
 
@@ -230,7 +230,10 @@ class LSM6DSO : public LSM6DSOCore
     uint8_t getTapDirPrior();
     bool setTapClearOnRead(bool = true);
     uint8_t getTapClearOnRead();
-    bool listenTap();
+    bool listenStep();
+
+    bool routeHardInterOne(uint8_t) ;
+    bool routeHardInterTwo(uint8_t);
 
   private:
 
@@ -1987,23 +1990,23 @@ typedef enum {
 /*******************************************************************************
 * Register      : MD1_CFG
 * Address       : 0x5E
-* Bit Group Name: INT1_TIMER
+* Bit Group Name: INT1_SHUB
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT1_TIMER_DISABLED 		 = 0x00,
-	INT1_TIMER_ENABLED 		 = 0x01,
-} LSM6DSO_INT1_TIMER_t;
+	INT1_SHUB_DISABLED 		 = 0x00,
+	INT1_SHUB_ENABLED 		 = 0x01,
+} LSM6DSO_INT1_SHUB_t;
 
 /*******************************************************************************
 * Register      : MD1_CFG
 * Address       : 0x5E
-* Bit Group Name: INT1_TILT
+* Bit Group Name: INT1_EMB_FUNC
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT1_TILT_DISABLED 		 = 0x00,
-	INT1_TILT_ENABLED 		 = 0x02,
+	INT1_EMB_FUNC_DISABLED 		 = 0x00,
+	INT1_EMB_FUNC_ENABLED 		 = 0x02,
 } LSM6DSO_INT1_TILT_t;
 
 /*******************************************************************************
@@ -2020,12 +2023,12 @@ typedef enum {
 /*******************************************************************************
 * Register      : MD1_CFG
 * Address       : 0x5E
-* Bit Group Name: INT1_TAP
+* Bit Group Name: INT1_DOUBLE_TAP
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT1_TAP_DISABLED 		 = 0x00,
-	INT1_TAP_ENABLED 		 = 0x08,
+	INT1_DOUBLE_TAP_DISABLED 		 = 0x00,
+	INT1_DOUBLE_TAP_ENABLED 		 = 0x08,
 } LSM6DSO_INT1_TAP_t;
 
 /*******************************************************************************
@@ -2075,24 +2078,24 @@ typedef enum {
 /*******************************************************************************
 * Register      : MD2_CFG
 * Address       : 0x5F
-* Bit Group Name: INT2_TIMER
+* Bit Group Name: INT2_TIMESTAMP
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT2_TIMER_DISABLED 		 = 0x00,
-	INT2_TIMER_ENABLED 		 = 0x01,
-} LSM6DSO_INT2_TIMER_t;
+	INT2_TIMESTAMP_DISABLED 		 = 0x00,
+	INT2_TIMESTAMP_ENABLED 		 = 0x01,
+} LSM6DSO_INT2_TIMESTAMP_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG
 * Address       : 0x5F
-* Bit Group Name: INT2_TILT
+* Bit Group Name: INT2_EMB_FUNC
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT2_TILT_DISABLED 		 = 0x00,
-	INT2_TILT_ENABLED 		 = 0x02,
-} LSM6DSO_INT2_TILT_t;
+	INT2_EMB_FUNC_DISABLED 		 = 0x00,
+	INT2_EMB_FUNC_ENABLED 		 = 0x02,
+} LSM6DSO_INT2_EMB_FUNC_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG
@@ -2108,13 +2111,13 @@ typedef enum {
 /*******************************************************************************
 * Register      : MD2_CFG
 * Address       : 0x5F
-* Bit Group Name: INT2_TAP
+* Bit Group Name: INT2_DOUBLE_TAP
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT2_TAP_DISABLED 		 = 0x00,
-	INT2_TAP_ENABLED 		 = 0x08,
-} LSM6DSO_INT2_TAP_t;
+	INT2_DOUBLE_TAP_DISABLED 		 = 0x00,
+	INT2_DOUBLE_TAP_ENABLED 		 = 0x08,
+} LSM6DSO_INT2_DOUBLE_TAP_t;
 
 /*******************************************************************************
 * Register      : MD2_CFG

@@ -402,7 +402,7 @@ status_t LSM6DSO::begin(uint8_t settings){
     //setTSDecimation(); // FIFO_CTRL4
     //getSamplesStored(); // FIFO_STATUS1 and STATUS2
     setAccelBatchDataRate(416);
-    setFifoMode(FIFO_MODE_CONTINUOUS);  
+    setFifoMode(FIFO_MODE);  
   }
 
   if( settings == PEDOMETER_SETTINGS ){
@@ -416,7 +416,7 @@ status_t LSM6DSO::begin(uint8_t settings){
     setAccelDataRate(1660); // Must be at least 417
     enableTap(true, true, false, false);//TAP_CFG, TAP_CFG2
     setTapClearOnRead(true); //TAP_CFG0
-    listenTap();//TAP_SRC
+    routeHardInterTwo(INT1_SINGLE_TAP_ENABLED);
   }
 
   if( settings == FREE_FALL_SETTINGS ){
@@ -561,7 +561,7 @@ status_t LSM6DSO::beginSettings()
 
 // Address: 0x1E , bit[2:0]: default value is: 0x00
 // Checks if there is new accelerometer, gyro, or temperature data.
-uint8_t LSM6DSO::getDataReady(){
+uint8_t LSM6DSO::listenDataReady(){
 
   uint8_t regVal;
   status_t returnError = readRegister(&regVal, STATUS_REG);
@@ -1905,7 +1905,7 @@ uint8_t LSM6DSO::getTapClearOnRead() {
 
 // Address:0x64 , bit[6]: default value is: 0x00
 // Checks if a step has been detected.
-bool LSM6DSO::listenTap() {
+bool LSM6DSO::listenStep() {
 
   uint8_t regVal;
   readRegister(&regVal, EMB_FUNC_SRC);
@@ -1917,3 +1917,42 @@ bool LSM6DSO::listenTap() {
       return false;
 }
 
+// Address: 0x5E , bit[7:0]: default value is: 0x00
+// Routes the given interrupt to hardware pin one. 
+bool LSM6DSO::routeHardInterOne(uint8_t interrupt) {
+
+  if( interrupt < 0 | interrupt > 0x80 )
+    return false; 
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, MD1_CFG);
+
+  regVal &= ~interrupt; //Preserve all but the one to set
+  regVal |= interrupt; 
+
+  returnError = writeRegister(MD1_CFG, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x5F , bit[7:0]: default value is: 0x00
+// Routes the given interrupt to hardware pin two. 
+bool LSM6DSO::routeHardInterTwo(uint8_t interrupt) {
+
+  if( interrupt < 0 | interrupt > 0x80 )
+    return false; 
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, MD2_CFG);
+
+  regVal &= ~interrupt; //Preserve all but the one to set
+  regVal |= interrupt; 
+
+  returnError = writeRegister(MD2_CFG, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
