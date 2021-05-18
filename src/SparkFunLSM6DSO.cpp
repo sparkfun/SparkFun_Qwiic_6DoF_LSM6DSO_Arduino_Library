@@ -402,7 +402,7 @@ status_t LSM6DSO::begin(uint8_t settings){
     //setTSDecimation(); // FIFO_CTRL4
     //getSamplesStored(); // FIFO_STATUS1 and STATUS2
     setAccelBatchDataRate(416);
-    setFifoMode(FIFO_MODE);  
+    setFifoMode(FIFO_MODE_STOP_WHEN_FULL);  
   }
 
   if( settings == PEDOMETER_SETTINGS ){
@@ -1634,7 +1634,7 @@ float LSM6DSO::getGyroBatchDataRate() {
 
 void LSM6DSO::fifoClear() {
 	//Drain the fifo data and dump it
-	while( (fifoGetStatus() & 0x1000 ) == 0 ) {
+	while( (getFifoStatus() & 0x1000 ) == 0 ) {
 		fifoRead();
 	}
 
@@ -1643,7 +1643,7 @@ void LSM6DSO::fifoClear() {
 fifoData LSM6DSO::fifoRead() {
 	//Pull the last data from the fifo
   uint8_t tempTagByte; 
-  uint8_t tempAccumulator;  
+  int16_t tempData;  
   fifoData tempFifoData; 
   
 
@@ -1662,37 +1662,53 @@ fifoData LSM6DSO::fifoRead() {
       tempTagByte == ACCELERTOMETER_DATA_2xC | 
       tempTagByte == ACCELERTOMETER_DATA_3xC) {
 
-    readRegister(&tempAccumulator, FIFO_DATA_OUT_X_H);
-    tempFifoData.xAccel = (static_cast<uint16_t>(tempAccumulator) << 8);
-    readRegister(&tempAccumulator, FIFO_DATA_OUT_X_L);
-    tempFifoData.xAccel |= tempAccumulator;
-    readRegister(&tempAccumulator, FIFO_DATA_OUT_Y_H);
-    tempFifoData.yAccel = (static_cast<uint16_t>(tempAccumulator) << 8);
-    readRegister(&tempAccumulator, FIFO_DATA_OUT_Y_L);
-    tempFifoData.yAccel |= tempAccumulator;
-    readRegister(&tempAccumulator, FIFO_DATA_OUT_Z_H);
-    tempFifoData.zAccel = (static_cast<uint16_t>(tempAccumulator) << 8);
-    readRegister(&tempAccumulator, FIFO_DATA_OUT_Z_L);
-    tempFifoData.zAccel |= tempAccumulator;
+    readRegisterInt16(&tempData, FIFO_DATA_OUT_X_L);
+    tempFifoData.xAccel = tempData;
+    readRegisterInt16(&tempData, FIFO_DATA_OUT_Y_L);
+    tempFifoData.yAccel = tempData; 
+    readRegisterInt16(&tempData, FIFO_DATA_OUT_Z_L);
+    tempFifoData.zAccel |= tempData;
+  }
+
+
+  if( tempTagByte == GYROSCOPE_DATA | 
+      tempTagByte == GYRO_DATA_T_1 | 
+      tempTagByte == GYRO_DATA_T_2 | 
+      tempTagByte == GYRO_DATA_2xC | 
+      tempTagByte == GYRO_DATA_3xC) {
+
+    readRegisterInt16(&tempData, FIFO_DATA_OUT_X_L);
+    tempFifoData.xGyro = tempData;
+    readRegisterInt16(&tempData, FIFO_DATA_OUT_Y_L);
+    tempFifoData.yGyro = tempData; 
+    readRegisterInt16(&tempData, FIFO_DATA_OUT_Z_L);
+    tempFifoData.zGyro |= tempData;
+  }
+
+
+  if( tempTagByte == TEMPERATURE_DATA ){ 
+    readRegisterInt16(&tempData, FIFO_DATA_OUT_X_L);
+    tempFifoData.temperature |= tempData;
   }
 
   return tempFifoData;
   
-  
 }
 
-uint16_t LSM6DSO::fifoGetStatus() {
-	//Return some data on the state of the fifo
-	uint8_t tempReadByte = 0;
-	uint16_t tempAccumulator = 0;
-	readRegister(&tempReadByte, FIFO_STATUS1);
-	tempAccumulator = tempReadByte;
-	readRegister(&tempReadByte, FIFO_STATUS2);
-	tempAccumulator |= (tempReadByte << 8);
+uint16_t LSM6DSO::getFifoStatus() {
 
-	return tempAccumulator;  
+	uint8_t regVal;
+	uint16_t numBytes;
+
+	readRegister(&regVal, FIFO_STATUS1);
+	numBytes = regVal;
+	readRegister(&regVal, FIFO_STATUS2);
+	numBytes |= static_cast<uint16_t>((regVal & 0x03) << 8);
+
+	return numBytes;  
 
 }
+
 void LSM6DSO::fifoEnd() {
 	// turn off the fifo
 	writeRegister(FIFO_STATUS1, 0x00);  //Disable

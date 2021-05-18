@@ -35,6 +35,8 @@ Distributed as-is; no warranty is given.
 #define I2C_MODE 0
 #define SPI_MODE 1
 #define SPI_READ_COMMAND 0x80
+#define DEFAULT_ADDRESS 0x6B
+#define ALT_ADDRESS 0x6A
 
 // Return values 
 typedef enum
@@ -215,7 +217,7 @@ class LSM6DSO : public LSM6DSOCore
     float getGyroBatchDataRate();
     void fifoClear();
     fifoData fifoRead();
-    uint16_t fifoGetStatus();
+    uint16_t getFifoStatus();
     void fifoEnd();
     
     float calcGyro( int16_t );

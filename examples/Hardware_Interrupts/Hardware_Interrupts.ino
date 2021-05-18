@@ -7,7 +7,7 @@ https://github.com/sparkfun/SparkFun_Qwiic_6DoF_LSM6DSO_Arduino_Library
 Description:
 This examples gets acclerometer data when an interrupt is deteced from "INT1"
 and gyroscopic data when an interrupt is detected from "INT2". These two
-interrupts can be put anywhere on your dev board, but for this exampled pins
+interrupts can be put anywhere on your dev board, but for this example pins
 two and three were used for "INT1" and INT2" respectively.
 
 Development environment tested:
