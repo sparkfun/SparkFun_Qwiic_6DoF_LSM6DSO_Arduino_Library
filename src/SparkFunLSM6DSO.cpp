@@ -567,7 +567,7 @@ uint8_t LSM6DSO::listenDataReady(){
   status_t returnError = readRegister(&regVal, STATUS_REG);
   
   if( returnError != IMU_SUCCESS )
-    return static_cast<uint8_t>(returnError);
+    return IMU_GENERIC_ERROR;
   else
     return regVal; 
 }

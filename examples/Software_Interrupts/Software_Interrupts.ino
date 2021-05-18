@@ -9,6 +9,10 @@ This examples polls the "data ready" bit before checking for new acceleromter,
 gyroscopic, and temperature data. The data is then printed out to the serial
 monitor. 
 
+For the sake of demonstration all the data points by have been turned on by default and
+so you can expect the IMU to send "all the data" when data is ready:
+"myIMU.listenDataReady()". 
+
 Development environment tested:
 Arduino IDE 1.8.2
 
@@ -32,6 +36,7 @@ void setup() {
   delay(500); 
   Serial.println("Ready.");
 
+  Wire.begin();
   myIMU.begin(SOFT_INT_SETTINGS); // Load software interrupt related settings
 
 }
@@ -42,6 +47,28 @@ void loop()
 
   data = myIMU.listenDataReady();
 
+  if( data == ALL_DATA_READY ){
+    Serial.print("\nAccelerometer:\n");
+    Serial.print(" X = ");
+    Serial.println(myIMU.readFloatAccelX(), 3);
+    Serial.print(" Y = ");
+    Serial.println(myIMU.readFloatAccelY(), 3);
+    Serial.print(" Z = ");
+    Serial.println(myIMU.readFloatAccelZ(), 3);
+    Serial.print("\nGyroscope:\n");
+    Serial.print(" X = ");
+    Serial.println(myIMU.readFloatGyroX(), 3);
+    Serial.print(" Y = ");
+    Serial.println(myIMU.readFloatGyroY(), 3);
+    Serial.print(" Z = ");
+    Serial.println(myIMU.readFloatGyroZ(), 3);
+    Serial.print("\nThermometer:\n");
+    Serial.print(" Degrees F = ");
+    Serial.println(myIMU.readTempF(), 3);
+  }
+
+  delay(1000);
+/*
   if( data == ACCEL_DATA_READY ){
     Serial.print("\nAccelerometer:\n");
     Serial.print(" X = ");
@@ -67,8 +94,7 @@ void loop()
     Serial.print(" Degrees F = ");
     Serial.println(myIMU.readTempF(), 3);
   }
-  
-  delay(1000);
+  */
 }
 
 
