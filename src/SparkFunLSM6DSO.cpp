@@ -367,15 +367,6 @@ LSM6DSO::LSM6DSO( uint8_t busType, uint8_t inputArg ) : LSM6DSOCore( busType, in
 
 }
 
-//****************************************************************************//
-//
-//  Configuration section
-//
-//  This uses the stored SensorSettings to start the IMU
-//  Use statements such as "myIMU.settings.commInterface = SPI_MODE;" or
-//  "myIMU.settings.accelEnabled = 1;" to configure before calling .begin();
-//
-//****************************************************************************//
 status_t LSM6DSO::begin(uint8_t settings){
 
 	status_t returnError = beginCore();
@@ -407,24 +398,25 @@ status_t LSM6DSO::begin(uint8_t settings){
   }
 
   if( settings == FIFO_SETTINGS ){
-    // one word is 6 bytes of data: x,y,z and its tag 
     setFifoDepth(500); // bytes
     //setTSDecimation(); // FIFO_CTRL4
     //getSamplesStored(); // FIFO_STATUS1 and STATUS2
-    setAccelBatchDataRate(416); //FIFO_CTRL3 
+    setAccelBatchDataRate(416);
     setFifoMode(FIFO_MODE_CONTINUOUS);  
   }
 
   if( settings == PEDOMETER_SETTINGS ){
     enableEmbeddedFunctions(true);
     setAccelDataRate(52);
-    setPedometer(true);
+    enablePedometer(true);
   }
 
   if( settings == TAP_SETTINGS ){
     enableEmbeddedFunctions(true);
-    //setTap(true);
-   // getTap();
+    setAccelDataRate(1660); // Must be at least 417
+    enableTap(true, true, false, false);//TAP_CFG, TAP_CFG2
+    setTapClearOnRead(true); //TAP_CFG0
+    listenTap();//TAP_SRC
   }
 
   if( settings == FREE_FALL_SETTINGS ){
@@ -1708,7 +1700,7 @@ void LSM6DSO::fifoEnd() {
 
 // Address: 0x04 , bit[3]: default value is: 0x00 (disabled)
 // Enables the pedometer functionality of the IMU. 
-bool LSM6DSO::setPedometer(bool enable) {
+bool LSM6DSO::enablePedometer(bool enable) {
 
   uint8_t regVal;
   status_t returnError = readRegister(&regVal, EMB_FUNC_EN_A);
@@ -1753,3 +1745,175 @@ uint8_t LSM6DSO::getSteps(){
     return steps;
   
 }
+
+// Address:0x64 , bit[8]: default value is: 0x00 
+// Resets the number of steps held in the STEP COUNTER registers.
+bool LSM6DSO::resetSteps() {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, EMB_FUNC_SRC);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal |= PEDO_RST_STEP_ENABLED;
+
+  returnError = writeRegister(EMB_FUNC_SRC, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x56 and 0x58, bit[3:1] and bit[7]: default value is: 0x00
+// Enables the single tap interrupts, as well as the direction that initiates
+// the interrupt: X, Y, Z, or some combination of all three.  
+bool LSM6DSO::enableTap(bool enable, bool xEnable, bool yEnable, bool zEnable) {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, TAP_CFG2);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  
+  regVal &= INTERRUPTS_MASK; 
+   
+  returnError = writeRegister(regVal, TAP_CFG2);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  returnError = readRegister(&regVal, TAP_CFG0);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= TAP_INTERRUPT_MASK;
+
+  if( xEnable )
+    regVal |= TAP_X_EN_ENABLED; 
+  else
+    regVal |= TAP_X_EN_DISABLED; 
+
+  if( yEnable )
+    regVal |= TAP_Y_EN_ENABLED; 
+  else
+    regVal |= TAP_X_EN_DISABLED; 
+
+  if( zEnable )
+    regVal |= TAP_Z_EN_ENABLED; 
+  else
+    regVal |= TAP_X_EN_DISABLED; 
+
+  returnError = writeRegister(TAP_CFG0, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x57, bit[7:5]: default value is: 0x00
+// Sets the direction priority for tap detection e.g. an X direction tap is
+// prioritized over a Y-direction tap etc. 
+bool LSM6DSO::setTapDirPrior(uint8_t prior) {
+  
+  if(  prior < 0 | prior > 0x08 )
+    return false;
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, TAP_CFG1);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= TAP_PRIORITY_MASK;
+
+  switch( prior ){
+    case TAP_PRIORITY_XYZ:
+      regVal |= TAP_PRIORITY_XYZ;
+      break;
+    case TAP_PRIORITY_YXZ:
+      regVal |= TAP_PRIORITY_YXZ;
+      break;
+    case TAP_PRIORITY_XZY:
+      regVal |= TAP_PRIORITY_XZY;
+      break;
+    case TAP_PRIORITY_ZYX:
+      regVal |= TAP_PRIORITY_ZYX;
+      break;
+    case TAP_PRIORITY_YZX:
+      regVal |= TAP_PRIORITY_YZX;
+      break;
+    case TAP_PRIORITY_ZXY:
+      regVal |= TAP_PRIORITY_ZXY;
+      break;
+    default:
+      break;
+  }
+
+  returnError = writeRegister(TAP_CFG1, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x57, bit[7:5]: default value is: 0x00
+// Sets the direction priority for tap detection e.g. an X direction tap is
+// prioritized over a Y-direction tap etc. 
+uint8_t LSM6DSO::getTapDirPrior(){
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, TAP_CFG2);
+  if( returnError != IMU_SUCCESS )
+    return IMU_GENERIC_ERROR;
+  else
+    return (regVal & ~TAP_PRIORITY_MASK); 
+}
+
+// Address: 0x56, bit[7,0]: default value is: 0x00 
+// Sets the configuration that clears the tap interrupt upon reading the
+// interrupt. 
+bool LSM6DSO::setTapClearOnRead(bool enable) {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, TAP_CFG0);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= 0x7E;
+
+  if( enable ) { 
+    regVal |= LIR_ENABLED;
+    regVal |= INT_CLR_ON_READ_IMMEDIATE;
+  }
+
+  returnError = writeRegister(TAP_CFG0, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+}
+
+// Address: 0x56, bit[7,0]: default value is: 0x00
+// Gets the configuration that clears the tap interrupt upon reading the
+// interrupt. 
+uint8_t LSM6DSO::getTapClearOnRead() {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, TAP_CFG0);
+  if( returnError != IMU_SUCCESS )
+      return IMU_GENERIC_ERROR;
+  else
+    regVal &= ~0x7E;
+
+}
+
+// Address:0x64 , bit[6]: default value is: 0x00
+// Checks if a step has been detected.
+bool LSM6DSO::listenTap() {
+
+  uint8_t regVal;
+  readRegister(&regVal, EMB_FUNC_SRC);
+  regVal &= ~STEP_DETECED_MASK;
+
+  if( regVal )
+      return true;
+  else
+      return false;
+}
+

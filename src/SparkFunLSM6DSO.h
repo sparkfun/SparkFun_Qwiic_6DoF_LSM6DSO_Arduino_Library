@@ -221,9 +221,16 @@ class LSM6DSO : public LSM6DSOCore
     float calcGyro( int16_t );
     float calcAccel( int16_t );
 
-    bool setPedometer(bool enable = true);
+    bool enablePedometer(bool enable = true);
     uint8_t getPedometer();
     uint8_t getSteps();
+    bool resetSteps();
+    bool enableTap(bool enable = true, bool xEnable = true, bool yEnable = false, bool zEnable = false) ;
+    bool setTapDirPrior(uint8_t);
+    uint8_t getTapDirPrior();
+    bool setTapClearOnRead(bool = true);
+    uint8_t getTapClearOnRead();
+    bool listenTap();
 
   private:
 
@@ -1182,17 +1189,6 @@ typedef enum {
 /*******************************************************************************
 * Register      : CTRL10_C
 * Address       : 0x19
-* Bit Group Name: PEDO_RST_STEP
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	PEDO_RST_STEP_DISABLED 		 = 0x00,
-	PEDO_RST_STEP_ENABLED 		 = 0x02,
-} LSM6DSO_PEDO_RST_STEP_t;
-
-/*******************************************************************************
-* Register      : CTRL10_C
-* Address       : 0x19
 * Bit Group Name: XEN_G
 * Permission    : RW
 *******************************************************************************/
@@ -1704,48 +1700,92 @@ typedef enum {
 } LSM6DSO_SIGN_MOT_EV_STATUS_t;
 
 /*******************************************************************************
-* Register      : TAP_CFG1
-* Address       : 0x58
+* Register      : TAP_CFG0
+* Address       : 0x56
 * Bit Group Name: LIR
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	LIR_DISABLED 		 = 0x00,
-	LIR_ENABLED 		 = 0x01,
+	LIR_DISABLED 	 = 0x00,
+	LIR_ENABLED 	 = 0x01,
+	LIR_MASK 		   = 0xFE
 } LSM6DSO_LIR_t;
 
+#define TAP_INTERRUPT_MASK 0xF1 
 /*******************************************************************************
-* Register      : TAP_CFG1
-* Address       : 0x58
+* Register      : TAP_CFG0
+* Address       : 0x56
 * Bit Group Name: TAP_Z_EN
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	TAP_Z_EN_DISABLED 		 = 0x00,
+	TAP_Z_EN_DISABLED 	 = 0x00,
 	TAP_Z_EN_ENABLED 		 = 0x02,
 } LSM6DSO_TAP_Z_EN_t;
 
 /*******************************************************************************
-* Register      : TAP_CFG1
-* Address       : 0x58
+* Register      : TAP_CFG0
+* Address       : 0x56
 * Bit Group Name: TAP_Y_EN
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	TAP_Y_EN_DISABLED 		 = 0x00,
+	TAP_Y_EN_DISABLED    = 0x00,
 	TAP_Y_EN_ENABLED 		 = 0x04,
 } LSM6DSO_TAP_Y_EN_t;
 
 /*******************************************************************************
-* Register      : TAP_CFG1
-* Address       : 0x58
+* Register      : TAP_CFG0
+* Address       : 0x56
 * Bit Group Name: TAP_X_EN
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	TAP_X_EN_DISABLED 		 = 0x00,
+	TAP_X_EN_DISABLED		 = 0x00,
 	TAP_X_EN_ENABLED 		 = 0x08,
 } LSM6DSO_TAP_X_EN_t;
+
+/*******************************************************************************
+* Register      : TAP_CFG0
+* Address       : 0x56
+* Bit Group Name: TAP_X_EN
+* Permission    : RW
+*******************************************************************************/
+typedef enum {
+	INT_CLR_ON_READ_AT_ODR 		 = 0x00,
+	INT_CLR_ON_READ_IMMEDIATE  = 0x80
+} LSM6DSO_INT_CLEAR_ON_READ_t;
+
+/*******************************************************************************
+* Register      : TAP_CFG1
+* Address       : 0x58
+* Bit Group Name: TIMER_EN
+* Permission    : RW
+*******************************************************************************/
+typedef enum {
+	TAP_PRIORITY_XYZ 		 = 0x00,
+	TAP_PRIORITY_YXZ 		 = 0x01,
+	TAP_PRIORITY_XZY 		 = 0x02,
+	TAP_PRIORITY_ZYX 		 = 0x03,
+	//TAP_PRIORITY_XYZ 	 = 0x04, repeated
+	TAP_PRIORITY_YZX 		 = 0x05,
+	TAP_PRIORITY_ZXY   	 = 0x06,
+	//TAP_PRIORITY_ZYX   = 0x07, repeated
+  TAP_PRIORITY_MASK = 0x1F
+} LSM6DSO_TAP_PRIORITY_t;
+
+
+/*******************************************************************************
+* Register      : TAP_CFG2
+* Address       : 0x58
+* Bit Group Name: INTERRUPTS_ENABLE
+* Permission    : RW
+*******************************************************************************/
+typedef enum {
+  INTERRUPTS_DISABLED = 0x00,
+  INTERRUPTS_ENABLED = 0x80,
+  INTERRUPTS_MASK = 0x7F,
+} LSM6DSO_INTERRUPTS_t;
 
 /*******************************************************************************
 * Register      : EMB_FUNC_EN_A
@@ -1781,16 +1821,30 @@ typedef enum {
 	SIGN_MOTION_ENABLED 	 = 0x20,
 } LSM6DSO_SIGN_MOTION_EN_t;
 
+
 /*******************************************************************************
-* Register      : TAP_CFG1
-* Address       : 0x58
-* Bit Group Name: TIMER_EN
+* Register      : EMB_FUNC_SRC
+* Address       : 0x64
+* Bit Group Name: PEDO_RST_STEP
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	TIMER_EN_DISABLED 		 = 0x00,
-	TIMER_EN_ENABLED 		 = 0x80,
-} LSM6DSO_TIMER_EN_t;
+	PEDO_RST_STEP_ENABLED 	 = 0x80,
+	PEDO_RST_STEP_DISABLED 	 = 0x00,
+  PEDO_RST_STEP_MASK 	     = 0x7F,
+} PEDO_RST_STEP_t;
+
+/*******************************************************************************
+* Register      : EMB_FUNC_SRC
+* Address       : 0x64
+* Bit Group Name: STEP_DETECTED
+* Permission    : RW
+*******************************************************************************/
+typedef enum {
+	STEP_NOT_DETECED  = 0x00,
+	STEP_DETECED 	    = 0x40,
+	STEP_DETECED_MASK = 0xBF
+} PEDO_STEP_DETECT_t;
 
 /*******************************************************************************
 * Register      : TAP_THS_6D
