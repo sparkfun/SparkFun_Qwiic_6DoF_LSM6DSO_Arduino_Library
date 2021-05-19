@@ -25,6 +25,7 @@ Distributed as-is; no warranty is given.
 
 LSM6DSO myIMU( I2C_MODE, 0x6B );
 //LSM6DSO myIMU( SPI_MODE, 10 );
+
 int accelInt = 2; 
 int gyroInt = 3; 
 
@@ -33,12 +34,18 @@ void setup()
 
   Serial.begin(115200);
   delay(500); 
-  Serial.println("Ready.");
 
-  pinMode(accelInt, INPUT_PULLUP);
-  pinMode(gyroInt, INPUT_PULLUP);
+  pinMode(accelInt, INPUT);
+  pinMode(gyroInt,INPUT);
 
-  myIMU.begin(HARD_INT_SETTINGS); // Load hardware interrupt related settings
+  Wire.begin();
+  if( !myIMU.begin(HARD_INT_SETTINGS) )
+    Serial.println("Ready.");
+  else { 
+    Serial.println("Could not connect to IMU.");
+    Serial.println("Freezing");
+    while(1);
+  }
 	
 }
 
@@ -46,7 +53,7 @@ void setup()
 void loop()
 {
 
-  if( digitalRead(accelInt) == LOW ){
+  if( digitalRead(accelInt) == HIGH ){
     Serial.print("\nAccelerometer:\n");
     Serial.print(" X = ");
     Serial.println(myIMU.readFloatAccelX(), 3);
@@ -56,7 +63,7 @@ void loop()
     Serial.println(myIMU.readFloatAccelZ(), 3);
   }
 
-  if( digitalRead(gyroInt) == LOW ){
+  if( digitalRead(gyroInt) == HIGH ){
     Serial.print("\nGyroscope:\n");
     Serial.print(" X = ");
     Serial.println(myIMU.readFloatGyroX(), 3);

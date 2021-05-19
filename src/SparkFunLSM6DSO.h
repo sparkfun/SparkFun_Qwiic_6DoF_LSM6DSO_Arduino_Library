@@ -41,7 +41,7 @@ Distributed as-is; no warranty is given.
 // Return values 
 typedef enum
 {
-	IMU_SUCCESS,
+  IMU_SUCCESS = 0x00,
 	IMU_HW_ERROR,
 	IMU_NOT_SUPPORTED,
 	IMU_OUT_OF_BOUNDS,
@@ -58,11 +58,9 @@ class LSM6DSOCore
 {
 public:
 
-	LSM6DSOCore( uint8_t );
-	LSM6DSOCore( uint8_t, uint8_t );
-	~LSM6DSOCore() = default;
-	
-	status_t beginCore( void );
+	LSM6DSOCore();
+	status_t beginCore(uint8_t, TwoWire &i2cPort );
+	status_t beginSPICore(uint8_t, uint32_t, SPIClass &spiPort );
 	
 	status_t readMultipleRegisters(uint8_t*, uint8_t, uint8_t );
 	status_t readRegister(uint8_t*, uint8_t);
@@ -74,13 +72,14 @@ public:
   SPISettings mySpiSettings; 
 	
 private:
-	
+
 	uint8_t commInterface;
 	uint8_t I2CAddress;
 	uint8_t chipSelectPin;
 
   TwoWire *_i2cPort;
   SPIClass *_spiPort;
+	
 
 };
 
@@ -157,17 +156,16 @@ class LSM6DSO : public LSM6DSOCore
 {
   public:
     //IMU settings
-    SensorSettings settings;
+    SensorSettings imuSettings;
 
     //Error checking
     uint16_t allOnesCounter;
     uint16_t nonSuccessCounter;
 
-    LSM6DSO( uint8_t busType = I2C_MODE, uint8_t inputArg = 0x6B );
-    ~LSM6DSO() = default;
-    
-    //Call to apply SensorSettings
-    status_t begin(uint8_t settings = BASIC_SETTINGS);
+    LSM6DSO();
+    bool begin(uint8_t deviceAddress = DEFAULT_ADDRESS, TwoWire &i2cPort = Wire);
+    bool beginSPI(uint8_t, uint32_t spiPortSpeed = 10000000, SPIClass &spiPort = SPI );
+    bool initialize(uint8_t settings = BASIC_SETTINGS);
     status_t beginSettings();
 
 
@@ -202,6 +200,8 @@ class LSM6DSO : public LSM6DSOCore
     float readFloatGyroZ();
 
     bool setInterruptOne(uint8_t);
+    uint8_t getInterruptOne(); 
+    bool configHardOutInt(uint8_t, uint8_t) ;
     bool setInterruptTwo(uint8_t);
     int16_t readRawTemp();
     float readTempC();
@@ -237,6 +237,7 @@ class LSM6DSO : public LSM6DSOCore
 
     bool routeHardInterOne(uint8_t) ;
     bool routeHardInterTwo(uint8_t);
+    bool setIncrement(bool enable = true) ;
 
   private:
 
@@ -869,17 +870,6 @@ typedef enum {
 /*******************************************************************************
 * Register      : CTRL3_C
 * Address       : 0x12
-* Bit Group Name: BLE
-* Permission    : RW
-*******************************************************************************/
-typedef enum {
-	BLE_LSB 		 = 0x00,
-	BLE_MSB 		 = 0x02,
-} LSM6DSO_BLE_t;
-
-/*******************************************************************************
-* Register      : CTRL3_C
-* Address       : 0x12
 * Bit Group Name: IF_INC
 * Permission    : RW
 *******************************************************************************/
@@ -913,13 +903,13 @@ typedef enum {
 /*******************************************************************************
 * Register      : CTRL3_C
 * Address       : 0x12
-* Bit Group Name: INT_ACT_LEVEL
+* Bit Group Name: H_LACTIVE
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	INT_ACT_LEVEL_ACTIVE_HI 		 = 0x00,
-	INT_ACT_LEVEL_ACTIVE_LO 		 = 0x20,
-} LSM6DSO_INT_ACT_LEVEL_t;
+	INT_ACTIVE_HIGH   = 0x00,
+	INT_ACTIVE_LOW  = 0x20,
+} LSM6DSO_H_LACTIVE_t;
 
 /*******************************************************************************
 * Register      : CTRL3_C

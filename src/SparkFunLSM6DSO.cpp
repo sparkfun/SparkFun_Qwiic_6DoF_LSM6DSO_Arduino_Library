@@ -24,55 +24,33 @@ or concerns with licensing, please contact techsupport@sparkfun.com.
 Distributed as-is; no warranty is given.
 ******************************************************************************/
 
-//See SparkFunLSM6DSO.h for additional topology notes.
 
 #include "SparkFunLSM6DSO.h"
 
-//****************************************************************************//
-//
-//  LSM6DSOCore functions.
-//
-//  Construction arguments:
-//  ( uint8_t busType, uint8_t inputArg ),
-//
-//    where inputArg is address for I2C_MODE and chip select pin
-//    number for SPI_MODE
-//
-//  For SPI, construct LSM6DSOCore myIMU(SPI_MODE, 10);
-//  For I2C, construct LSM6DSOCore myIMU(I2C_MODE, 0x6B);
-//
-//  Default construction is I2C mode, address 0x6B.
-//
-//****************************************************************************//
-LSM6DSOCore::LSM6DSOCore( uint8_t busType, uint8_t inputArg) : commInterface(I2C_MODE), I2CAddress(0x6B), chipSelectPin(10)
+LSM6DSOCore::LSM6DSOCore() { }
+
+status_t LSM6DSOCore::beginCore(uint8_t deviceAddress, TwoWire &i2cPort)
 {
-	commInterface = busType;
-	if( commInterface == I2C_MODE )
-	{
-		I2CAddress = inputArg;
-    _i2cPort = &Wire;
-	}
-	if( commInterface == SPI_MODE )
-	{
-    _spiPort = &SPI; 
-		chipSelectPin = inputArg;
-	}
+
+
+  commInterface = I2C_MODE; 
+  _i2cPort = &i2cPort;
+  I2CAddress = deviceAddress;
+
+	uint8_t partID;
+	status_t returnError = readRegister(&partID, WHO_AM_I_REG);
+	if( partID != 0x6C && returnError != IMU_SUCCESS)
+		return returnError;
+  else
+    return IMU_SUCCESS;
 
 }
 
-status_t LSM6DSOCore::beginCore()
-{
-	status_t returnError = IMU_SUCCESS;
-  uint32_t spiPortSpeed = 10000000;
+status_t LSM6DSOCore::beginSPICore(uint8_t csPin, uint32_t spiPortSpeed, SPIClass &spiPort){
 
-	switch (commInterface) {
-
-	case I2C_MODE:
-		break;
-
-	case SPI_MODE:
-		// Data is read and written MSb first.
-		// Maximum SPI frequency is 10MHz, could divide by 2 here:
+  commInterface = SPI_MODE;
+  _spiPort = &spiPort; 
+  chipSelectPin = csPin; 
 
 #ifdef __AVR__
     mySpiSettings = SPISettings(spiPortSpeed, MSBFIRST, SPI_MODE1);
@@ -86,31 +64,15 @@ status_t LSM6DSOCore::beginCore()
     mySpiSettings = SPISettings(spiPortSpeed, SPI_MSBFIRST, SPI_MODE1);
 #endif
 
-		// initalize the  data ready and chip select pins:
-		pinMode(chipSelectPin, OUTPUT);
-		digitalWrite(chipSelectPin, HIGH);
-		break;
-	default:
-		break;
-	}
+  pinMode(chipSelectPin, OUTPUT);
+  digitalWrite(chipSelectPin, HIGH);
 
-	//Spin for a few ms
-	volatile uint8_t temp = 0;
-	for( uint16_t i = 0; i < 10000; i++ )
-	{
-		temp++;
-	}
-
-	//Check the ID register to determine if the operation was a success.
-	uint8_t readCheck;
-	readRegister(&readCheck, WHO_AM_I_REG);
-	if( readCheck != 0x6C )
-	{
-		returnError = IMU_HW_ERROR;
-	}
-
-	return returnError;
-
+	uint8_t partID;
+	readRegister(&partID, WHO_AM_I_REG);
+	if( partID != 0x6C )
+		return IMU_HW_ERROR;
+  else
+    return IMU_SUCCESS;
 }
 
 //****************************************************************************//
@@ -179,23 +141,23 @@ status_t LSM6DSOCore::readMultipleRegisters(uint8_t outputPointer[], uint8_t add
 //    address -- register to read
 //****************************************************************************//
 status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t address) {
-	//Return value
-	uint8_t result;
+
 	status_t returnError; 
 
 	switch (commInterface) {
 
 	case I2C_MODE:
-
+    
 		_i2cPort->beginTransmission(I2CAddress);
 		_i2cPort->write(address);
 		if( _i2cPort->endTransmission() != 0 )
-			returnError = IMU_HW_ERROR;
+			return IMU_HW_ERROR;
 
 		_i2cPort->requestFrom(static_cast<uint8_t>(I2CAddress), static_cast<uint8_t>(1));
     *outputPointer = _i2cPort->read(); // receive a byte as a proper uint8_t
-    if( _i2cPort->endTransmission() != 0) 
+    if( _i2cPort->endTransmission() != 0) {
       return IMU_HW_ERROR;
+    }
     else
       return IMU_SUCCESS;
 
@@ -211,7 +173,10 @@ status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t address) {
     _spiPort->endTransaction(); 
 		
       return IMU_SUCCESS; 
-	}
+	
+  default:
+    return IMU_GENERIC_ERROR;
+  }
 
 }
 
@@ -340,26 +305,26 @@ status_t LSM6DSOCore::enableEmbeddedFunctions(bool enable)
 //  Construct with same rules as the core ( uint8_t busType, uint8_t inputArg )
 //
 //****************************************************************************//
-LSM6DSO::LSM6DSO( uint8_t busType, uint8_t inputArg ) : LSM6DSOCore( busType, inputArg )
+LSM6DSO::LSM6DSO() 
 {
-	//Construct with these default settings
+	//Construct with these default imuSettings
 
-	settings.gyroEnabled = true;  //Can be 0 or 1
-	settings.gyroRange = 500;   //Max deg/s.  Can be: 125, 250, 500, 1000, 2000
-	settings.gyroSampleRate = 416;   //Hz.  Can be: 13, 26, 52, 104, 208, 416, 833, 1666
-	settings.gyroBandWidth = 400;  //Hz.  Can be: 50, 100, 200, 400;
-	settings.gyroFifoEnabled = 1;  //Set to include gyro in FIFO
-	settings.gyroAccelDecimation = 1;  //Set to include gyro in FIFO
+	imuSettings.gyroEnabled = true;  //Can be 0 or 1
+	imuSettings.gyroRange = 500;   //Max deg/s.  Can be: 125, 250, 500, 1000, 2000
+	imuSettings.gyroSampleRate = 416;   //Hz.  Can be: 13, 26, 52, 104, 208, 416, 833, 1666
+	imuSettings.gyroBandWidth = 400;  //Hz.  Can be: 50, 100, 200, 400;
+	imuSettings.gyroFifoEnabled = 1;  //Set to include gyro in FIFO
+	imuSettings.gyroAccelDecimation = 1;  //Set to include gyro in FIFO
 
-	settings.accelEnabled = true;
-	settings.accelRange = 8;      //Max G force readable.  Can be: 2, 4, 8, 16
-	settings.accelSampleRate = 416;  //Hz.  Can be: 1.6 (16), 12.5 (125), 26, 52, 104, 208, 416, 833, 1660, 3330, 6660
-	settings.accelFifoEnabled = 1;  //Set to include accelerometer in the FIFO
+	imuSettings.accelEnabled = true;
+	imuSettings.accelRange = 8;      //Max G force readable.  Can be: 2, 4, 8, 16
+	imuSettings.accelSampleRate = 416;  //Hz.  Can be: 1.6 (16), 12.5 (125), 26, 52, 104, 208, 416, 833, 1660, 3330, 6660
+	imuSettings.accelFifoEnabled = 1;  //Set to include accelerometer in the FIFO
 
-  settings.fifoEnabled = true;
-	settings.fifoThreshold = 3000;  //Can be 0 to 4096 (16 bit bytes)
-	settings.fifoSampleRate = 416; 
-	settings.fifoModeWord = 0;  //Default off
+  imuSettings.fifoEnabled = true;
+	imuSettings.fifoThreshold = 3000;  //Can be 0 to 4096 (16 bit bytes)
+	imuSettings.fifoSampleRate = 416; 
+	imuSettings.fifoModeWord = 0;  //Default off
 
 	allOnesCounter = 0;
 	nonSuccessCounter = 0;
@@ -367,11 +332,33 @@ LSM6DSO::LSM6DSO( uint8_t busType, uint8_t inputArg ) : LSM6DSOCore( busType, in
 
 }
 
-status_t LSM6DSO::begin(uint8_t settings){
+bool LSM6DSO::begin(uint8_t address, TwoWire &i2cPort){
 
-	status_t returnError = beginCore();
-  if( returnError != IMU_SUCCESS ) 
-    return returnError;
+  if( address != DEFAULT_ADDRESS && address != ALT_ADDRESS )
+    return false;
+
+  uint8_t regVal;
+	status_t returnError = beginCore(address, i2cPort);
+  if( returnError != IMU_SUCCESS )
+    return false;
+  else
+    return true; 
+  
+}
+
+bool LSM6DSO::beginSPI(uint8_t csPin, uint32_t spiPortSpeed, SPIClass &spiPort){
+
+
+	status_t returnError = beginSPICore(csPin, spiPortSpeed, spiPort);
+  if( returnError != IMU_SUCCESS )
+    return false;
+  else
+    return true; 
+}
+
+bool LSM6DSO::initialize(uint8_t settings){
+
+  setIncrement();
 
   if( settings == BASIC_SETTINGS ){
     setAccelRange(8);
@@ -380,66 +367,59 @@ status_t LSM6DSO::begin(uint8_t settings){
     setGyroDataRate(416);
     setBlockDataUpdate(true);
   }
-  
-  if( settings = SOFT_INT_SETTINGS ){
+  else if( settings = SOFT_INT_SETTINGS ){
     setAccelRange(8);
     setAccelDataRate(416);
     setGyroRange(500);
     setGyroDataRate(416);
   }
-  
-  if( settings = HARD_INT_SETTINGS ){
-    setAccelRange(8);
-    setAccelDataRate(416);
-    setGyroRange(500);
-    setGyroDataRate(416);
+  else if( settings = HARD_INT_SETTINGS ){
     setInterruptOne(INT1_DRDY_XL_ENABLED);
-    setInterruptTwo(INT2_DRDY_G_ENABLED); 
+    //setInterruptTwo(INT2_DRDY_G_ENABLED); 
+    //configHardOutInt(INT_ACTIVE_LOW, PP_OD_OPEN_DRAIN);
+    setAccelRange(8);
+    setAccelDataRate(416);
+    setGyroRange(500);
+    setGyroDataRate(416);
   }
-
-  if( settings == FIFO_SETTINGS ){
+  else if( settings == FIFO_SETTINGS ){
     setFifoDepth(500); // bytes
     //setTSDecimation(); // FIFO_CTRL4
     //getSamplesStored(); // FIFO_STATUS1 and STATUS2
     setAccelBatchDataRate(416);
     setFifoMode(FIFO_MODE_STOP_WHEN_FULL);  
   }
-
-  if( settings == PEDOMETER_SETTINGS ){
+  else if( settings == PEDOMETER_SETTINGS ){
     enableEmbeddedFunctions(true);
     setAccelDataRate(52);
     enablePedometer(true);
   }
-
-  if( settings == TAP_SETTINGS ){
+  else if( settings == TAP_SETTINGS ){
     enableEmbeddedFunctions(true);
     setAccelDataRate(1660); // Must be at least 417
     enableTap(true, true, false, false);//TAP_CFG, TAP_CFG2
     setTapClearOnRead(true); //TAP_CFG0
     routeHardInterTwo(INT1_SINGLE_TAP_ENABLED);
   }
-
-  if( settings == FREE_FALL_SETTINGS ){
+  else if( settings == FREE_FALL_SETTINGS ){
     enableEmbeddedFunctions(true);
     //setFreeFall(true);
    // getFreeFall();
   }
 
+  return true;
+
 }
 
-status_t LSM6DSO::beginSettings()
-{
-	uint8_t dataToWrite = 0;  //Temporary variable
+status_t LSM6DSO::beginSettings() {
 
-	status_t returnError = beginCore();
-  if( returnError != IMU_SUCCESS ) 
-    return returnError;
+	uint8_t dataToWrite = 0;  //Temporary variable
 
 	//Setup the accelerometer******************************
 	dataToWrite = 0; //Start Fresh!
-	if ( settings.accelEnabled == 1) {
+	if ( imuSettings.accelEnabled == 1) {
     //Range
-		switch (settings.accelRange) {
+		switch (imuSettings.accelRange) {
 		case 2:
 			dataToWrite |= FS_XL_2g;
 			break;
@@ -455,7 +435,7 @@ status_t LSM6DSO::beginSettings()
 			break;
 		}
 		// Accelerometer ODR
-		switch (settings.accelSampleRate) {
+		switch (imuSettings.accelSampleRate) {
 		case 16:
 			dataToWrite |= ODR_XL_1_6Hz;
 			break;
@@ -499,8 +479,8 @@ status_t LSM6DSO::beginSettings()
 	//Setup the gyroscope**********************************************
 	dataToWrite = 0; // Clear variable
 
-	if ( settings.gyroEnabled == 1) {
-		switch (settings.gyroRange) {
+	if ( imuSettings.gyroEnabled == 1) {
+		switch (imuSettings.gyroRange) {
 		case 125:
 			dataToWrite |=  FS_G_125dps;
 			break;
@@ -518,7 +498,7 @@ status_t LSM6DSO::beginSettings()
 			dataToWrite |=  FS_G_2000dps;
 			break;
 		}
-		switch (settings.gyroSampleRate) { 
+		switch (imuSettings.gyroSampleRate) { 
 		case 125:
 			dataToWrite |= ODR_GYRO_12_5Hz;
 			break;
@@ -553,10 +533,10 @@ status_t LSM6DSO::beginSettings()
 		}
 	}
 	
-  // Write the gyroscope settings. 
+  // Write the gyroscope imuSettings. 
 	writeRegister(CTRL2_G, dataToWrite);
 
-	return returnError;
+	return IMU_SUCCESS;
 }
 
 // Address: 0x1E , bit[2:0]: default value is: 0x00
@@ -601,7 +581,39 @@ bool LSM6DSO::setInterruptOne(uint8_t setting) {
       return true;
 }
 
+// Address:0x0D , bit[7:0]: default value is: 0x00
+// Gets whether the accelerometer, gyroscope, or FIFO trigger on hardware
+// interrupt one.
+uint8_t LSM6DSO::getInterruptOne() {
 
+  uint8_t regVal; 
+  status_t returnError = readRegister(&regVal, INT1_CTRL);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return regVal;
+}
+
+// Address: 0x12, bit[5,4]: default value is: 0x00
+// Configures the polarity of the hardware interrupts and whether they are
+// push-pull or open-drain. 
+bool LSM6DSO::configHardOutInt(uint8_t polarity, uint8_t pushOrDrain) {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, CTRL3_C);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= 0xCF;
+  regVal |= polarity;
+  regVal |= pushOrDrain;
+
+  returnError = writeRegister(CTRL3_C, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
 // Address:0x0E , bit[7:0]: default value is: 0x00
 // Sets whether the accelerometer, gyroscope, temperature sensor or FIFO trigger on hardware
 // interrupt two. Error checking for the user's argument is tricky (could be a
@@ -677,8 +689,6 @@ bool LSM6DSO::setAccelRange(uint8_t range) {
   status_t returnError = readRegister(&regVal, CTRL1_XL);
   if( returnError != IMU_SUCCESS )
       return false;
-  else
-      return true;
 
   fullScale = getAccelFullScale();
 
@@ -688,7 +698,7 @@ bool LSM6DSO::setAccelRange(uint8_t range) {
 
   regVal &= FS_XL_MASK;
 
-  switch (range) {
+  switch( range ) {
     case 2:
       regVal |= FS_XL_2g;
       break;
@@ -770,8 +780,6 @@ bool LSM6DSO::setAccelDataRate(uint16_t rate) {
   status_t returnError = readRegister(&regVal, CTRL1_XL);
   if( returnError != IMU_SUCCESS )
       return false;
-  else
-      return true;
 
   highPerf = getAccelHighPerf();
 
@@ -781,7 +789,7 @@ bool LSM6DSO::setAccelDataRate(uint16_t rate) {
 
   regVal &= ODR_XL_MASK;
 
-  switch (settings.accelSampleRate) {
+  switch ( rate ) {
     case 0:
       regVal |= ODR_XL_DISABLE;
       break;
@@ -1029,8 +1037,6 @@ bool LSM6DSO::setGyroDataRate(uint16_t rate) {
   status_t returnError = readRegister(&regVal, CTRL2_G);
   if( returnError != IMU_SUCCESS )
       return false;
-  else
-      return true;
 
   regVal &= ODR_GYRO_MASK;
 
@@ -1330,8 +1336,8 @@ float LSM6DSO::readTempF()
 void LSM6DSO::fifoBeginSettings() {
 
 	//Split and mask the threshold
-	uint8_t thresholdLByte = (settings.fifoThreshold & 0x007F) >> 1;
-	uint8_t thresholdHByte = (settings.fifoThreshold & 0x00F0) >> 7;
+	uint8_t thresholdLByte = (imuSettings.fifoThreshold & 0x007F) >> 1;
+	uint8_t thresholdHByte = (imuSettings.fifoThreshold & 0x00F0) >> 7;
 
 	//CONFIGURE FIFO_CTRL4
 	uint8_t tempFIFO_CTRL4;
@@ -1339,18 +1345,17 @@ void LSM6DSO::fifoBeginSettings() {
   // Clear fifoMode bits
   tempFIFO_CTRL4 &= 0xF8;
   // Merge bits
-  tempFIFO_CTRL4 |= settings.fifoModeWord;
-	if (settings.gyroFifoEnabled == 1 | settings.accelFifoEnabled == 1)
+  tempFIFO_CTRL4 |= imuSettings.fifoModeWord;
+	if (imuSettings.gyroFifoEnabled == 1 | imuSettings.accelFifoEnabled == 1)
 	{
 		//Decimation is calculated as max rate between accel and gyro
     //Clear decimation bits
     tempFIFO_CTRL4 &= 0x3F; 
     // Merge bits
-		tempFIFO_CTRL4 |= (settings.gyroAccelDecimation << 6);
+		tempFIFO_CTRL4 |= (imuSettings.gyroAccelDecimation << 6);
   }
 
 	//Write the data
-	//Serial.println(thresholdLByte, HEX);
 	writeRegister(FIFO_CTRL1, thresholdLByte);
   uint8_t tempVal;
   tempVal = readRegister(&tempVal, FIFO_CTRL2);
@@ -1360,7 +1365,6 @@ void LSM6DSO::fifoBeginSettings() {
   tempVal |= thresholdHByte; 
 	writeRegister(FIFO_CTRL2, tempVal);
 
-	//Serial.println(thresholdHByte, HEX);
 	writeRegister(FIFO_CTRL4, tempFIFO_CTRL4);
 
 }
@@ -1967,6 +1971,25 @@ bool LSM6DSO::routeHardInterTwo(uint8_t interrupt) {
   regVal |= interrupt; 
 
   returnError = writeRegister(MD2_CFG, regVal);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x12 , bit[4]: default value is: 0x01
+// Sets register iteration when making multiple reads.
+bool LSM6DSO::setIncrement(bool enable) {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, CTRL3_C);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= 0xFD;
+  regVal |= IF_INC_ENABLED;
+
+  returnError = writeRegister(CTRL3_C, regVal);
   if( returnError != IMU_SUCCESS )
       return false;
   else

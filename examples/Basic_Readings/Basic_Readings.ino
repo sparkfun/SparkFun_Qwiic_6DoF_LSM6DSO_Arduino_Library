@@ -29,11 +29,19 @@ void setup() {
 
   Serial.begin(115200);
   delay(500); 
-  Serial.println("Ready.");
   
-  myIMU.begin(BASIC_SETTINGS); // Loads settings for reading temperature,
-                               // acceleromter and gyroscopic data.
-  
+  Wire.begin();
+  delay(10);
+  if( myIMU.begin() )
+    Serial.println("Ready.");
+  else { 
+    Serial.println("Could not connect to IMU.");
+    Serial.println("Freezing");
+  }
+
+  if( myIMU.initialize(BASIC_SETTINGS) )
+    Serial.println("Loaded Settings.");
+
 }
 
 

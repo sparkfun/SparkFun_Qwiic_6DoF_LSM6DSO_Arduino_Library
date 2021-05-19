@@ -26,18 +26,25 @@ Distributed as-is; no warranty is given.
 #include "Wire.h"
 // #include "SPI.h"
 
-LSM6DSO myIMU( I2C_MODE, 0x6B ); 
-//LSM6DSO myIMU( SPI_MODE, 10 );
+LSM6DSO myIMU; 
+
 int data; 
 
 void setup() {
 
   Serial.begin(115200);
   delay(500); 
-  Serial.println("Ready.");
 
   Wire.begin();
-  myIMU.begin(SOFT_INT_SETTINGS); // Load software interrupt related settings
+  if( myIMU.begin() )// Load software interrupt related settings
+    Serial.println("Ready.");
+  else {
+    Serial.println("Could not connect to IMU.");
+    Serial.println("Freezing");
+  }
+
+  if( myIMU.initialize(SOFT_INT_SETTINGS)) 
+    Serial.println("Loaded Settings.");
 
 }
 
