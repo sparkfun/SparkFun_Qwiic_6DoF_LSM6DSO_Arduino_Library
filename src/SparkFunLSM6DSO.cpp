@@ -562,7 +562,7 @@ bool LSM6DSO::setBlockDataUpdate(bool enable){
   if( returnError != IMU_SUCCESS )
     return false;
     
-  regVal &= 0xBF
+  regVal &= 0xBF;
   regVal |= enable;   
 
   returnError = writeRegister(CTRL3_C, regVal);  			

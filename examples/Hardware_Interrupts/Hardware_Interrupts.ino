@@ -23,11 +23,10 @@ Distributed as-is; no warranty is given.
 //#include "SPI.h"
 
 
-LSM6DSO myIMU( I2C_MODE, 0x6B );
-//LSM6DSO myIMU( SPI_MODE, 10 );
+LSM6DSO myIMU;
 
-int accelInt = 2; 
-int gyroInt = 3; 
+int accelInt = A0; 
+int gyroInt = A1; 
 
 void setup()
 {
@@ -39,13 +38,16 @@ void setup()
   pinMode(gyroInt,INPUT);
 
   Wire.begin();
-  if( !myIMU.begin(HARD_INT_SETTINGS) )
+  if( myIMU.begin() )
     Serial.println("Ready.");
   else { 
     Serial.println("Could not connect to IMU.");
     Serial.println("Freezing");
     while(1);
   }
+
+  if( myIMU.initialize(HARD_INT_SETTINGS) )
+    Serial.println("Settings Loaded.");
 	
 }
 
