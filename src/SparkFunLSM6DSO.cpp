@@ -557,8 +557,15 @@ uint8_t LSM6DSO::listenDataReady(){
 // the FIFO buffer.
 bool LSM6DSO::setBlockDataUpdate(bool enable){
 
-  status_t returnError = writeRegister(CTRL3_C, 0x40);  			
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, CTRL3_C); 
+  if( returnError != IMU_SUCCESS )
+    return false;
+    
+  regVal &= 0xBF
+  regVal |= enable;   
 
+  returnError = writeRegister(CTRL3_C, regVal);  			
   if( returnError != IMU_SUCCESS )
     return false;
   else 
