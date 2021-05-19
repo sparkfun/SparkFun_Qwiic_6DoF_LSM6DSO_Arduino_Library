@@ -27,6 +27,7 @@ LSM6DSO myIMU; //Default constructor is I2C, addr 0x6B
 
 void setup() {
 
+
   Serial.begin(115200);
   delay(500); 
   

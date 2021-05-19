@@ -130,6 +130,9 @@ status_t LSM6DSOCore::readMultipleRegisters(uint8_t outputPointer[], uint8_t add
 
       return IMU_SUCCESS;
 
+    default:
+      return IMU_GENERIC_ERROR;
+
   }
 }
 
@@ -279,6 +282,9 @@ status_t LSM6DSOCore::writeMultipleRegisters(uint8_t inputPointer[], uint8_t add
 
       return IMU_SUCCESS;
 
+    default:
+      return IMU_GENERIC_ERROR;
+
   }
 }
 
@@ -367,13 +373,13 @@ bool LSM6DSO::initialize(uint8_t settings){
     setGyroDataRate(416);
     setBlockDataUpdate(true);
   }
-  else if( settings = SOFT_INT_SETTINGS ){
+  else if( settings == SOFT_INT_SETTINGS ){
     setAccelRange(8);
     setAccelDataRate(416);
     setGyroRange(500);
     setGyroDataRate(416);
   }
-  else if( settings = HARD_INT_SETTINGS ){
+  else if( settings == HARD_INT_SETTINGS ){
     setInterruptOne(INT1_DRDY_XL_ENABLED);
     //setInterruptTwo(INT2_DRDY_G_ENABLED); 
     //configHardOutInt(INT_ACTIVE_LOW, PP_OD_OPEN_DRAIN);
@@ -563,7 +569,9 @@ bool LSM6DSO::setBlockDataUpdate(bool enable){
     return false;
     
   regVal &= 0xBF;
-  regVal |= enable;   
+  regVal |= BDU_BLOCK_UPDATE;   
+
+  Serial.println(regVal, HEX);
 
   returnError = writeRegister(CTRL3_C, regVal);  			
   if( returnError != IMU_SUCCESS )
@@ -581,7 +589,16 @@ bool LSM6DSO::setBlockDataUpdate(bool enable){
 // user to set the correct value. 
 bool LSM6DSO::setInterruptOne(uint8_t setting) {
 
-  status_t returnError = writeRegister(INT1_CTRL, setting);
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, INT1_CTRL);
+  if( returnError != IMU_SUCCESS )
+      return false;
+
+  regVal &= 0xFE; 
+  regVal |= setting; 
+  Serial.println(regVal);
+
+  returnError = writeRegister(INT1_CTRL, regVal);
   if( returnError != IMU_SUCCESS )
       return false;
   else
@@ -736,8 +753,8 @@ uint8_t LSM6DSO::getAccelRange(){
 
   uint8_t regVal;
   uint8_t fullScale;
-  status_t returnError = readRegister(&regVal, CTRL1_XL);
 
+  status_t returnError = readRegister(&regVal, CTRL1_XL);
   if( returnError != IMU_SUCCESS )
     return IMU_GENERIC_ERROR;
 
@@ -754,9 +771,10 @@ uint8_t LSM6DSO::getAccelRange(){
         return 4;
       case 3:
         return 8;
+      default:
+        return IMU_GENERIC_ERROR;
       }
     }
-
   else if( fullScale == 0 ){
     switch( regVal ){
       case 0: 
@@ -767,9 +785,10 @@ uint8_t LSM6DSO::getAccelRange(){
         return 4;
       case 3:
         return 8;
+      default:
+        return IMU_GENERIC_ERROR;
       }
   }
-
   else
     return IMU_GENERIC_ERROR;
 
@@ -1802,6 +1821,10 @@ bool LSM6DSO::enableTap(bool enable, bool xEnable, bool yEnable, bool zEnable) {
       return false;
   
   regVal &= INTERRUPTS_MASK; 
+  if( enable )
+    regVal |= INTERRUPTS_ENABLED;
+
+  Serial.println(regVal, HEX);
    
   returnError = writeRegister(regVal, TAP_CFG2);
   if( returnError != IMU_SUCCESS )
@@ -1827,6 +1850,7 @@ bool LSM6DSO::enableTap(bool enable, bool xEnable, bool yEnable, bool zEnable) {
     regVal |= TAP_Z_EN_ENABLED; 
   else
     regVal |= TAP_X_EN_DISABLED; 
+  Serial.println(regVal, HEX);
 
   returnError = writeRegister(TAP_CFG0, regVal);
   if( returnError != IMU_SUCCESS )
@@ -1913,6 +1937,8 @@ bool LSM6DSO::setTapClearOnRead(bool enable) {
   returnError = writeRegister(TAP_CFG0, regVal);
   if( returnError != IMU_SUCCESS )
       return false;
+  else
+    return true;
 
 }
 
@@ -1926,7 +1952,7 @@ uint8_t LSM6DSO::getTapClearOnRead() {
   if( returnError != IMU_SUCCESS )
       return IMU_GENERIC_ERROR;
   else
-    regVal &= ~0x7E;
+    return regVal &= ~0x7E;
 
 }
 
@@ -2001,4 +2027,13 @@ bool LSM6DSO::setIncrement(bool enable) {
       return false;
   else
       return true;
+}
+
+bool LSM6DSO::softwareReset(){
+
+  status_t returnError = writeRegister(SW_RESET_DEVICE, CTRL3_C);
+  if( returnError != IMU_SUCCESS )
+    return false;
+  else
+    return true; 
 }

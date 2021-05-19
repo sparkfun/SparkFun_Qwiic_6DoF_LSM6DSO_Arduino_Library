@@ -238,6 +238,7 @@ class LSM6DSO : public LSM6DSOCore
     bool routeHardInterOne(uint8_t) ;
     bool routeHardInterTwo(uint8_t);
     bool setIncrement(bool enable = true) ;
+    bool softwareReset();
 
   private:
 
@@ -864,7 +865,7 @@ typedef enum {
 *******************************************************************************/
 typedef enum {
 	SW_RESET_NORMAL_MODE 		 = 0x00,
-	SW_RESET_RESET_DEVICE 		 = 0x01,
+	SW_RESET_DEVICE 		 = 0x01,
 } LSM6DSO_SW_RESET_t;
 
 /*******************************************************************************
@@ -918,8 +919,9 @@ typedef enum {
 * Permission    : RW
 *******************************************************************************/
 typedef enum {
-	BDU_CONTINUOS 		 = 0x00,
-	BDU_BLOCK_UPDATE 		 = 0x40,
+	BDU_CONTINUOS 	 = 0x00,
+	BDU_BLOCK_UPDATE = 0x40,
+  BDU_MASK         = 0xBF 
 } LSM6DSO_BDU_t;
 
 /*******************************************************************************

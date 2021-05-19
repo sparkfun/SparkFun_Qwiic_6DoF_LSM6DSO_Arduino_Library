@@ -37,27 +37,35 @@ Distributed as-is; no warranty is given.
 #include <Wire.h>
 //#include <SPI.h>
 
-LSM6DSO myIMU( I2C_MODE, 0x6B );
-//LSM6DSO myIMU( SPI_MODE, 10 );
+LSM6DSO myIMU;
 
 int tapInterrupt = 2; 
 
 void setup() {
 
+
   Serial.begin(115200);
   delay(500); 
-  Serial.println("Ready.");
+  
+  Wire.begin();
+  delay(10);
+  if( myIMU.begin() )
+    Serial.println("Ready.");
+  else { 
+    Serial.println("Could not connect to IMU.");
+    Serial.println("Freezing");
+  }
 
-  pinMode(tapInterrupt, INPUT_PULLUP);
 
-  myIMU.begin(TAP_SETTINGS); // Load tap interrupt related settings
+
+  myIMU.initialize(TAP_SETTINGS);// Load tap interrupt related settings
 	
 }
 
 void loop()
 {
   
-  if( digitalRead( tapInterrupt ) == LOW ){
+  if( digitalRead( tapInterrupt ) == HIGH ){
     Serial.println("Tap Detected.");
   }
 
