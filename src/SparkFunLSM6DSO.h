@@ -121,15 +121,16 @@ public:
 struct fifoData{ 
 public:
   uint8_t fifoTag;
-  uint16_t xAccel; 
-  uint16_t yAccel; 
-  uint16_t zAccel; 
+  float xAccel; 
+  float yAccel; 
+  float zAccel; 
 
-  uint16_t xGyro; 
-  uint16_t yGyro; 
-  uint16_t zGyro; 
+  float xGyro; 
+  float yGyro; 
+  float zGyro; 
 
-  uint16_t temperature; 
+  float temperatureC; 
+  float temperatureF; 
 };
 
 
@@ -201,7 +202,7 @@ class LSM6DSO : public LSM6DSOCore
 
     bool setInterruptOne(uint8_t);
     uint8_t getInterruptOne(); 
-    bool configHardOutInt(uint8_t, uint8_t) ;
+    bool configHardOutInt(uint8_t, uint8_t pushOrDrain = 0x00) ;
     bool setInterruptTwo(uint8_t);
     int16_t readRawTemp();
     float readTempC();
@@ -479,7 +480,7 @@ typedef enum {
 	FIFO_BDR_GYRO_3333Hz        = 0x90,
 	FIFO_BDR_GYRO_6667Hz        = 0xA0,
 	FIFO_BDR_GYRO_6_5Hz         = 0xB0,
-	FIFO_BDR_GYRO_MASK          = 0xF0
+	FIFO_BDR_GYRO_MASK          = 0x0F
 } LSM6DSO_BDR_GY_FIFO_t;
 
 /*******************************************************************************

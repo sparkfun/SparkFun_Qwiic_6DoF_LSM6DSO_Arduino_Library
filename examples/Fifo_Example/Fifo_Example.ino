@@ -36,8 +36,8 @@ Distributed as-is; no warranty is given.
 #include "Wire.h"
 //#include "SPI.h"
 
-LSM6DSO myIMU( I2C_MODE, 0x6B );
-fifoData myFifo; 
+LSM6DSO myIMU;
+fifoData myFifo; //This will hold our FIFO data
 int availableBytes = 0;
 
 void setup()
@@ -45,9 +45,19 @@ void setup()
 
   Serial.begin(115200);
   delay(500); 
-  Serial.println("Ready.");
+  
+  Wire.begin();
+  delay(10);
+  if( myIMU.begin() )
+    Serial.println("Ready.");
+  else { 
+    Serial.println("Could not connect to IMU.");
+    Serial.println("Freezing");
+  }
 
-  myIMU.begin(FIFO_SETTINGS); // Load hardware interrupt related settings
+  if( myIMU.initialize(FIFO_SETTINGS) )
+    Serial.println("Loaded Settings.");
+
 	
   
 }
@@ -58,11 +68,13 @@ void loop()
   availableBytes = myIMU.getFifoStatus();  //Check for data in FIFO
 
   if( availableBytes > 0 ){
+    Serial.print("Number of bytes in FIFO: ");
+    Serial.println(availableBytes);
 
     myFifo = myIMU.fifoRead(); // Get the data
 
     if( myFifo.fifoTag == ACCELEROMETER_DATA ){
-      Serial.print("\nAccelerometer:\n");
+      Serial.println("Accelerometer:");
       Serial.print(" X = ");
       Serial.println(myFifo.xAccel, 3);
       Serial.print(" Y = ");
@@ -82,6 +94,6 @@ void loop()
     }
   }
 
-  delay(1000);
+  delay(500);
  
 }

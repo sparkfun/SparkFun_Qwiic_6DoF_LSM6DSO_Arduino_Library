@@ -10,6 +10,12 @@ and gyroscopic data when an interrupt is detected from "INT2". These two
 interrupts can be put anywhere on your dev board, but for this example pins
 two and three were used for "INT1" and INT2" respectively.
 
+Interrupts can be changed to be active low: 
+myIMU.configHardOutInt(INT_ACTIVE_LOW);
+Interrupts are being configured automatically like so: 
+myIMU.setInterruptOne(INT1_DRDY_XL_ENABLED);
+myIMU.setInterruptTwo(INT2_DRDY_G_ENABLED);
+
 Development environment tested:
 Arduino IDE 1.8.2
 
@@ -25,8 +31,8 @@ Distributed as-is; no warranty is given.
 
 LSM6DSO myIMU;
 
-int accelInt = A0; 
-int gyroInt = A1; 
+int accelInt = 2; 
+int gyroInt = 3; 
 
 void setup()
 {

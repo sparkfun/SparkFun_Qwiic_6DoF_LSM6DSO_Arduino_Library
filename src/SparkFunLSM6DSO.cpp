@@ -265,7 +265,7 @@ status_t LSM6DSOCore::writeMultipleRegisters(uint8_t inputPointer[], uint8_t add
          _i2cPort->write(inputPointer[i]); 
       }
 
-      if( _i2cPort->endTransmission(false) != 0 )
+      if( _i2cPort->endTransmission() != 0 )
         return IMU_HW_ERROR;
       else
         return IMU_SUCCESS;
@@ -381,8 +381,7 @@ bool LSM6DSO::initialize(uint8_t settings){
   }
   else if( settings == HARD_INT_SETTINGS ){
     setInterruptOne(INT1_DRDY_XL_ENABLED);
-    //setInterruptTwo(INT2_DRDY_G_ENABLED); 
-    //configHardOutInt(INT_ACTIVE_LOW, PP_OD_OPEN_DRAIN);
+    setInterruptTwo(INT2_DRDY_G_ENABLED); 
     setAccelRange(8);
     setAccelDataRate(416);
     setGyroRange(500);
@@ -392,8 +391,13 @@ bool LSM6DSO::initialize(uint8_t settings){
     setFifoDepth(500); // bytes
     //setTSDecimation(); // FIFO_CTRL4
     //getSamplesStored(); // FIFO_STATUS1 and STATUS2
-    setAccelBatchDataRate(416);
+    setAccelBatchDataRate(417);
+    setGyroBatchDataRate(417);
     setFifoMode(FIFO_MODE_STOP_WHEN_FULL);  
+    setAccelRange(8);
+    setAccelDataRate(833);
+    setGyroRange(500);
+    setGyroDataRate(833);
   }
   else if( settings == PEDOMETER_SETTINGS ){
     enableEmbeddedFunctions(true);
@@ -571,8 +575,6 @@ bool LSM6DSO::setBlockDataUpdate(bool enable){
   regVal &= 0xBF;
   regVal |= BDU_BLOCK_UPDATE;   
 
-  Serial.println(regVal, HEX);
-
   returnError = writeRegister(CTRL3_C, regVal);  			
   if( returnError != IMU_SUCCESS )
     return false;
@@ -596,7 +598,6 @@ bool LSM6DSO::setInterruptOne(uint8_t setting) {
 
   regVal &= 0xFE; 
   regVal |= setting; 
-  Serial.println(regVal);
 
   returnError = writeRegister(INT1_CTRL, regVal);
   if( returnError != IMU_SUCCESS )
@@ -1430,7 +1431,8 @@ uint8_t LSM6DSO::getFifoMode(){
 }
 
 // Address:0x07 and 0x08 , bit[7:0] bit[0]: default value is: 0x000
-// This sets the number of bytes that the FIFO can hold.  
+// This sets the number of bytes that the FIFO can hold. Maximum possible value
+// is 511
 bool LSM6DSO::setFifoDepth(uint16_t depth) {
 
   if( depth < 0 | depth > 511 )
@@ -1438,13 +1440,13 @@ bool LSM6DSO::setFifoDepth(uint16_t depth) {
 
   uint8_t dataToWrite[2];
   uint8_t regVal;
-  uint16_t waterMark;
   status_t returnError = readRegister(&regVal, FIFO_CTRL2);
 
   regVal &= 0x01; 
-  dataToWrite[0] = depth & 0x00FF;
-  dataToWrite[1] = (depth & 0x0100) >> 8; 
-  dataToWrite[1] |= regVal; 
+  dataToWrite[0] = depth & 0x00FF; // full byte
+  dataToWrite[1] = (depth & 0x0100) >> 8; //one bit
+  dataToWrite[1] |= regVal;// add the contents from the read 
+
     
   returnError = writeMultipleRegisters(dataToWrite, FIFO_CTRL1, 2);
   if( returnError != IMU_SUCCESS )
@@ -1471,7 +1473,7 @@ uint16_t LSM6DSO::getFifoDepth(){
 // Sets the accelerometer's batch data rate for the FIFO. 
 bool LSM6DSO::setAccelBatchDataRate(uint16_t rate) {
 
-  if( rate < 125 | rate > 1660 )
+  if( rate < 16 | rate > 1660 )
     return false;
 
   uint8_t regVal;
@@ -1482,38 +1484,38 @@ bool LSM6DSO::setAccelBatchDataRate(uint16_t rate) {
   regVal &= FIFO_BDR_ACC_MASK;
 
   switch( rate ){
-    case FIFO_BDR_ACC_NOT_BATCHED:
-      regVal | FIFO_BDR_ACC_NOT_BATCHED;
+    case 0:
+      regVal |= FIFO_BDR_ACC_NOT_BATCHED;
       break;
-    case FIFO_BDR_ACC_1_6Hz:
-      regVal | FIFO_BDR_ACC_1_6Hz;
+    case 16:
+      regVal |= FIFO_BDR_ACC_1_6Hz;
       break;
-    case FIFO_BDR_ACC_12_5Hz:
-      regVal | FIFO_BDR_ACC_12_5Hz;
+    case 125:
+      regVal |= FIFO_BDR_ACC_12_5Hz;
       break;
-    case FIFO_BDR_ACC_52Hz:
-      regVal | FIFO_BDR_ACC_52Hz;
+    case 52:
+      regVal |= FIFO_BDR_ACC_52Hz;
       break;
-    case FIFO_BDR_ACC_104Hz:
-      regVal | FIFO_BDR_ACC_104Hz;
+    case 104:
+      regVal |= FIFO_BDR_ACC_104Hz;
       break;
-    case FIFO_BDR_ACC_208Hz:
-      regVal | FIFO_BDR_ACC_208Hz;
+    case 208:
+      regVal |= FIFO_BDR_ACC_208Hz;
       break;
-    case FIFO_BDR_ACC_417Hz:
-      regVal | FIFO_BDR_ACC_417Hz;
+    case 417:
+      regVal |= FIFO_BDR_ACC_417Hz;
       break;
-    case FIFO_BDR_ACC_833Hz:
-      regVal | FIFO_BDR_ACC_833Hz;
+    case 833:
+      regVal |= FIFO_BDR_ACC_833Hz;
       break;
-    case FIFO_BDR_ACC_1667Hz:
-      regVal | FIFO_BDR_ACC_1667Hz;
+    case 1667:
+      regVal |= FIFO_BDR_ACC_1667Hz;
       break;
-    case FIFO_BDR_ACC_3333Hz:
-      regVal | FIFO_BDR_ACC_3333Hz;
+    case 3333:
+      regVal |= FIFO_BDR_ACC_3333Hz;
       break;
-    case FIFO_BDR_ACC_6667Hz:
-      regVal | FIFO_BDR_ACC_6667Hz;
+    case 6667:
+      regVal |= FIFO_BDR_ACC_6667Hz;
       break;
     default:
       FIFO_BDR_ACC_NOT_BATCHED;
@@ -1570,52 +1572,55 @@ float LSM6DSO::getAccelBatchDataRate() {
 // Sets the gyroscope's batch data rate for the FIFO. 
 bool LSM6DSO::setGyroBatchDataRate(uint16_t rate) {
 
+  if( rate < 65 | rate > 6667 )
+    return false; 
+  
   uint8_t regVal;
   status_t returnError = readRegister(&regVal, FIFO_CTRL3);
   if( returnError != IMU_SUCCESS )
       return false;
 
-  regVal &= ~FIFO_BDR_GYRO_MASK;
+  regVal &= FIFO_BDR_GYRO_MASK;
 
-  switch( regVal ){
-    case FIFO_BDR_GYRO_NOT_BATCHED:
-      regVal | FIFO_BDR_GYRO_NOT_BATCHED;
+  switch( rate ){
+    case 0:
+      regVal |= FIFO_BDR_GYRO_NOT_BATCHED;
       break;
-    case FIFO_BDR_GYRO_6_5Hz:
-      regVal | FIFO_BDR_GYRO_6_5Hz;
+    case 65:
+      regVal |= FIFO_BDR_GYRO_6_5Hz;
       break;
-    case FIFO_BDR_GYRO_12_5Hz:
-      regVal | FIFO_BDR_GYRO_12_5Hz;
+    case 125:
+      regVal |= FIFO_BDR_GYRO_12_5Hz;
       break;
-    case FIFO_BDR_GYRO_52Hz:
-      regVal | FIFO_BDR_GYRO_52Hz;
+    case 52:
+      regVal |= FIFO_BDR_GYRO_52Hz;
       break;
-    case FIFO_BDR_GYRO_104Hz:
-      regVal | FIFO_BDR_GYRO_104Hz;
+    case 104:
+      regVal |= FIFO_BDR_GYRO_104Hz;
       break;
-    case FIFO_BDR_GYRO_208Hz:
-      regVal | FIFO_BDR_GYRO_208Hz;
+    case 208:
+      regVal |= FIFO_BDR_GYRO_208Hz;
       break;
-    case FIFO_BDR_GYRO_417Hz:
-      regVal | FIFO_BDR_GYRO_417Hz;
+    case 417:
+      regVal |= FIFO_BDR_GYRO_417Hz;
       break;
-    case FIFO_BDR_GYRO_833Hz:
-      regVal | FIFO_BDR_GYRO_833Hz;
+    case 833:
+      regVal |= FIFO_BDR_GYRO_833Hz;
       break;
-    case FIFO_BDR_GYRO_1667Hz:
-      regVal | FIFO_BDR_GYRO_1667Hz;
+    case 1667:
+      regVal |= FIFO_BDR_GYRO_1667Hz;
       break;
-    case FIFO_BDR_GYRO_3333Hz:
-      regVal | FIFO_BDR_GYRO_3333Hz;
+    case 3333:
+      regVal |= FIFO_BDR_GYRO_3333Hz;
       break;
-    case FIFO_BDR_GYRO_6667Hz:
-      regVal | FIFO_BDR_GYRO_6667Hz;
+    case 6667:
+      regVal |= FIFO_BDR_GYRO_6667Hz;
       break;
     default:
       FIFO_BDR_GYRO_NOT_BATCHED;
   }
 
-  returnError = writeRegister(FIFO_CTRL3  , regVal);
+  returnError = writeRegister(FIFO_CTRL3, regVal);
   if( returnError != IMU_SUCCESS )
       return false;
   else
@@ -1664,9 +1669,6 @@ float LSM6DSO::getGyroBatchDataRate() {
 
 void LSM6DSO::fifoClear() {
 	//Drain the fifo data and dump it
-	while( (getFifoStatus() & 0x1000 ) == 0 ) {
-		fifoRead();
-	}
 
 }
 
@@ -1676,8 +1678,10 @@ fifoData LSM6DSO::fifoRead() {
   int16_t tempData;  
   fifoData tempFifoData; 
   
-
   status_t returnError = readRegister(&tempTagByte, FIFO_DATA_OUT_TAG);
+  tempTagByte &= 0xF8;
+  tempTagByte = tempTagByte >> 3;
+
   if( returnError != IMU_SUCCESS ){
     tempFifoData.fifoTag = IMU_GENERIC_ERROR;  
     return tempFifoData;  
@@ -1693,11 +1697,11 @@ fifoData LSM6DSO::fifoRead() {
       tempTagByte == ACCELERTOMETER_DATA_3xC) {
 
     readRegisterInt16(&tempData, FIFO_DATA_OUT_X_L);
-    tempFifoData.xAccel = tempData;
+    tempFifoData.xAccel = calcAccel(tempData);
     readRegisterInt16(&tempData, FIFO_DATA_OUT_Y_L);
-    tempFifoData.yAccel = tempData; 
+    tempFifoData.yAccel = calcAccel(tempData); 
     readRegisterInt16(&tempData, FIFO_DATA_OUT_Z_L);
-    tempFifoData.zAccel |= tempData;
+    tempFifoData.zAccel = calcAccel(tempData);
   }
 
 
@@ -1708,17 +1712,17 @@ fifoData LSM6DSO::fifoRead() {
       tempTagByte == GYRO_DATA_3xC) {
 
     readRegisterInt16(&tempData, FIFO_DATA_OUT_X_L);
-    tempFifoData.xGyro = tempData;
+    tempFifoData.xGyro = calcGyro(tempData);
     readRegisterInt16(&tempData, FIFO_DATA_OUT_Y_L);
-    tempFifoData.yGyro = tempData; 
+    tempFifoData.yGyro = calcGyro(tempData); 
     readRegisterInt16(&tempData, FIFO_DATA_OUT_Z_L);
-    tempFifoData.zGyro |= tempData;
+    tempFifoData.zGyro = calcGyro(tempData);
   }
 
 
   if( tempTagByte == TEMPERATURE_DATA ){ 
     readRegisterInt16(&tempData, FIFO_DATA_OUT_X_L);
-    tempFifoData.temperature |= tempData;
+    //tempFifoData.temperature = tempData;
   }
 
   return tempFifoData;
@@ -1728,12 +1732,10 @@ fifoData LSM6DSO::fifoRead() {
 uint16_t LSM6DSO::getFifoStatus() {
 
 	uint8_t regVal;
-	uint16_t numBytes;
+	int16_t numBytes;
 
-	readRegister(&regVal, FIFO_STATUS1);
-	numBytes = regVal;
-	readRegister(&regVal, FIFO_STATUS2);
-	numBytes |= static_cast<uint16_t>((regVal & 0x03) << 8);
+	readRegisterInt16(&numBytes, FIFO_STATUS1);
+	numBytes &= 0x03FF;
 
 	return numBytes;  
 
@@ -1824,8 +1826,6 @@ bool LSM6DSO::enableTap(bool enable, bool xEnable, bool yEnable, bool zEnable) {
   if( enable )
     regVal |= INTERRUPTS_ENABLED;
 
-  Serial.println(regVal, HEX);
-   
   returnError = writeRegister(regVal, TAP_CFG2);
   if( returnError != IMU_SUCCESS )
       return false;
@@ -1850,7 +1850,6 @@ bool LSM6DSO::enableTap(bool enable, bool xEnable, bool yEnable, bool zEnable) {
     regVal |= TAP_Z_EN_ENABLED; 
   else
     regVal |= TAP_X_EN_DISABLED; 
-  Serial.println(regVal, HEX);
 
   returnError = writeRegister(TAP_CFG0, regVal);
   if( returnError != IMU_SUCCESS )
