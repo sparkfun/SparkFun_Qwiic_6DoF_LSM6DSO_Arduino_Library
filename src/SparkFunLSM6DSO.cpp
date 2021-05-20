@@ -294,13 +294,14 @@ status_t LSM6DSOCore::enableEmbeddedFunctions(bool enable)
   uint8_t tempVal; 
   readRegister(&tempVal, FUNC_CFG_ACCESS);
   
+  tempVal &= 0x7F;
+
   if( enable )
     tempVal |= 0x80;  
   else
     tempVal |= 0x7F; 
 
 	status_t returnError = writeRegister( FUNC_CFG_ACCESS, tempVal );
-	
 	return returnError;
 }
 
@@ -409,7 +410,7 @@ bool LSM6DSO::initialize(uint8_t settings){
     setAccelDataRate(1660); // Must be at least 417
     enableTap(true, true, false, false);//TAP_CFG, TAP_CFG2
     setTapClearOnRead(true); //TAP_CFG0
-    routeHardInterTwo(INT1_SINGLE_TAP_ENABLED);
+    routeHardInterOne(INT1_SINGLE_TAP_ENABLED);
   }
   else if( settings == FREE_FALL_SETTINGS ){
     enableEmbeddedFunctions(true);
@@ -1825,6 +1826,8 @@ bool LSM6DSO::enableTap(bool enable, bool xEnable, bool yEnable, bool zEnable) {
   regVal &= INTERRUPTS_MASK; 
   if( enable )
     regVal |= INTERRUPTS_ENABLED;
+  else
+    regVal |= INTERRUPTS_DISABLED;
 
   returnError = writeRegister(regVal, TAP_CFG2);
   if( returnError != IMU_SUCCESS )
@@ -1853,9 +1856,9 @@ bool LSM6DSO::enableTap(bool enable, bool xEnable, bool yEnable, bool zEnable) {
 
   returnError = writeRegister(TAP_CFG0, regVal);
   if( returnError != IMU_SUCCESS )
-      return false;
+    return false;
   else
-      return true;
+    return true;
 }
 
 // Address: 0x57, bit[7:5]: default value is: 0x00
@@ -1898,9 +1901,9 @@ bool LSM6DSO::setTapDirPrior(uint8_t prior) {
 
   returnError = writeRegister(TAP_CFG1, regVal);
   if( returnError != IMU_SUCCESS )
-      return false;
+    return false;
   else
-      return true;
+    return true;
 }
 
 // Address: 0x57, bit[7:5]: default value is: 0x00
@@ -1932,6 +1935,8 @@ bool LSM6DSO::setTapClearOnRead(bool enable) {
     regVal |= LIR_ENABLED;
     regVal |= INT_CLR_ON_READ_IMMEDIATE;
   }
+
+  regVal |= 0x08; // remove- brute force
 
   returnError = writeRegister(TAP_CFG0, regVal);
   if( returnError != IMU_SUCCESS )
@@ -1981,6 +1986,7 @@ bool LSM6DSO::routeHardInterOne(uint8_t interrupt) {
 
   regVal &= ~interrupt; //Preserve all but the one to set
   regVal |= interrupt; 
+  regVal = INT1_SINGLE_TAP_ENABLED;// remove
 
   returnError = writeRegister(MD1_CFG, regVal);
   if( returnError != IMU_SUCCESS )

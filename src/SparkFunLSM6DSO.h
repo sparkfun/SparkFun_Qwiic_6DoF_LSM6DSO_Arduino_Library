@@ -2058,6 +2058,7 @@ typedef enum {
 typedef enum {
 	INT1_SINGLE_TAP_DISABLED 		 = 0x00,
 	INT1_SINGLE_TAP_ENABLED 		 = 0x40,
+  INT1_SINGLE_TAP_MASK = 0xBF
 } LSM6DSO_INT1_SINGLE_TAP_t;
 
 /*******************************************************************************
