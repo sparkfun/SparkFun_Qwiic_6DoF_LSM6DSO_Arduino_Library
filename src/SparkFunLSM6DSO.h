@@ -234,12 +234,16 @@ class LSM6DSO : public LSM6DSOCore
     uint8_t getTapDirPrior();
     bool setTapClearOnRead(bool = true);
     uint8_t getTapClearOnRead();
+    uint8_t clearTapInt();
+    bool setXThreshold(uint8_t);
     bool listenStep();
+    bool configureTap(uint8_t);
 
     bool routeHardInterOne(uint8_t) ;
     bool routeHardInterTwo(uint8_t);
     bool setIncrement(bool enable = true) ;
     bool softwareReset();
+    uint8_t clearAllInt();
 
   private:
 
@@ -1230,6 +1234,21 @@ typedef enum {
 } LSM6DSO_FUNC_EN_t;
 
 /*******************************************************************************
+* Register      : ALL_INT_SRC
+* Address       : 0x1A
+* Permission    : R
+*******************************************************************************/
+typedef enum {
+  INT_FREE_FALL          = 0x01,
+  INT_WAKE_UP            = 0x02,
+  INT_SINGLE_TAP         = 0x04,
+  INT_DOUBLE_TAP         = 0x08,
+  INT_D6D                = 0x10,
+  INT_SLEEP_CHANGEN      = 0x20,
+  INT_TIMESTAMP_ENDCOUNT = 0x80,
+} LSM6DSO_ALL_INT_t;
+
+/*******************************************************************************
 * Register      : MASTER_CONFIG
 * Address       : 0x1A
 * Bit Group Name: MASTER_ON
@@ -1419,23 +1438,23 @@ typedef enum {
 /*******************************************************************************
 * Register      : TAP_SRC
 * Address       : 0x1C
-* Bit Group Name: DOUBLE_TAP_EV_STATUS
+* Bit Group Name: DOUBLE_TAP
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	DOUBLE_TAP_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	DOUBLE_TAP_EV_STATUS_DETECTED 		 = 0x10,
+	DOUBLE_TAP_NOT_DETECTED 		 = 0x00,
+	DOUBLE_TAP_DETECTED 		 = 0x10,
 } LSM6DSO_DOUBLE_TAP_EV_STATUS_t;
 
 /*******************************************************************************
 * Register      : TAP_SRC
 * Address       : 0x1C
-* Bit Group Name: SINGLE_TAP_EV_STATUS
+* Bit Group Name: SINGLE_TAP
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	SINGLE_TAP_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	SINGLE_TAP_EV_STATUS_DETECTED 		 = 0x20,
+	SINGLE_TAP_NOT_DETECTED 		 = 0x00,
+	SINGLE_TAP_DETECTED 		 = 0x20,
 } LSM6DSO_SINGLE_TAP_EV_STATUS_t;
 
 /*******************************************************************************
@@ -1445,8 +1464,8 @@ typedef enum {
 * Permission    : RO
 *******************************************************************************/
 typedef enum {
-	TAP_EV_STATUS_NOT_DETECTED 		 = 0x00,
-	TAP_EV_STATUS_DETECTED 		 = 0x40,
+	TAP_EV_NOT_DETECTED 		 = 0x00,
+	TAP_EV_DETECTED 		 = 0x40,
 } LSM6DSO_TAP_EV_STATUS_t;
 
 /*******************************************************************************
@@ -1758,7 +1777,7 @@ typedef enum {
 /*******************************************************************************
 * Register      : TAP_CFG1
 * Address       : 0x58
-* Bit Group Name: TIMER_EN
+* Bit Group Name: TAP_PRIORITY
 * Permission    : RW
 *******************************************************************************/
 typedef enum {

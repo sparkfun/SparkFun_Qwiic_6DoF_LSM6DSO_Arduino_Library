@@ -39,7 +39,7 @@ Distributed as-is; no warranty is given.
 
 LSM6DSO myIMU;
 
-int tapInterrupt = A0; 
+int tapInterrupt = I2CINT; 
 bool tap = false;
 
 void setup() {
@@ -59,6 +59,7 @@ void setup() {
     Serial.println("Could not connect to IMU.");
     Serial.println("Freezing");
   }
+  myIMU.softwareReset();
 
   myIMU.initialize(TAP_SETTINGS);// Load tap interrupt related settings
 	
@@ -68,8 +69,13 @@ void loop()
 {
   if( tap ){
     Serial.println("Tap Detected.");
+    Serial.print("Interrupt: ");
+    Serial.println(myIMU.clearTapInt());
     tap = false;
   }
+
+  //if(digitalRead(tapInterrupt) == HIGH) 
+   // Serial.println("Tap Detected.");
 
   delay(100);
 }

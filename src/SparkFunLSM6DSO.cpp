@@ -406,11 +406,14 @@ bool LSM6DSO::initialize(uint8_t settings){
     enablePedometer(true);
   }
   else if( settings == TAP_SETTINGS ){
-    enableEmbeddedFunctions(true);
-    setAccelDataRate(1660); // Must be at least 417
-    enableTap(true, true, false, false);//TAP_CFG, TAP_CFG2
-    setTapClearOnRead(true); //TAP_CFG0
+    setAccelRange(2);
+    setAccelDataRate(417); // Must be at least 417
+    enableTap(true, true, true, true);
+    setTapDirPrior( TAP_PRIORITY_YXZ );
+    setXThreshold(9);
+    configureTap(0x06);
     routeHardInterOne(INT1_SINGLE_TAP_ENABLED);
+    //setTapClearOnRead(true); //TAP_CFG0
   }
   else if( settings == FREE_FALL_SETTINGS ){
     enableEmbeddedFunctions(true);
@@ -2041,4 +2044,61 @@ bool LSM6DSO::softwareReset(){
     return false;
   else
     return true; 
+}
+
+// Address:0x1A , bit[7:0]: default value is: 0x00
+// This function clears the given interrupt upon reading it from the register.  
+uint8_t LSM6DSO::clearAllInt() {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, ALL_INT_SRC);
+  if( returnError != IMU_SUCCESS )
+      return returnError;
+  else
+      return regVal;
+}
+
+// Address:0x1C , bit[7:0]: default value is: 0x00
+// This function clears the given interrupt upon reading it from the register.  
+uint8_t LSM6DSO::clearTapInt() {
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, TAP_SRC);
+  if( returnError != IMU_SUCCESS )
+      return returnError;
+  else
+      return regVal;
+}
+
+// Address: 0x57, bit[4:0]: default value is: 0x00
+// Sets the threshold for x-axis tap recognintion.
+bool LSM6DSO::setXThreshold(uint8_t thresh) {
+
+  if( thresh < 0 | thresh > 31 )
+    return false;
+
+  uint8_t regVal;
+  status_t returnError = readRegister(&regVal, TAP_CFG1);
+  regVal &= 0xE0;
+
+  regVal |= thresh;
+  returnError = writeRegister(TAP_CFG1, thresh);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
+}
+
+// Address: 0x5A, bit[7:0]: default value is: 0x00
+// Sets the various tap configurations. This is a broad function that just
+// writes the entier register. 
+bool LSM6DSO::configureTap(uint8_t settings) {
+
+  uint8_t regVal;
+
+  status_t returnError =  writeRegister(INT_DUR2, settings);
+  if( returnError != IMU_SUCCESS )
+      return false;
+  else
+      return true;
 }
