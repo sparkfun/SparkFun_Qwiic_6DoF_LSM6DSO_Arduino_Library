@@ -252,7 +252,7 @@ class LSM6DSO : public LSM6DSOCore
 enum LSM6DSO_REGISTERS {
 
   FUNC_CFG_ACCESS        = 0x01,  
-  PIN_CTRL               = 0x02, 
+  LSM6DO_PIN_CTRL        = 0x02, 
 
   FIFO_CTRL1             = 0x07,
   FIFO_CTRL2             = 0x08,

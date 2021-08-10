@@ -94,6 +94,7 @@ status_t LSM6DSOCore::readMultipleRegisters(uint8_t outputPointer[], uint8_t add
 {
 
 	status_t returnError;
+  uint8_t byteReturn;
 
 	switch( commInterface ){
 
@@ -104,15 +105,16 @@ status_t LSM6DSOCore::readMultipleRegisters(uint8_t outputPointer[], uint8_t add
       if( _i2cPort->endTransmission(false) != 0 )
         return IMU_HW_ERROR;
 
-      _i2cPort->requestFrom(I2CAddress, numBytes);
+      byteReturn = _i2cPort->requestFrom(static_cast<uint8_t>(I2CAddress), static_cast<uint8_t>(numBytes));
+
+      if( byteReturn == 0 )
+        return IMU_HW_ERROR;
+
       for(size_t i = 0; i < numBytes; i++){
          outputPointer[i] =  _i2cPort->read(); 
       }
 
-      if( _i2cPort->endTransmission() != 0 )
-        return IMU_HW_ERROR;
-      else
-        return IMU_SUCCESS;
+      return IMU_SUCCESS;
 
     case SPI_MODE:
 
@@ -146,6 +148,7 @@ status_t LSM6DSOCore::readMultipleRegisters(uint8_t outputPointer[], uint8_t add
 status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t address) {
 
 	status_t returnError; 
+  uint8_t byteReturn;
 
 	switch (commInterface) {
 
@@ -156,13 +159,14 @@ status_t LSM6DSOCore::readRegister(uint8_t* outputPointer, uint8_t address) {
 		if( _i2cPort->endTransmission() != 0 )
 			return IMU_HW_ERROR;
 
-		_i2cPort->requestFrom(static_cast<uint8_t>(I2CAddress), static_cast<uint8_t>(1));
-    *outputPointer = _i2cPort->read(); // receive a byte as a proper uint8_t
-    if( _i2cPort->endTransmission() != 0) {
+		byteReturn  = _i2cPort->requestFrom(static_cast<uint8_t>(I2CAddress), static_cast<uint8_t>(1));
+    
+    if( byteReturn == 0 )
       return IMU_HW_ERROR;
-    }
-    else
-      return IMU_SUCCESS;
+
+    *outputPointer = _i2cPort->read(); // receive a byte as a proper uint8_t
+
+    return IMU_SUCCESS;
 
 	case SPI_MODE:
 		// take the chip select low to select the device:
