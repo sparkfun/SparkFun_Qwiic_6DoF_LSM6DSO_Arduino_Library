@@ -61,7 +61,7 @@ status_t LSM6DSOCore::beginSPICore(uint8_t csPin, uint32_t spiPortSpeed, SPIClas
 #endif
 		
 #ifdef ESP32
-    mySpiSettings = SPISettings(spiPortSpeed, SPI_MSBFIRST, SPI_MODE1);
+    mySpiSettings = SPISettings(spiPortSpeed, SPI_MSBFIRST, SPI_MODE0);
 #endif
 
   pinMode(chipSelectPin, OUTPUT);
