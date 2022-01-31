@@ -1065,7 +1065,7 @@ float LSM6DSO::calcAccel( int16_t input )
 // Sets the gyro's output data rate thereby enabling it.  
 bool LSM6DSO::setGyroDataRate(uint16_t rate) {
 
-  if( rate < 125 | rate > 6660 ) 
+  if( rate < 0 | rate > 6660 ) 
     return false; 
 
   uint8_t regVal;
