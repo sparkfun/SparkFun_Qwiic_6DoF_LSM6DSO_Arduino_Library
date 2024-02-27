@@ -1166,7 +1166,7 @@ float LSM6DSO::getGyroDataRate(){
 // Sets the gyroscope's range.
 bool LSM6DSO::setGyroRange(uint16_t range) {
 
-  if( range < 250 | range > 2000)
+  if( range < 125| range > 2000)
     return false;
 
   uint8_t regVal;
@@ -1481,7 +1481,7 @@ uint16_t LSM6DSO::getFifoDepth(){
 // Sets the accelerometer's batch data rate for the FIFO. 
 bool LSM6DSO::setAccelBatchDataRate(uint16_t rate) {
 
-  if( rate < 16 | rate > 1660 )
+  if( rate < 0 | rate > 1660 )
     return false;
 
   uint8_t regVal;
@@ -1580,7 +1580,7 @@ float LSM6DSO::getAccelBatchDataRate() {
 // Sets the gyroscope's batch data rate for the FIFO. 
 bool LSM6DSO::setGyroBatchDataRate(uint16_t rate) {
 
-  if( rate < 65 | rate > 6667 )
+  if( rate < 0 | rate > 6667 )
     return false; 
   
   uint8_t regVal;
